@@ -88,7 +88,7 @@
                     <h1 class="text-base sm:text-xl font-bold font-bangla text-white leading-tight">বাংলাদেশ পুলিশ ব্যাচ ২০২২</h1>
                     <p class="text-[11px] sm:text-xs text-police-gold font-medium flex items-center gap-1">
                         <span class="inline-block w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                        লাইভ ক্লাউড নেটওয়ার্ক
+                        সুরক্ষিত ক্লাউড ডিরেক্টরি
                     </p>
                 </div>
             </div>
@@ -105,10 +105,16 @@
                     </div>
                 </div>
 
-                <!-- Add Member Button (Admin Only) -->
+                <!-- Add Member / Submit Profile Button -->
                 <button id="addMemberBtn" onclick="openAddMemberModal()" class="hidden px-3 py-1.5 sm:px-4 sm:py-2 bg-police-accent hover:bg-police-gold text-slate-950 text-xs sm:text-sm font-bold rounded-xl shadow-lg transition-all flex items-center gap-1.5 active:scale-95">
                     <i class="fa-solid fa-user-plus"></i>
-                    <span class="hidden sm:inline">সদস্য যোগ করুন</span>
+                    <span class="hidden sm:inline" id="submitBtnText">প্রোফাইল জমা দিন</span>
+                </button>
+
+                <!-- Admin Pending Approvals Button -->
+                <button id="adminPendingBtn" onclick="openAdminPendingModal()" class="hidden px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl shadow-lg transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-user-clock"></i>
+                    <span>পেন্ডিং রিকোয়েস্ট (<span id="pendingCount">০</span>)</span>
                 </button>
 
                 <!-- Authentication Button -->
@@ -123,163 +129,182 @@
     <!-- Main Content Area -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-1">
         
-        <!-- PROMINENT BANNER WITH TOTAL MEMBERS STAT CARD -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <!-- Total Counter Prominent Display -->
-            <div class="glass-card p-5 rounded-2xl border-l-4 border-l-police-accent flex items-center justify-between shadow-xl bg-gradient-to-r from-police-navy/90 to-police-card">
-                <div>
-                    <span class="text-xs font-semibold text-gray-300 tracking-wide uppercase">ডিরেক্টরি পরিসংখ্যান</span>
-                    <h3 class="text-2xl sm:text-3xl font-black text-police-gold font-bangla mt-1" id="mainTotalCounter">০ জন</h3>
-                    <p class="text-[11px] text-police-accent mt-0.5">নিবন্ধিত ব্যাচমেট সদস্য</p>
+        <!-- LOCKED STATE BANNER (When not logged in) -->
+        <section id="lockedStateScreen" class="py-20 text-center glass-card rounded-3xl my-6 border border-police-accent/40 shadow-2xl">
+            <div class="max-w-lg mx-auto px-4 space-y-4">
+                <div class="w-20 h-20 bg-police-accent/20 border border-police-accent text-police-accent rounded-full flex items-center justify-center mx-auto text-3xl shadow-lg animate-bounce">
+                    <i class="fa-solid fa-shield-halved"></i>
                 </div>
-                <div class="w-14 h-14 rounded-2xl bg-police-accent/20 border border-police-accent/40 flex items-center justify-center text-police-accent text-2xl shadow-lg">
-                    <i class="fa-solid fa-user-shield"></i>
-                </div>
+                <h2 class="text-xl sm:text-2xl font-bold text-white font-bangla">বাংলাদেশ পুলিশ ব্যাচ ২০২২ ডিরেক্টরিতে স্বাগতম</h2>
+                <p class="text-xs sm:text-sm text-gray-300">তথ্য দেখতে এবং আপনার প্রোফাইল যুক্ত করতে অনুগ্রহ করে ব্যাচ পিন (`২০২২`) দিয়ে লগইন করুন।</p>
+                <button onclick="openLoginModal()" class="px-6 py-3 bg-police-accent hover:bg-police-gold text-slate-950 font-bold rounded-xl shadow-xl transition-all text-sm inline-flex items-center gap-2">
+                    <i class="fa-solid fa-key"></i> পিন দিয়ে প্রবেশ করুন
+                </button>
             </div>
+        </section>
 
-            <!-- Emergency & Assistance Banner -->
-            <div class="md:col-span-3 glass-card p-5 rounded-2xl flex flex-wrap items-center justify-between gap-4 border-l-4 border-l-red-600 shadow-xl">
-                <div class="flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-full bg-red-600/20 text-red-500 flex items-center justify-center text-xl animate-pulse">
-                        <i class="fa-solid fa-phone-volume"></i>
-                    </div>
+        <!-- UNLOCKED APP CONTAINER -->
+        <div id="unlockedAppContainer" class="hidden space-y-6">
+            
+            <!-- PROMINENT BANNER WITH TOTAL MEMBERS STAT CARD -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <!-- Total Counter Prominent Display -->
+                <div class="glass-card p-5 rounded-2xl border-l-4 border-l-police-accent flex items-center justify-between shadow-xl bg-gradient-to-r from-police-navy/90 to-police-card">
                     <div>
-                        <h2 class="font-bold text-white text-sm sm:text-base font-bangla">জরুরি ব্যাচমেট সহায়তা নেটওয়ার্ক (বাংলাদেশ পুলিশ ব্যাচ ২০২২)</h2>
-                        <p class="text-xs text-gray-300">দেশের যেকোনো প্রান্ত থেকে যেকোনো প্রয়োজনে সহকর্মীদের সরাসরি কল দিয়ে সাহায্যে যুক্ত হোন।</p>
+                        <span class="text-xs font-semibold text-gray-300 tracking-wide uppercase">ডিরেক্টরি পরিসংখ্যান</span>
+                        <h3 class="text-2xl sm:text-3xl font-black text-police-gold font-bangla mt-1" id="mainTotalCounter">০ জন</h3>
+                        <p class="text-[11px] text-police-accent mt-0.5">নিবন্ধিত ব্যাচমেট সদস্য</p>
+                    </div>
+                    <div class="w-14 h-14 rounded-2xl bg-police-accent/20 border border-police-accent/40 flex items-center justify-center text-police-accent text-2xl shadow-lg">
+                        <i class="fa-solid fa-user-shield"></i>
                     </div>
                 </div>
-                
-                <div class="flex items-center gap-2 flex-wrap">
-                    <button onclick="filterByBloodGroup('O+')" class="px-3 py-1.5 bg-red-950/70 hover:bg-red-900 border border-red-700 text-red-400 text-xs font-bold rounded-lg transition-all flex items-center gap-1">
-                        <i class="fa-solid fa-droplet text-red-500"></i> O+ রক্ত
-                    </button>
-                    <button onclick="resetFilters()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-gray-300 text-xs font-medium rounded-lg transition-all flex items-center gap-1">
-                        <i class="fa-solid fa-rotate-left"></i> ফিল্টার রিসেট
-                    </button>
+
+                <!-- Emergency & Assistance Banner -->
+                <div class="md:col-span-3 glass-card p-5 rounded-2xl flex flex-wrap items-center justify-between gap-4 border-l-4 border-l-red-600 shadow-xl">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-full bg-red-600/20 text-red-500 flex items-center justify-center text-xl animate-pulse">
+                            <i class="fa-solid fa-phone-volume"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-bold text-white text-sm sm:text-base font-bangla">জরুরি ব্যাচমেট সহায়তা নেটওয়ার্ক (বাংলাদেশ পুলিশ ব্যাচ ২০২২)</h2>
+                            <p class="text-xs text-gray-300">দেশের যেকোনো প্রান্ত থেকে যেকোনো প্রয়োজনে সহকর্মীদের সরাসরি কল দিয়ে সাহায্যে যুক্ত হোন।</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <button onclick="filterByBloodGroup('O+')" class="px-3 py-1.5 bg-red-950/70 hover:bg-red-900 border border-red-700 text-red-400 text-xs font-bold rounded-lg transition-all flex items-center gap-1">
+                            <i class="fa-solid fa-droplet text-red-500"></i> O+ রক্ত
+                        </button>
+                        <button onclick="resetFilters()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-gray-300 text-xs font-medium rounded-lg transition-all flex items-center gap-1">
+                            <i class="fa-solid fa-rotate-left"></i> ফিল্টার রিসেট
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Role Banner & Cloud Status -->
-        <div id="userInfoBadge" class="hidden glass-card p-4 rounded-2xl mb-6 flex flex-wrap items-center justify-between gap-3 border-l-4 border-l-police-accent">
-            <div class="flex items-center gap-3">
-                <i class="fa-solid fa-user-lock text-xl text-police-accent"></i>
-                <div>
-                    <p class="text-xs text-gray-400">আপনার বর্তমান এক্সেস মোড:</p>
-                    <span id="userRoleText" class="text-xs font-bold text-police-gold">সদস্য</span>
+            <!-- Role Banner & Cloud Status -->
+            <div id="userInfoBadge" class="glass-card p-4 rounded-2xl mb-6 flex flex-wrap items-center justify-between gap-3 border-l-4 border-l-police-accent">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-user-lock text-xl text-police-accent"></i>
+                    <div>
+                        <p class="text-xs text-gray-400">আপনার বর্তমান এক্সেস মোড:</p>
+                        <span id="userRoleText" class="text-xs font-bold text-police-gold">সদস্য</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span id="cloudStatusBadge" class="px-3 py-1 bg-green-950/80 border border-green-600 text-green-400 text-xs font-semibold rounded-lg flex items-center gap-1.5">
+                        <i class="fa-solid fa-cloud"></i> ক্লাউড সিনক্রোনাইজড
+                    </span>
                 </div>
             </div>
-            <div class="flex items-center gap-2">
-                <span id="cloudStatusBadge" class="px-3 py-1 bg-green-950/80 border border-green-600 text-green-400 text-xs font-semibold rounded-lg flex items-center gap-1.5">
-                    <i class="fa-solid fa-cloud"></i> ক্লাউড সিনক্রোনাইজড
-                </span>
+
+            <!-- Filter and Search Control Panel -->
+            <section class="glass-card p-4 sm:p-6 rounded-2xl mb-8 shadow-2xl space-y-4">
+                <!-- Search Bar -->
+                <div class="relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-gray-400 text-sm"></i>
+                    <input type="text" id="searchInput" oninput="applyFilters()" placeholder="নাম, বিপি নম্বর, কর্মস্থল/থানা, জেলা, পদবী বা ফোন নম্বর লিখে লাইভ সার্চ করুন..." class="w-full bg-slate-900/90 border border-slate-700 focus:border-police-accent rounded-xl pl-11 pr-4 py-3 text-sm text-white placeholder-gray-400 outline-none transition-all shadow-inner">
+                </div>
+
+                <!-- Multi Filter Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    <!-- Rank Filter -->
+                    <div>
+                        <label class="block text-xs font-semibold text-police-gold mb-1">পদবী / র‍্যাঙ্ক</label>
+                        <select id="rankFilter" onchange="applyFilters()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
+                            <option value="">সকল পদবী</option>
+                            <option value="কনস্টেবল">কনস্টেবল</option>
+                            <option value="নায়েক">নায়েক</option>
+                            <option value="এএসআই">এএসআই</option>
+                            <option value="এসআই">এসআই</option>
+                            <option value="সার্জেন্ট">সার্জেন্ট</option>
+                            <option value="পরিদর্শক">পরিদর্শক (ইন্সপেক্টর)</option>
+                            <option value="এএসপি">এএসপি</option>
+                        </select>
+                    </div>
+
+                    <!-- Unit Filter -->
+                    <div>
+                        <label class="block text-xs font-semibold text-police-gold mb-1">সংস্থা / ইউনিট</label>
+                        <select id="unitFilter" onchange="applyFilters()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
+                            <option value="">সকল ইউনিট</option>
+                            <option value="পুলিশ হেডকোয়ার্টার্স">পুলিশ হেডকোয়ার্টার্স</option>
+                            <option value="জেলা পুলিশ">জেলা পুলিশ</option>
+                            <option value="DMP">DMP (ঢাকা মেট্রোপলিটন)</option>
+                            <option value="CMP">CMP (চট্টগ্রাম মেট্রোপলিটন)</option>
+                            <option value="KMP">KMP (খুলনা মেট্রোপলিটন)</option>
+                            <option value="RMP">RMP (রাজশাহী মেট্রোপলিটন)</option>
+                            <option value="BMP">BMP (বরিশাল মেট্রোপলিটন)</option>
+                            <option value="SMP">SMP (সিলেট মেট্রোপলিটন)</option>
+                            <option value="GMP">GMP (গাজীপুর মেট্রোপলিটন)</option>
+                            <option value="RPMP">RPMP (রংপুর মেট্রোপলিটন)</option>
+                            <option value="RAB">RAB</option>
+                            <option value="APBn">APBn</option>
+                            <option value="CID">CID</option>
+                            <option value="SB">SB (বিশেষ শাখা)</option>
+                            <option value="PBI">PBI</option>
+                            <option value="হাইওয়ে পুলিশ">হাইওয়ে পুলিশ</option>
+                            <option value="রেলওয়ে পুলিশ">রেলওয়ে পুলিশ</option>
+                            <option value="ট্যুরিস্ট পুলিশ">ট্যুরিস্ট পুলিশ</option>
+                            <option value="শিল্প পুলিশ">শিল্প পুলিশ</option>
+                            <option value="SPBn">SPBn</option>
+                            <option value="অন্যান্য">অন্যান্য</option>
+                        </select>
+                    </div>
+
+                    <!-- Branch / Fund Filter -->
+                    <div>
+                        <label class="block text-xs font-semibold text-police-gold mb-1">শাখা / ফান্ড</label>
+                        <select id="branchFilter" onchange="applyFilters()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
+                            <option value="">সকল শাখা</option>
+                            <option value="প্রশাসনিক শাখা">১. প্রশাসনিক শাখা</option>
+                            <option value="রিজার্ভ শাখা">২. রিজার্ভ শাখা</option>
+                            <option value="রেশন শাখা">৩. রেশন শাখা</option>
+                            <option value="বকসি শাখা">৪. বকসি শাখা</option>
+                            <option value="অপস/ইন্টেলিজেন্স শাখা">৬. অপস/ইন্টেলিজেন্স শাখা</option>
+                            <option value="সি-স্টোর">৭. সি-স্টোর</option>
+                            <option value="ডি-স্টোর">৮. ডি-স্টোর</option>
+                            <option value="এমআই">৯. এমআই</option>
+                            <option value="ইলেকট্রিশিয়ান">১০. ইলেকট্রিশিয়ান</option>
+                            <option value="মেস">১১. মেস</option>
+                            <option value="জিডি">১২. জিডি</option>
+                            <option value="ক্যান্টিন">১৩. ক্যান্টিন</option>
+                            <option value="গানার">১৪. গানার</option>
+                            <option value="এমটি শাখা">১৫. এমটি শাখা</option>
+                            <option value="অন্যান্য শাখা">অন্যান্য শাখা</option>
+                        </select>
+                    </div>
+
+                    <!-- Blood Group Filter -->
+                    <div>
+                        <label class="block text-xs font-semibold text-police-gold mb-1">রক্তের গ্রুপ</label>
+                        <select id="bloodFilter" onchange="applyFilters()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
+                            <option value="">সকল গ্রুপ</option>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dynamic Member Cards Grid -->
+            <section id="membersGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Dynamic Content Load -->
+            </section>
+
+            <!-- Empty Results Placeholder -->
+            <div id="noResults" class="hidden text-center py-16 glass-card rounded-2xl my-6">
+                <i class="fa-solid fa-user-slash text-5xl text-gray-500 mb-3"></i>
+                <h3 class="text-lg font-bold text-gray-300">কোনো অনুমোদিত ব্যাচমেট সদস্য পাওয়া যায়নি!</h3>
+                <p class="text-xs text-gray-400 mt-1">অনুগ্রহ করে সঠিক নাম, বিপি নম্বর বা ভিন্ন ফিল্টার নির্বাচন করে চেষ্টা করুন।</p>
             </div>
-        </div>
-
-        <!-- Filter and Search Control Panel -->
-        <section class="glass-card p-4 sm:p-6 rounded-2xl mb-8 shadow-2xl space-y-4">
-            <!-- Search Bar -->
-            <div class="relative">
-                <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-gray-400 text-sm"></i>
-                <input type="text" id="searchInput" oninput="applyFilters()" placeholder="নাম, বিপি নম্বর, কর্মস্থল/থানা, জেলা, পদবী বা ফোন নম্বর লিখে লাইভ সার্চ করুন..." class="w-full bg-slate-900/90 border border-slate-700 focus:border-police-accent rounded-xl pl-11 pr-4 py-3 text-sm text-white placeholder-gray-400 outline-none transition-all shadow-inner">
-            </div>
-
-            <!-- Multi Filter Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                <!-- Rank Filter -->
-                <div>
-                    <label class="block text-xs font-semibold text-police-gold mb-1">পদবী / র‍্যাঙ্ক</label>
-                    <select id="rankFilter" onchange="applyFilters()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
-                        <option value="">সকল পদবী</option>
-                        <option value="কনস্টেবল">কনস্টেবল</option>
-                        <option value="নায়েক">নায়েক</option>
-                        <option value="এএসআই">এএসআই</option>
-                        <option value="এসআই">এসআই</option>
-                        <option value="সার্জেন্ট">সার্জেন্ট</option>
-                        <option value="পরিদর্শক">পরিদর্শক (ইন্সপেক্টর)</option>
-                        <option value="এএসপি">এএসপি</option>
-                    </select>
-                </div>
-
-                <!-- Unit Filter -->
-                <div>
-                    <label class="block text-xs font-semibold text-police-gold mb-1">সংস্থা / ইউনিট</label>
-                    <select id="unitFilter" onchange="applyFilters()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
-                        <option value="">সকল ইউনিট</option>
-                        <option value="পুলিশ হেডকোয়ার্টার্স">পুলিশ হেডকোয়ার্টার্স</option>
-                        <option value="জেলা পুলিশ">জেলা পুলিশ</option>
-                        <option value="DMP">DMP (ঢাকা মেট্রোপলিটন)</option>
-                        <option value="CMP">CMP (চট্টগ্রাম মেট্রোপলিটন)</option>
-                        <option value="KMP">KMP (খুলনা মেট্রোপলিটন)</option>
-                        <option value="RMP">RMP (রাজশাহী মেট্রোপলিটন)</option>
-                        <option value="BMP">BMP (বরিশাল মেট্রোপলিটন)</option>
-                        <option value="SMP">SMP (সিলেট মেট্রোপলিটন)</option>
-                        <option value="GMP">GMP (গাজীপুর মেট্রোপলিটন)</option>
-                        <option value="RPMP">RPMP (রংপুর মেট্রোপলিটন)</option>
-                        <option value="RAB">RAB</option>
-                        <option value="APBn">APBn</option>
-                        <option value="CID">CID</option>
-                        <option value="SB">SB (বিশেষ শাখা)</option>
-                        <option value="PBI">PBI</option>
-                        <option value="হাইওয়ে পুলিশ">হাইওয়ে পুলিশ</option>
-                        <option value="রেলওয়ে পুলিশ">রেলওয়ে পুলিশ</option>
-                        <option value="ট্যুরিস্ট পুলিশ">ট্যুরিস্ট পুলিশ</option>
-                        <option value="শিল্প পুলিশ">শিল্প পুলিশ</option>
-                        <option value="SPBn">SPBn</option>
-                        <option value="অন্যান্য">অন্যান্য</option>
-                    </select>
-                </div>
-
-                <!-- Branch / Fund Filter (14 Specific Branches) -->
-                <div>
-                    <label class="block text-xs font-semibold text-police-gold mb-1">শাখা / ফান্ড</label>
-                    <select id="branchFilter" onchange="applyFilters()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
-                        <option value="">সকল শাখা</option>
-                        <option value="প্রশাসনিক শাখা">১. প্রশাসনিক শাখা</option>
-                        <option value="রিজার্ভ শাখা">২. রিজার্ভ শাখা</option>
-                        <option value="রেশন শাখা">৩. রেশন শাখা</option>
-                        <option value="বকসি শাখা">৪. বকসি শাখা</option>
-                        <option value="অপস/ইন্টেলিজেন্স শাখা">৬. অপস/ইন্টেলিজেন্স শাখা</option>
-                        <option value="সি-স্টোর">৭. সি-স্টোর</option>
-                        <option value="ডি-স্টোর">৮. ডি-স্টোর</option>
-                        <option value="এমআই">৯. এমআই</option>
-                        <option value="ইলেকট্রিশিয়ান">১০. ইলেকট্রিশিয়ান</option>
-                        <option value="মেস">১১. মেস</option>
-                        <option value="ক্যান্টিন">১২. ক্যান্টিন</option>
-                        <option value="গানার">১৩. গানার</option>
-                        <option value="এমটি শাখা">১৪. এমটি শাখা</option>
-                        <option value="অন্যান্য শাখা">অন্যান্য শাখা</option>
-                    </select>
-                </div>
-
-                <!-- Blood Group Filter -->
-                <div>
-                    <label class="block text-xs font-semibold text-police-gold mb-1">রক্তের গ্রুপ</label>
-                    <select id="bloodFilter" onchange="applyFilters()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
-                        <option value="">সকল গ্রুপ</option>
-                        <option value="A+">A+</option>
-                        <option value="A-">A-</option>
-                        <option value="B+">B+</option>
-                        <option value="B-">B-</option>
-                        <option value="O+">O+</option>
-                        <option value="O-">O-</option>
-                        <option value="AB+">AB+</option>
-                        <option value="AB-">AB-</option>
-                    </select>
-                </div>
-            </div>
-        </section>
-
-        <!-- Dynamic Member Cards Grid -->
-        <section id="membersGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Dynamic Content Load -->
-        </section>
-
-        <!-- Empty Results Placeholder -->
-        <div id="noResults" class="hidden text-center py-16 glass-card rounded-2xl my-6">
-            <i class="fa-solid fa-user-slash text-5xl text-gray-500 mb-3"></i>
-            <h3 class="text-lg font-bold text-gray-300">কোনো ব্যাচমেট সদস্য পাওয়া যায়নি!</h3>
-            <p class="text-xs text-gray-400 mt-1">অনুগ্রহ করে সঠিক নাম, বিপি নম্বর বা ভিন্ন ফিল্টার নির্বাচন করে চেষ্টা করুন।</p>
         </div>
 
     </main>
@@ -319,7 +344,7 @@
                 </button>
             </div>
 
-            <!-- Member PIN Form (Masked Input) -->
+            <!-- Member PIN Form -->
             <form id="memberLoginForm" onsubmit="handleMemberLogin(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-medium text-gray-300 mb-1">বিপি নম্বর (BP Number)</label>
@@ -328,25 +353,23 @@
                 <div>
                     <label class="block text-xs font-medium text-gray-300 mb-1">লগইন পিন (PIN) *</label>
                     <div class="relative">
-                        <!-- Password masked field -->
                         <input type="password" id="loginPin" required placeholder="••••" maxlength="10" autocomplete="current-password" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 pr-10 text-sm text-white focus:border-police-accent outline-none">
                         <button type="button" onclick="togglePasswordVisibility('loginPin', 'pinEyeIcon')" class="absolute right-3 top-3 text-gray-400 hover:text-white">
                             <i id="pinEyeIcon" class="fa-solid fa-eye-slash text-xs"></i>
                         </button>
                     </div>
-                    <p class="text-[10px] text-gray-400 mt-1">* গোপন ব্যাচ পিন কোড প্রদান করুন (ডিফল্ট: <strong>২০২২</strong> / <strong>2022</strong>)</p>
+                    <p class="text-[10px] text-gray-400 mt-1">* গোপন ব্যাচ পিন কোড প্রদান করুন (ডিফল্ট: <strong>২০২২</strong>)</p>
                 </div>
                 <button type="submit" class="w-full py-3 bg-police-accent hover:bg-police-gold text-slate-950 font-bold rounded-xl shadow-lg transition-all text-sm">
                     সদস্য হিসেবে প্রবেশ করুন
                 </button>
             </form>
 
-            <!-- Admin Password Form (Masked Input) -->
+            <!-- Admin Password Form -->
             <form id="adminLoginForm" onsubmit="handleAdminLogin(event)" class="space-y-4 hidden">
                 <div>
                     <label class="block text-xs font-medium text-gray-300 mb-1">অ্যাডমিন পাসওয়ার্ড (Admin Password) *</label>
                     <div class="relative">
-                        <!-- Password masked field -->
                         <input type="password" id="adminPassword" required placeholder="••••••••" autocomplete="current-password" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 pr-10 text-sm text-white focus:border-police-accent outline-none">
                         <button type="button" onclick="togglePasswordVisibility('adminPassword', 'adminEyeIcon')" class="absolute right-3 top-3 text-gray-400 hover:text-white">
                             <i id="adminEyeIcon" class="fa-solid fa-eye-slash text-xs"></i>
@@ -361,7 +384,7 @@
         </div>
     </div>
 
-    <!-- Add / Edit Member Modal (Admin Only) -->
+    <!-- Submit / Edit Profile Modal -->
     <div id="memberFormModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="glass-card max-w-2xl w-full p-6 rounded-2xl shadow-2xl relative border border-police-accent/40 my-8">
             <button onclick="closeModal('memberFormModal')" class="absolute top-4 right-4 text-gray-400 hover:text-white text-lg">
@@ -369,7 +392,7 @@
             </button>
 
             <h3 id="formTitle" class="text-lg font-bold text-police-gold font-bangla mb-4 flex items-center gap-2">
-                <i class="fa-solid fa-user-plus"></i> নতুন সদস্য যুক্ত করুন (ক্লাউডে সেভ হবে)
+                <i class="fa-solid fa-user-plus"></i> নিজের প্রোফাইল তথ্য জমা দিন (এডমিন অনুমোদনের পর যোগ হবে)
             </h3>
 
             <form id="memberDataForm" onsubmit="saveMember(event)" class="space-y-4">
@@ -381,25 +404,22 @@
                         <i class="fa-solid fa-user text-2xl text-gray-500"></i>
                     </div>
                     <div class="flex-1">
-                        <label class="block text-xs font-medium text-gray-300 mb-1">সদস্যের ছবি নির্বাচন করুন (স্বচ্ছ ও সাইজ ছোট)</label>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">প্রোফাইল ছবি (স্বচ্ছ ও সাইজ ছোট)</label>
                         <input type="file" accept="image/*" onchange="handleImageUpload(event)" class="text-xs text-gray-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-police-accent file:text-slate-950 hover:file:bg-police-gold">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <!-- Name -->
                     <div>
                         <label class="block text-xs font-medium text-gray-300 mb-1">পূর্ণ নাম *</label>
                         <input type="text" id="memberName" required placeholder="মোঃ নাম..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
                     </div>
 
-                    <!-- BP Number -->
                     <div>
                         <label class="block text-xs font-medium text-gray-300 mb-1">বিপি নম্বর (BP No.) *</label>
                         <input type="text" id="memberBp" required placeholder="BP2022..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
                     </div>
 
-                    <!-- Rank -->
                     <div>
                         <label class="block text-xs font-medium text-gray-300 mb-1">পদবী / র‍্যাঙ্ক *</label>
                         <select id="memberRank" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
@@ -413,7 +433,6 @@
                         </select>
                     </div>
 
-                    <!-- Unit -->
                     <div>
                         <label class="block text-xs font-medium text-gray-300 mb-1">সংস্থা / ইউনিট *</label>
                         <select id="memberUnit" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
@@ -441,7 +460,6 @@
                         </select>
                     </div>
 
-                    <!-- Branch / Fund -->
                     <div>
                         <label class="block text-xs font-medium text-gray-300 mb-1">শাখা / ফান্ড *</label>
                         <select id="memberBranch" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
@@ -463,7 +481,6 @@
                         </select>
                     </div>
 
-                    <!-- Blood Group -->
                     <div>
                         <label class="block text-xs font-medium text-gray-300 mb-1">রক্তের গ্রুপ *</label>
                         <select id="memberBlood" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
@@ -478,16 +495,26 @@
                         </select>
                     </div>
 
-                    <!-- Location / Thana -->
                     <div>
                         <label class="block text-xs font-medium text-gray-300 mb-1">কর্মস্থল / থানা / জেলা *</label>
                         <input type="text" id="memberLocation" required placeholder="উদাহরণ: মিরপুর মডেল থানা, ঢাকা" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
                     </div>
 
-                    <!-- Phone Number -->
                     <div>
-                        <label class="block text-xs font-medium text-gray-300 mb-1">মোবাইল নম্বর *</label>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">মোবাইল নম্বর (কল করার জন্য) *</label>
                         <input type="tel" id="memberPhone" required placeholder="017XXXXXXXX" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
+                    </div>
+
+                    <!-- WhatsApp Number -->
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">হোয়াটসঅ্যাপ নম্বর (WhatsApp)</label>
+                        <input type="tel" id="memberWhatsapp" placeholder="017XXXXXXXX" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
+                    </div>
+
+                    <!-- Facebook Profile Link -->
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">ফেসবুক প্রোফাইল লিংক (Facebook Profile URL)</label>
+                        <input type="url" id="memberFacebook" placeholder="https://facebook.com/username" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
                     </div>
                 </div>
 
@@ -496,10 +523,25 @@
                         বাতিল
                     </button>
                     <button type="submit" class="px-6 py-2 bg-police-accent hover:bg-police-gold text-slate-950 font-bold text-xs rounded-xl shadow-lg transition-all">
-                        ক্লাউডে জমা দিন
+                        অনুমোদনের জন্য জমা দিন
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Admin Pending Approvals Modal -->
+    <div id="adminPendingModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="glass-card max-w-4xl w-full p-6 rounded-2xl shadow-2xl relative border border-red-600/40 my-8">
+            <button onclick="closeModal('adminPendingModal')" class="absolute top-4 right-4 text-gray-400 hover:text-white text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-lg font-bold text-red-400 font-bangla mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-user-clock"></i> পেন্ডিং প্রোফাইল অনুমোদন প্যানেল (অ্যাডমিন)
+            </h3>
+            <div id="pendingListContainer" class="space-y-3 max-h-[60vh] overflow-y-auto pr-2">
+                <!-- Pending Items Will Load Here -->
+            </div>
         </div>
     </div>
 
@@ -511,9 +553,6 @@
 
     <!-- ==================== FIREBASE & APP LOGIC ==================== -->
     <script>
-        /**
-         * FIREBASE CLOUD CONFIGURATION (Conneced with police-batch-2022-f693a)
-         */
         const firebaseConfig = {
             apiKey: "AIzaSyDXnuZlO8LYHgYaFvgyXEDsTuH3L3OGW_8",
             authDomain: "police-batch-2022-f693a.firebaseapp.com",
@@ -524,15 +563,13 @@
             measurementId: "G-YMT17CG5W2"
         };
 
-        // Application Global States
         let db = null;
         let isFirebaseActive = false;
         let membersData = [];
+        let pendingData = [];
         let currentUserRole = 'guest'; // 'guest', 'member', 'admin'
         let memberImageBase64 = '';
 
-       
-        // Initialize Application & Firebase
         window.onload = function() {
             initFirebase();
             checkSessionState();
@@ -541,26 +578,25 @@
         function initFirebase() {
             try {
                 if (firebaseConfig.apiKey) {
-                    firebase.initializeApp(firebaseConfig);
+                    if (!firebase.apps.length) {
+                        firebase.initializeApp(firebaseConfig);
+                    }
                     db = firebase.firestore();
                     isFirebaseActive = true;
-                    console.log("Firebase Cloud Storage Initialized Successfully.");
-                    
-                    // Listen to Real-time Cloud Changes
                     subscribeToCloudStorage();
                 } else {
                     loadLocalData();
                 }
             } catch (error) {
-                console.error("Firebase init failed, switching to local mode:", error);
+                console.error("Firebase init failed:", error);
                 loadLocalData();
             }
         }
 
-        // Subscribe to Cloud Firestore collection 'members'
         function subscribeToCloudStorage() {
             if (!db) return;
             
+            // Listen to Approved Members
             db.collection("members").onSnapshot((snapshot) => {
                 const cloudMembers = [];
                 snapshot.forEach((doc) => {
@@ -568,50 +604,60 @@
                 });
                 membersData = cloudMembers;
                 renderMembersGrid();
-            }, (error) => {
-                console.error("Cloud subscribe error:", error);
-                showToast("ক্লাউড ডাটা লোড করতে সমস্যা হয়েছে, Firestore Rules চেক করুন।", true);
-                loadLocalData();
+            });
+
+            // Listen to Pending Approvals
+            db.collection("pending_members").onSnapshot((snapshot) => {
+                const cloudPending = [];
+                snapshot.forEach((doc) => {
+                    cloudPending.push({ id: doc.id, ...doc.data() });
+                });
+                pendingData = cloudPending;
+                updatePendingCounter();
+                if (currentUserRole === 'admin') renderPendingList();
             });
         }
 
-        // Fallback Local Storage Mode
         function loadLocalData() {
-            const localData = localStorage.getItem('POLICE_BATCH_2022_MEMBERS');
-            if (localData) {
-                try {
-                    membersData = JSON.parse(localData);
-                } catch(e) {
-                    membersData = [...demoMembers];
-                }
-            } else {
-                membersData = [...demoMembers];
-            }
+            const localMembers = localStorage.getItem('POLICE_BATCH_2022_MEMBERS');
+            const localPending = localStorage.getItem('POLICE_BATCH_2022_PENDING');
+            membersData = localMembers ? JSON.parse(localMembers) : [];
+            pendingData = localPending ? JSON.parse(localPending) : [];
             renderMembersGrid();
+            updatePendingCounter();
         }
 
         function saveLocalData() {
             localStorage.setItem('POLICE_BATCH_2022_MEMBERS', JSON.stringify(membersData));
+            localStorage.setItem('POLICE_BATCH_2022_PENDING', JSON.stringify(pendingData));
         }
 
-        // Render Cards and Counters
+        function updatePendingCounter() {
+            document.getElementById('pendingCount').innerText = pendingData.length;
+            const btn = document.getElementById('adminPendingBtn');
+            if (currentUserRole === 'admin' && pendingData.length > 0) {
+                btn.classList.remove('hidden');
+            } else {
+                btn.classList.add('hidden');
+            }
+        }
+
         function renderMembersGrid() {
             const grid = document.getElementById('membersGrid');
             const noResults = document.getElementById('noResults');
             
-            // Render Total Counters
             const totalCountBangla = toBanglaDigit(membersData.length) + ' জন';
             document.getElementById('navCounter').innerText = totalCountBangla;
             document.getElementById('mainTotalCounter').innerText = totalCountBangla;
 
-            // Search Filter inputs
+            if (currentUserRole === 'guest') return;
+
             const searchTxt = document.getElementById('searchInput').value.toLowerCase().trim();
             const rankVal = document.getElementById('rankFilter').value;
             const unitVal = document.getElementById('unitFilter').value;
             const branchVal = document.getElementById('branchFilter').value;
             const bloodVal = document.getElementById('bloodFilter').value;
 
-            // Multi Filter Logic
             const filtered = membersData.filter(m => {
                 const matchSearch = !searchTxt || 
                     (m.name && m.name.toLowerCase().includes(searchTxt)) ||
@@ -644,11 +690,16 @@
                 
                 const photoSrc = m.photo ? m.photo : `https://placehold.co/120x120/0b192c/fbbf24?text=${encodeURIComponent((m.name || 'P').charAt(0))}`;
 
+                let socialLinks = '';
+                if (m.whatsapp) {
+                    socialLinks += `<a href="https://wa.me/${m.whatsapp}" target="_blank" title="WhatsApp" class="w-8 h-8 rounded-lg bg-green-600/20 border border-green-600 text-green-400 flex items-center justify-center hover:bg-green-600 hover:text-white transition-all"><i class="fa-brands fa-whatsapp text-sm"></i></a>`;
+                }
+                if (m.facebook) {
+                    socialLinks += `<a href="${m.facebook}" target="_blank" title="Facebook" class="w-8 h-8 rounded-lg bg-blue-600/20 border border-blue-600 text-blue-400 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all"><i class="fa-brands fa-facebook-f text-sm"></i></a>`;
+                }
+
                 const adminControls = currentUserRole === 'admin' ? `
                     <div class="absolute top-3 right-3 flex gap-1 z-10">
-                        <button onclick="editMember('${m.id}')" title="সম্পাদনা" class="p-1.5 bg-blue-600/90 hover:bg-blue-600 text-white text-xs rounded-lg shadow transition-all">
-                            <i class="fa-solid fa-pen-to-square"></i>
-                        </button>
                         <button onclick="deleteMember('${m.id}')" title="মুছে ফেলুন" class="p-1.5 bg-red-600/90 hover:bg-red-600 text-white text-xs rounded-lg shadow transition-all">
                             <i class="fa-solid fa-trash"></i>
                         </button>
@@ -658,7 +709,6 @@
                 card.innerHTML = `
                     ${adminControls}
                     <div>
-                        <!-- Header / User Info -->
                         <div class="flex items-start gap-4 mb-4">
                             <img src="${photoSrc}" alt="${m.name}" class="w-16 h-16 rounded-full object-cover border-2 border-police-accent shadow-md flex-shrink-0">
                             <div class="pr-6">
@@ -672,7 +722,6 @@
                             </div>
                         </div>
 
-                        <!-- Details Matrix -->
                         <div class="space-y-2 text-xs text-gray-300 bg-slate-900/80 p-3 rounded-xl border border-slate-800 mb-4">
                             <div class="flex justify-between items-center">
                                 <span class="text-gray-400 font-medium">সংস্থা / ইউনিট:</span>
@@ -695,18 +744,19 @@
                         </div>
                     </div>
 
-                    <!-- Direct Dial Call Button -->
-                    <a href="tel:${m.phone}" class="w-full py-2.5 bg-green-600 hover:bg-green-500 text-white font-bold text-xs rounded-xl shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95">
-                        <i class="fa-solid fa-phone"></i>
-                        <span>সরাসরি কল করুন (${m.phone})</span>
-                    </a>
+                    <div class="space-y-2">
+                        ${socialLinks ? `<div class="flex items-center gap-2 mb-2">${socialLinks}</div>` : ''}
+                        <a href="tel:${m.phone}" class="w-full py-2.5 bg-green-600 hover:bg-green-500 text-white font-bold text-xs rounded-xl shadow-lg flex items-center justify-center gap-2 transition-all active:scale-95">
+                            <i class="fa-solid fa-phone"></i>
+                            <span>সরাসরি কল করুন (${m.phone})</span>
+                        </a>
+                    </div>
                 `;
 
                 grid.appendChild(card);
             });
         }
 
-        // Apply Search & Filters
         function applyFilters() {
             renderMembersGrid();
         }
@@ -726,15 +776,10 @@
             showToast('সকল ফিল্টার রিসেট করা হয়েছে');
         }
 
-        // Save or Update Member (Cloud Firestore Sync)
+        // Save Member Profile (Sends to Pending if regular member, or direct if admin)
         function saveMember(e) {
             e.preventDefault();
-            if (currentUserRole !== 'admin') {
-                showToast('শুধুমাত্র অ্যাডমিন সদস্য ডাটা যোগ করতে পারবেন', true);
-                return;
-            }
 
-            const id = document.getElementById('editMemberId').value.trim();
             const name = document.getElementById('memberName').value.trim();
             const bp = document.getElementById('memberBp').value.trim();
             const rank = document.getElementById('memberRank').value;
@@ -743,9 +788,11 @@
             const blood = document.getElementById('memberBlood').value;
             const location = document.getElementById('memberLocation').value.trim();
             const phone = document.getElementById('memberPhone').value.trim();
+            const whatsapp = document.getElementById('memberWhatsapp').value.trim();
+            const facebook = document.getElementById('memberFacebook').value.trim();
 
             const memberPayload = {
-                name, bp, rank, unit, branch, blood, location, phone,
+                name, bp, rank, unit, branch, blood, location, phone, whatsapp, facebook,
                 updatedAt: new Date().toISOString()
             };
 
@@ -753,86 +800,111 @@
                 memberPayload.photo = memberImageBase64;
             }
 
-            if (isFirebaseActive && db) {
-                if (id) {
-                    // Update existing member
-                    db.collection("members").doc(id).update(memberPayload).then(() => {
-                        showToast('সদস্যের তথ্য ক্লাউডে সফলভাবে আপডেট হয়েছে!');
-                        closeModal('memberFormModal');
-                    }).catch(err => {
-                        console.error("Cloud update error:", err);
-                        showToast('ক্লাউড আপডেটে সমস্যা হয়েছে', true);
-                    });
-                } else {
-                    // Add new member with auto-generated unique ID
+            if (currentUserRole === 'admin') {
+                // Admin directly adds to main members
+                if (isFirebaseActive && db) {
                     db.collection("members").add(memberPayload).then(() => {
-                        showToast('নতুন সদস্য ক্লাউডে সফলভাবে যুক্ত হয়েছে!');
+                        showToast('অ্যাডমিন কর্তৃক সদস্য সফলভাবে যুক্ত হয়েছে!');
                         closeModal('memberFormModal');
-                    }).catch(err => {
-                        console.error("Cloud insert error:", err);
-                        showToast('ক্লাউড এন্ট্রিতে সমস্যা হয়েছে', true);
                     });
                 }
             } else {
-                if (id) {
-                    const idx = membersData.findIndex(m => m.id === id);
-                    if (idx !== -1) {
-                        membersData[idx] = { ...membersData[idx], ...memberPayload };
-                    }
+                // Regular member submission goes to pending queue
+                if (isFirebaseActive && db) {
+                    db.collection("pending_members").add(memberPayload).then(() => {
+                        showToast('আপনার প্রোফাইল জমা হয়েছে! অ্যাডমিন অনুমোদনের পর তা ডিরেক্টরিতে দেখাবে।');
+                        closeModal('memberFormModal');
+                    });
                 } else {
                     memberPayload.id = Date.now().toString();
-                    membersData.unshift(memberPayload);
+                    pendingData.push(memberPayload);
+                    saveLocalData();
+                    updatePendingCounter();
+                    showToast('অনুমোদনের জন্য জমা দেওয়া হয়েছে!');
+                    closeModal('memberFormModal');
                 }
-                saveLocalData();
-                renderMembersGrid();
-                showToast('ডাটা সেভ করা হয়েছে (লোকাল)');
-                closeModal('memberFormModal');
             }
         }
 
-        function editMember(id) {
-            const member = membersData.find(m => m.id === id);
-            if (!member) return;
+        // Admin Approval Actions
+        function openAdminPendingModal() {
+            if (currentUserRole !== 'admin') return;
+            renderPendingList();
+            openModal('adminPendingModal');
+        }
 
-            document.getElementById('editMemberId').value = member.id;
-            document.getElementById('memberName').value = member.name || '';
-            document.getElementById('memberBp').value = member.bp || '';
-            document.getElementById('memberRank').value = member.rank || 'কনস্টেবল';
-            document.getElementById('memberUnit').value = member.unit || 'পুলিশ হেডকোয়ার্টার্স';
-            document.getElementById('memberBranch').value = member.branch || 'প্রশাসনিক শাখা';
-            document.getElementById('memberBlood').value = member.blood || 'A+';
-            document.getElementById('memberLocation').value = member.location || '';
-            document.getElementById('memberPhone').value = member.phone || '';
+        function renderPendingList() {
+            const container = document.getElementById('pendingListContainer');
+            container.innerHTML = '';
 
-            memberImageBase64 = member.photo || '';
-            if (member.photo) {
-                document.getElementById('photoPreviewBox').innerHTML = `<img src="${member.photo}" class="w-full h-full object-cover">`;
-            } else {
-                document.getElementById('photoPreviewBox').innerHTML = `<i class="fa-solid fa-user text-2xl text-gray-500"></i>`;
+            if (pendingData.length === 0) {
+                container.innerHTML = `<p class="text-center text-xs text-gray-400 py-6">বর্তমানে কোনো পেন্ডিং রিকোয়েস্ট নেই।</p>`;
+                return;
             }
 
-            document.getElementById('formTitle').innerText = 'সদস্যের তথ্য সম্পাদনা (ক্লাউড)';
-            openModal('memberFormModal');
+            pendingData.forEach((p, index) => {
+                const div = document.createElement('div');
+                div.className = "bg-slate-900/90 border border-slate-700 p-4 rounded-xl flex flex-wrap items-center justify-between gap-4";
+                
+                div.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-full bg-police-accent/20 border border-police-accent flex items-center justify-center font-bold text-police-gold text-sm overflow-hidden">
+                            ${p.photo ? `<img src="${p.photo}" class="w-full h-full object-cover">` : p.name.charAt(0)}
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-sm text-white">${p.name} <span class="text-xs text-police-gold">(${p.rank})</span></h4>
+                            <p class="text-[11px] text-gray-300">বিপি: ${p.bp} | ইউনিট: ${p.unit} | ফোন: ${p.phone}</p>
+                            <p class="text-[10px] text-gray-400">স্থান: ${p.location}</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="approvePending('${p.id || index}')" class="px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white font-bold text-xs rounded-lg transition-all">
+                            এপ্রুভ করুন
+                        </button>
+                        <button onclick="rejectPending('${p.id || index}')" class="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-lg transition-all">
+                            বাতিল
+                        </button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function approvePending(id) {
+            const item = pendingData.find(p => (p.id && p.id === id) || pendingData.indexOf(p).toString() === id);
+            if (!item) return;
+
+            if (isFirebaseActive && db) {
+                db.collection("members").add(item).then(() => {
+                    db.collection("pending_members").doc(id).delete().then(() => {
+                        showToast('প্রোফাইল সফলভাবে এপ্রুভ করা হয়েছে!');
+                        openAdminPendingModal();
+                    });
+                });
+            }
+        }
+
+        function rejectPending(id) {
+            if (confirm('এই আবেদনটি বাতিল করতে চান?')) {
+                if (isFirebaseActive && db) {
+                    db.collection("pending_members").doc(id).delete().then(() => {
+                        showToast('আবেদনটি বাতিল করা হয়েছে');
+                        openAdminPendingModal();
+                    });
+                }
+            }
         }
 
         function deleteMember(id) {
-            if (confirm('আপনি কি নিশ্চিত যে এই সদস্যকে মুছে ফেলতে চান? এটি ক্লাউড থেকেও মুছে যাবে!')) {
+            if (confirm('আপনি কি নিশ্চিত যে এই সদস্যকে মুছে ফেলতে চান?')) {
                 if (isFirebaseActive && db) {
                     db.collection("members").doc(id).delete().then(() => {
-                        showToast('সদস্যের ডাটা ক্লাউড থেকে মুছে ফেলা হয়েছে');
-                    }).catch(err => {
-                        showToast('ডাটা মুছতে সমস্যা হয়েছে', true);
+                        showToast('সদস্যের ডাটা মুছে ফেলা হয়েছে');
                     });
-                } else {
-                    membersData = membersData.filter(m => m.id !== id);
-                    saveLocalData();
-                    renderMembersGrid();
-                    showToast('সদস্য মুছে ফেলা হয়েছে');
                 }
             }
         }
 
-        // Toggle Password Masking Visibility
         function togglePasswordVisibility(inputId, iconId) {
             const input = document.getElementById(inputId);
             const icon = document.getElementById(iconId);
@@ -845,7 +917,6 @@
             }
         }
 
-        // Image Base64 Handler
         function handleImageUpload(event) {
             const file = event.target.files[0];
             if (file) {
@@ -858,7 +929,6 @@
             }
         }
 
-        // Modal Controls
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
@@ -868,7 +938,6 @@
                 sessionStorage.removeItem('POLICE_USER_ROLE');
                 checkSessionState();
                 showToast('লগআউট করা হয়েছে');
-                renderMembersGrid();
                 return;
             }
             openModal('loginModal');
@@ -893,7 +962,6 @@
             }
         }
 
-        // Authentication Handlers
         function handleMemberLogin(e) {
             e.preventDefault();
             const pin = document.getElementById('loginPin').value.trim();
@@ -902,9 +970,9 @@
                 sessionStorage.setItem('POLICE_USER_ROLE', 'member');
                 checkSessionState();
                 closeModal('loginModal');
-                showToast('ব্যাচমেট পিন সফলভাবে ভেরিফাইড!');
+                showToast('সদস্য পিন ভেরিফাইড! ডিরেক্টরি উন্মুক্ত।');
             } else {
-                showToast('ভুল পিন কোড! সঠিক গোপন পিন দিন।', true);
+                showToast('ভুল পিন কোড! সঠিক পিন (২০২২) দিন।', true);
             }
         }
 
@@ -917,9 +985,8 @@
                 checkSessionState();
                 closeModal('loginModal');
                 showToast('অ্যাডমিন মোড অ্যাক্টিভেটেড!');
-                renderMembersGrid();
             } else {
-                showToast('ভুল পাসওয়ার্ড! সঠিক পাসওয়ার্ড দিন।', true);
+                showToast('ভুল পাসওয়ার্ড!', true);
             }
         }
 
@@ -929,37 +996,41 @@
 
             const authBtnText = document.getElementById('authBtnText');
             const addMemberBtn = document.getElementById('addMemberBtn');
-            const userInfoBadge = document.getElementById('userInfoBadge');
             const userRoleText = document.getElementById('userRoleText');
+            const lockedScreen = document.getElementById('lockedStateScreen');
+            const unlockedApp = document.getElementById('unlockedAppContainer');
+            const submitBtnText = document.getElementById('submitBtnText');
 
-            if (currentUserRole === 'admin') {
-                authBtnText.innerText = 'অ্যাডমিন লগআউট';
+            if (currentUserRole !== 'guest') {
+                lockedScreen.classList.add('hidden');
+                unlockedApp.classList.remove('hidden');
                 addMemberBtn.classList.remove('hidden');
-                userInfoBadge.classList.remove('hidden');
-                userRoleText.innerText = 'অ্যাডমিন মোড (ডাটা এডিট ও ডিলিট সক্রিয়)';
-                userRoleText.className = "text-xs px-2.5 py-1 rounded-lg bg-red-600/20 text-red-400 border border-red-600/40 font-semibold";
-            } else if (currentUserRole === 'member') {
-                authBtnText.innerText = 'লগআউট';
-                addMemberBtn.classList.add('hidden');
-                userInfoBadge.classList.remove('hidden');
-                userRoleText.innerText = 'ব্যাচমেট সদস্য এক্সেস (ভেরিফাইড)';
-                userRoleText.className = "text-xs px-2.5 py-1 rounded-lg bg-police-accent/20 text-police-gold border border-police-accent/40 font-semibold";
+                renderMembersGrid();
+                updatePendingCounter();
+
+                if (currentUserRole === 'admin') {
+                    authBtnText.innerText = 'অ্যাডমিন লগআউট';
+                    userRoleText.innerText = 'অ্যাডমিন মোড (এপ্রুভাল ও ডিলিট সক্রিয়)';
+                    userRoleText.className = "text-xs px-2.5 py-1 rounded-lg bg-red-600/20 text-red-400 border border-red-600/40 font-semibold";
+                    submitBtnText.innerText = 'সরাসরি সদস্য যোগ করুন';
+                } else {
+                    authBtnText.innerText = 'লগআউট';
+                    userRoleText.innerText = 'ব্যাচমেট সদস্য এক্সেস (ভেরিফাইড)';
+                    userRoleText.className = "text-xs px-2.5 py-1 rounded-lg bg-police-accent/20 text-police-gold border border-police-accent/40 font-semibold";
+                    submitBtnText.innerText = 'নিজের প্রোফাইল জমা দিন';
+                }
             } else {
-                authBtnText.innerText = 'লগইন করুন';
+                lockedScreen.classList.remove('hidden');
+                unlockedApp.classList.add('hidden');
                 addMemberBtn.classList.add('hidden');
-                userInfoBadge.classList.add('hidden');
+                document.getElementById('adminPendingBtn').classList.add('hidden');
+                authBtnText.innerText = 'লগইন করুন';
             }
         }
 
         function openAddMemberModal() {
-            if (currentUserRole !== 'admin') {
-                showToast('সদস্য যোগ করতে অ্যাডমিন পাসওয়ার্ড প্রয়োজন', true);
-                openLoginModal();
-                return;
-            }
             document.getElementById('editMemberId').value = '';
             document.getElementById('memberDataForm').reset();
-            document.getElementById('formTitle').innerText = 'নতুন সদস্য যুক্ত করুন (ক্লাউডে সেভ হবে)';
             document.getElementById('photoPreviewBox').innerHTML = `<i class="fa-solid fa-user text-2xl text-gray-500"></i>`;
             memberImageBase64 = '';
             openModal('memberFormModal');
