@@ -781,7 +781,7 @@
             showToast('সকল ফিল্টার রিসেট করা হয়েছে');
         }
 
-        // Save or Update Member Profile
+        // Save or Update Member Profile (Fixed for multiple independent entries)
         function saveMember(e) {
             e.preventDefault();
 
@@ -813,21 +813,25 @@
                         closeModal('memberFormModal');
                     });
                 } else {
+                    // Using .add() ensures a unique new entry is created every time without conflicts
                     db.collection("members").add(memberPayload).then(() => {
-                        showToast('অ্যাডমিন কর্তৃক সদস্য সফলভাবে যুক্ত হয়েছে!');
+                        showToast('অ্যাডমিন কর্তৃক নতুন সদস্য সফলভাবে যুক্ত হয়েছে!');
                         closeModal('memberFormModal');
+                    }).catch(err => {
+                        showToast('ডাটা সেভ করতে সমস্যা হয়েছে: ' + err.message, true);
                     });
                 }
             } else {
-                // Member submission goes to pending for approval
+                // Regular member submission goes to pending queue safely using .add()
                 db.collection("pending_members").add(memberPayload).then(() => {
-                    showToast('আপনার প্রোফাইল আপডেট/জমা রিকোয়েস্ট পাঠানো হয়েছে! অ্যাডমিন অনুমোদনের পর তা আপডেট হবে।');
+                    showToast('আপনার প্রোফাইল জমা হয়েছে! অ্যাডমিন অনুমোদনের পর তা ডিরেক্টরিতে দেখাবে।');
                     closeModal('memberFormModal');
+                }).catch(err => {
+                    showToast('অনুরোধ পাঠাতে সমস্যা হয়েছে: ' + err.message, true);
                 });
             }
         }
 
-        // Open Add Modal
         function openAddMemberModal() {
             document.getElementById('editMemberId').value = '';
             document.getElementById('memberDataForm').reset();
@@ -839,7 +843,6 @@
             openModal('memberFormModal');
         }
 
-        // Open Edit My Profile Modal (Based on Logged-in BP)
         function openEditMyProfileModal() {
             const found = membersData.find(m => m.bp.toUpperCase() === loggedInBpNumber.toUpperCase());
             if (!found) {
@@ -851,7 +854,7 @@
             document.getElementById('editMemberId').value = found.id;
             document.getElementById('memberName').value = found.name || '';
             document.getElementById('memberBp').value = found.bp || '';
-            document.getElementById('memberBp').disabled = true; // BP restricted
+            document.getElementById('memberBp').disabled = true;
             document.getElementById('memberRank').value = found.rank || 'কনস্টেবল';
             document.getElementById('memberUnit').value = found.unit || 'পুলিশ হেডকোয়ার্টার্স';
             document.getElementById('memberBranch').value = found.branch || 'প্রশাসনিক শাখা';
@@ -873,7 +876,6 @@
             openModal('memberFormModal');
         }
 
-        // Admin Approval Actions
         function openAdminPendingModal() {
             if (currentUserRole !== 'admin') return;
             renderPendingList();
