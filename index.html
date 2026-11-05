@@ -88,13 +88,12 @@
                     <h1 class="text-base sm:text-xl font-bold font-bangla text-white leading-tight">বাংলাদেশ পুলিশ ব্যাচ ২০২২</h1>
                     <p class="text-[11px] sm:text-xs text-police-gold font-medium flex items-center gap-1">
                         <span class="inline-block w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                        সুরক্ষিত ক্লাউড ডিরেক্টরি
+                        ১০০% ক্লাউড সার্ভার কানেক্টেড
                     </p>
                 </div>
             </div>
 
             <div class="flex items-center gap-2 sm:gap-3">
-                <!-- Highlighted Total Counter Badge -->
                 <div class="flex items-center gap-2 bg-gradient-to-r from-police-navy to-slate-900 border border-police-accent/40 px-3 py-1.5 rounded-xl shadow-inner">
                     <div class="w-7 h-7 rounded-lg bg-police-accent/20 flex items-center justify-center text-police-accent">
                         <i class="fa-solid fa-users text-xs sm:text-sm"></i>
@@ -105,25 +104,21 @@
                     </div>
                 </div>
 
-                <!-- Add Member / Submit Profile Button -->
                 <button id="addMemberBtn" onclick="openAddMemberModal()" class="hidden px-3 py-1.5 sm:px-4 sm:py-2 bg-police-accent hover:bg-police-gold text-slate-950 text-xs sm:text-sm font-bold rounded-xl shadow-lg transition-all flex items-center gap-1.5 active:scale-95">
                     <i class="fa-solid fa-user-plus"></i>
                     <span class="hidden sm:inline" id="submitBtnText">প্রোফাইল জমা দিন</span>
                 </button>
 
-                <!-- Edit My Profile Button -->
                 <button id="editMyProfileNavBtn" onclick="openEditMyProfileModal()" class="hidden px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-lg transition-all flex items-center gap-1.5">
                     <i class="fa-solid fa-user-pen"></i>
                     <span class="hidden sm:inline">আমার প্রোফাইল এডিট</span>
                 </button>
 
-                <!-- Admin Pending Approvals Button -->
                 <button id="adminPendingBtn" onclick="openAdminPendingModal()" class="hidden px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl shadow-lg transition-all flex items-center gap-1.5">
                     <i class="fa-solid fa-user-clock"></i>
                     <span>পেন্ডিং রিকোয়েস্ট (<span id="pendingCount">০</span>)</span>
                 </button>
 
-                <!-- Authentication Button -->
                 <button id="loginModalBtn" onclick="openLoginModal()" class="px-3 py-1.5 sm:px-4 sm:py-2 bg-police-light hover:bg-blue-800 text-white text-xs sm:text-sm font-medium rounded-xl border border-police-accent/40 shadow-lg transition-all flex items-center gap-1.5">
                     <i class="fa-solid fa-lock"></i>
                     <span id="authBtnText">লগইন করুন</span>
@@ -135,13 +130,12 @@
     <!-- Main Content Area -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-1">
         
-        <!-- LOCKED STATE BANNER (When not logged in) -->
         <section id="lockedStateScreen" class="py-20 text-center glass-card rounded-3xl my-6 border border-police-accent/40 shadow-2xl">
             <div class="max-w-lg mx-auto px-4 space-y-4">
                 <div class="w-20 h-20 bg-police-accent/20 border border-police-accent text-police-accent rounded-full flex items-center justify-center mx-auto text-3xl shadow-lg animate-bounce">
                     <i class="fa-solid fa-shield-halved"></i>
                 </div>
-                <h2 class="text-xl sm:text-2xl font-bold text-white font-bangla">বাংলাদেশ পুলিশ ব্যাচ ২০২২ ডিরেক্টরিতে স্বাগতম</h2>
+                <h2 class="text-xl sm:text-2xl font-bold text-white font-bangla">বাংলাদেশ পুলিশ ব্যাচ ২০২২ ক্লাউড ডিরেক্টরিতে স্বাগতম</h2>
                 <p class="text-xs sm:text-sm text-gray-300">তথ্য দেখতে এবং আপনার প্রোফাইল যুক্ত করতে অনুগ্রহ করে ব্যাচ পিন (`২০২২`) দিয়ে লগইন করুন।</p>
                 <button onclick="openLoginModal()" class="px-6 py-3 bg-police-accent hover:bg-police-gold text-slate-950 font-bold rounded-xl shadow-xl transition-all text-sm inline-flex items-center gap-2">
                     <i class="fa-solid fa-key"></i> পিন দিয়ে প্রবেশ করুন
@@ -149,15 +143,12 @@
             </div>
         </section>
 
-        <!-- UNLOCKED APP CONTAINER -->
         <div id="unlockedAppContainer" class="hidden space-y-6">
             
-            <!-- PROMINENT BANNER WITH TOTAL MEMBERS STAT CARD -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                <!-- Total Counter Prominent Display -->
                 <div class="glass-card p-5 rounded-2xl border-l-4 border-l-police-accent flex items-center justify-between shadow-xl bg-gradient-to-r from-police-navy/90 to-police-card">
                     <div>
-                        <span class="text-xs font-semibold text-gray-300 tracking-wide uppercase">ডিরেক্টরি পরিসংখ্যান</span>
+                        <span class="text-xs font-semibold text-gray-300 tracking-wide uppercase">ক্লাউড ডিরেক্টরি পরিসংখ্যান</span>
                         <h3 class="text-2xl sm:text-3xl font-black text-police-gold font-bangla mt-1" id="mainTotalCounter">০ জন</h3>
                         <p class="text-[11px] text-police-accent mt-0.5">নিবন্ধিত ব্যাচমেট সদস্য</p>
                     </div>
@@ -166,7 +157,6 @@
                     </div>
                 </div>
 
-                <!-- Emergency & Assistance Banner -->
                 <div class="md:col-span-3 glass-card p-5 rounded-2xl flex flex-wrap items-center justify-between gap-4 border-l-4 border-l-red-600 shadow-xl">
                     <div class="flex items-center gap-3">
                         <div class="w-11 h-11 rounded-full bg-red-600/20 text-red-500 flex items-center justify-center text-xl animate-pulse">
@@ -189,7 +179,6 @@
                 </div>
             </div>
 
-            <!-- Role Banner & Cloud Status -->
             <div id="userInfoBadge" class="glass-card p-4 rounded-2xl mb-6 flex flex-wrap items-center justify-between gap-3 border-l-4 border-l-police-accent">
                 <div class="flex items-center gap-3">
                     <i class="fa-solid fa-user-lock text-xl text-police-accent"></i>
@@ -200,22 +189,18 @@
                 </div>
                 <div class="flex items-center gap-2">
                     <span id="cloudStatusBadge" class="px-3 py-1 bg-green-950/80 border border-green-600 text-green-400 text-xs font-semibold rounded-lg flex items-center gap-1.5">
-                        <i class="fa-solid fa-cloud"></i> ক্লাউড সিনক্রোনাইজড
+                        <i class="fa-solid fa-cloud-arrow-up"></i> ফায়ারস্টোর ক্লাউড লাইভ সিন্ক
                     </span>
                 </div>
             </div>
 
-            <!-- Filter and Search Control Panel -->
             <section class="glass-card p-4 sm:p-6 rounded-2xl mb-8 shadow-2xl space-y-4">
-                <!-- Search Bar -->
                 <div class="relative">
                     <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-gray-400 text-sm"></i>
                     <input type="text" id="searchInput" oninput="applyFilters()" placeholder="নাম, বিপি নম্বর, কর্মস্থল/থানা, জেলা, পদবী বা ফোন নম্বর লিখে লাইভ সার্চ করুন..." class="w-full bg-slate-900/90 border border-slate-700 focus:border-police-accent rounded-xl pl-11 pr-4 py-3 text-sm text-white placeholder-gray-400 outline-none transition-all shadow-inner">
                 </div>
 
-                <!-- Multi Filter Grid -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                    <!-- Rank Filter -->
                     <div>
                         <label class="block text-xs font-semibold text-police-gold mb-1">পদবী / র‍্যাঙ্ক</label>
                         <select id="rankFilter" onchange="applyFilters()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
@@ -230,7 +215,6 @@
                         </select>
                     </div>
 
-                    <!-- Unit Filter -->
                     <div>
                         <label class="block text-xs font-semibold text-police-gold mb-1">সংস্থা / ইউনিট</label>
                         <select id="unitFilter" onchange="applyFilters()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
@@ -259,7 +243,6 @@
                         </select>
                     </div>
 
-                    <!-- Branch / Fund Filter -->
                     <div>
                         <label class="block text-xs font-semibold text-police-gold mb-1">শাখা / ফান্ড</label>
                         <select id="branchFilter" onchange="applyFilters()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
@@ -282,7 +265,6 @@
                         </select>
                     </div>
 
-                    <!-- Blood Group Filter -->
                     <div>
                         <label class="block text-xs font-semibold text-police-gold mb-1">রক্তের গ্রুপ</label>
                         <select id="bloodFilter" onchange="applyFilters()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
@@ -300,12 +282,9 @@
                 </div>
             </section>
 
-            <!-- Dynamic Member Cards Grid -->
             <section id="membersGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Dynamic Content Load -->
             </section>
 
-            <!-- Empty Results Placeholder -->
             <div id="noResults" class="hidden text-center py-16 glass-card rounded-2xl my-6">
                 <i class="fa-solid fa-user-slash text-5xl text-gray-500 mb-3"></i>
                 <h3 class="text-lg font-bold text-gray-300">কোনো অনুমোদিত ব্যাচমেট সদস্য পাওয়া যায়নি!</h3>
@@ -315,7 +294,6 @@
 
     </main>
 
-    <!-- Footer -->
     <footer class="bg-police-dark border-t border-police-accent/20 py-6 text-center text-xs text-gray-400">
         <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
             <p>© ২০২২ বাংলাদেশ পুলিশ ব্যাচ ২০২২ | ক্লাউড কানেক্টেড নেটওয়ার্ক</p>
@@ -323,9 +301,7 @@
         </div>
     </footer>
 
-    <!-- ==================== MODALS ==================== -->
-
-    <!-- Authentication Modal (Masked PIN & Password Input) -->
+    <!-- Modals -->
     <div id="loginModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
         <div class="glass-card max-w-md w-full p-6 rounded-2xl shadow-2xl relative border border-police-accent/40">
             <button onclick="closeModal('loginModal')" class="absolute top-4 right-4 text-gray-400 hover:text-white text-lg">
@@ -340,7 +316,6 @@
                 <p class="text-xs text-gray-300">বাংলাদেশ পুলিশ ব্যাচ ২০২২</p>
             </div>
 
-            <!-- Login Switch Tabs -->
             <div class="flex bg-slate-900 p-1 rounded-xl mb-5 border border-slate-800">
                 <button id="memberTabBtn" onclick="switchAuthTab('member')" class="w-1/2 py-2 text-xs font-bold rounded-lg transition-all bg-police-accent text-slate-950">
                     সদস্য পিন (PIN)
@@ -350,7 +325,6 @@
                 </button>
             </div>
 
-            <!-- Member PIN Form -->
             <form id="memberLoginForm" onsubmit="handleMemberLogin(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-medium text-gray-300 mb-1">বিপি নম্বর (BP Number) *</label>
@@ -371,7 +345,6 @@
                 </button>
             </form>
 
-            <!-- Admin Password Form -->
             <form id="adminLoginForm" onsubmit="handleAdminLogin(event)" class="space-y-4 hidden">
                 <div>
                     <label class="block text-xs font-medium text-gray-300 mb-1">অ্যাডমিন পাসওয়ার্ড (Admin Password) *</label>
@@ -390,7 +363,6 @@
         </div>
     </div>
 
-    <!-- Submit / Edit Profile Modal -->
     <div id="memberFormModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="glass-card max-w-2xl w-full p-6 rounded-2xl shadow-2xl relative border border-police-accent/40 my-8">
             <button onclick="closeModal('memberFormModal')" class="absolute top-4 right-4 text-gray-400 hover:text-white text-lg">
@@ -398,13 +370,12 @@
             </button>
 
             <h3 id="formTitle" class="text-lg font-bold text-police-gold font-bangla mb-4 flex items-center gap-2">
-                <i class="fa-solid fa-user-plus"></i> নিজের প্রোফাইল তথ্য জমা দিন (এডমিন অনুমোদনের পর যোগ হবে)
+                <i class="fa-solid fa-user-plus"></i> নিজের প্রোফাইল তথ্য জমা দিন (এডমিন অনুমোদনের পর ক্লাউডে যোগ হবে)
             </h3>
 
             <form id="memberDataForm" onsubmit="saveMember(event)" class="space-y-4">
                 <input type="hidden" id="editMemberId">
 
-                <!-- Photo Upload Field -->
                 <div class="flex items-center gap-4 bg-slate-900/60 p-3 rounded-xl border border-slate-800">
                     <div id="photoPreviewBox" class="w-16 h-16 rounded-full bg-slate-800 border-2 border-police-accent flex items-center justify-center overflow-hidden flex-shrink-0">
                         <i class="fa-solid fa-user text-2xl text-gray-500"></i>
@@ -511,13 +482,11 @@
                         <input type="tel" id="memberPhone" required placeholder="017XXXXXXXX" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
                     </div>
 
-                    <!-- WhatsApp Number -->
                     <div>
                         <label class="block text-xs font-medium text-gray-300 mb-1">হোয়াটসঅ্যাপ নম্বর (WhatsApp)</label>
                         <input type="tel" id="memberWhatsapp" placeholder="017XXXXXXXX" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
                     </div>
 
-                    <!-- Facebook Profile Link -->
                     <div>
                         <label class="block text-xs font-medium text-gray-300 mb-1">ফেসবুক প্রোফাইল লিংক (Facebook Profile URL)</label>
                         <input type="url" id="memberFacebook" placeholder="https://facebook.com/username" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
@@ -536,28 +505,25 @@
         </div>
     </div>
 
-    <!-- Admin Pending Approvals Modal -->
     <div id="adminPendingModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="glass-card max-w-4xl w-full p-6 rounded-2xl shadow-2xl relative border border-red-600/40 my-8">
             <button onclick="closeModal('adminPendingModal')" class="absolute top-4 right-4 text-gray-400 hover:text-white text-lg">
                 <i class="fa-solid fa-xmark"></i>
             </button>
             <h3 class="text-lg font-bold text-red-400 font-bangla mb-4 flex items-center gap-2">
-                <i class="fa-solid fa-user-clock"></i> পেন্ডিং প্রোফাইল অনুমোদন প্যানেল (অ্যাডমিন)
+                <i class="fa-solid fa-user-clock"></i> পেন্ডিং প্রোফাইল অনুমোদন প্যানেল (ক্লাউড অ্যাডমিন)
             </h3>
             <div id="pendingListContainer" class="space-y-3 max-h-[60vh] overflow-y-auto pr-2">
-                <!-- Pending Items Will Load Here -->
             </div>
         </div>
     </div>
 
-    <!-- Notification Toast -->
     <div id="toast" class="fixed bottom-6 right-6 z-50 hidden glass-card p-4 rounded-xl shadow-2xl border border-police-accent flex items-center gap-3 max-w-sm transition-all duration-300">
         <i id="toastIcon" class="fa-solid fa-circle-check text-police-accent text-xl"></i>
         <p id="toastMessage" class="text-xs text-white font-medium"></p>
     </div>
 
-    <!-- ==================== FIREBASE & APP LOGIC ==================== -->
+    <!-- 100% Cloud-Based Logic Script -->
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyDXnuZlO8LYHgYaFvgyXEDsTuH3L3OGW_8",
@@ -570,71 +536,56 @@
         };
 
         let db = null;
-        let isFirebaseActive = false;
         let membersData = [];
         let pendingData = [];
-        let currentUserRole = 'guest'; // 'guest', 'member', 'admin'
+        let currentUserRole = 'guest'; 
         let loggedInBpNumber = '';
         let memberImageBase64 = '';
 
         window.onload = function() {
-            initFirebase();
+            initFirebaseCloud();
             checkSessionState();
         };
 
-        function initFirebase() {
+        function initFirebaseCloud() {
             try {
-                if (firebaseConfig.apiKey) {
-                    if (!firebase.apps.length) {
-                        firebase.initializeApp(firebaseConfig);
-                    }
-                    db = firebase.firestore();
-                    isFirebaseActive = true;
-                    subscribeToCloudStorage();
-                } else {
-                    loadLocalData();
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(firebaseConfig);
                 }
+                db = firebase.firestore();
+                // Real-time synchronization directly from Cloud Database
+                listenToCloudDatabase();
             } catch (error) {
-                console.error("Firebase init failed:", error);
-                loadLocalData();
+                console.error("Cloud Connection Failed:", error);
+                showToast("ক্লাউড সার্ভারের সাথে সংযোগ স্থাপন করা যায়নি!", true);
             }
         }
 
-        function subscribeToCloudStorage() {
+        function listenToCloudDatabase() {
             if (!db) return;
             
+            // Listen to main members collection from Firestore Cloud
             db.collection("members").onSnapshot((snapshot) => {
-                const cloudMembers = [];
+                membersData = [];
                 snapshot.forEach((doc) => {
-                    cloudMembers.push({ id: doc.id, ...doc.data() });
+                    membersData.push({ id: doc.id, ...doc.data() });
                 });
-                membersData = cloudMembers;
                 renderMembersGrid();
+            }, (error) => {
+                console.error("Error reading members from cloud:", error);
             });
 
+            // Listen to pending approval requests collection from Firestore Cloud
             db.collection("pending_members").onSnapshot((snapshot) => {
-                const cloudPending = [];
+                pendingData = [];
                 snapshot.forEach((doc) => {
-                    cloudPending.push({ id: doc.id, ...doc.data() });
+                    pendingData.push({ id: doc.id, ...doc.data() });
                 });
-                pendingData = cloudPending;
                 updatePendingCounter();
                 if (currentUserRole === 'admin') renderPendingList();
+            }, (error) => {
+                console.error("Error reading pending requests from cloud:", error);
             });
-        }
-
-        function loadLocalData() {
-            const localMembers = localStorage.getItem('POLICE_BATCH_2022_MEMBERS');
-            const localPending = localStorage.getItem('POLICE_BATCH_2022_PENDING');
-            membersData = localMembers ? JSON.parse(localMembers) : [];
-            pendingData = localPending ? JSON.parse(localPending) : [];
-            renderMembersGrid();
-            updatePendingCounter();
-        }
-
-        function saveLocalData() {
-            localStorage.setItem('POLICE_BATCH_2022_MEMBERS', JSON.stringify(membersData));
-            localStorage.setItem('POLICE_BATCH_2022_PENDING', JSON.stringify(pendingData));
         }
 
         function updatePendingCounter() {
@@ -705,7 +656,7 @@
 
                 const adminControls = currentUserRole === 'admin' ? `
                     <div class="absolute top-3 right-3 flex gap-1 z-10">
-                        <button onclick="deleteMember('${m.id}')" title="মুছে ফেলুন" class="p-1.5 bg-red-600/90 hover:bg-red-600 text-white text-xs rounded-lg shadow transition-all">
+                        <button onclick="deleteMember('${m.id}')" title="ক্লাউড থেকে মুছে ফেলুন" class="p-1.5 bg-red-600/90 hover:bg-red-600 text-white text-xs rounded-lg shadow transition-all">
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </div>
@@ -781,9 +732,13 @@
             showToast('সকল ফিল্টার রিসেট করা হয়েছে');
         }
 
-        // Save or Update Member Profile (Fixed with .add() for independent new entries)
+        // Save or Update directly to Firestore Cloud Database using .add()
         function saveMember(e) {
             e.preventDefault();
+            if (!db) {
+                showToast("ক্লাউড সার্ভারের সাথে সংযোগ নেই!", true);
+                return;
+            }
 
             const editId = document.getElementById('editMemberId').value.trim();
             const name = document.getElementById('memberName').value.trim();
@@ -809,24 +764,20 @@
             if (currentUserRole === 'admin') {
                 if (editId) {
                     db.collection("members").doc(editId).update(memberPayload).then(() => {
-                        showToast('সদস্যের তথ্য সফলভাবে আপডেট হয়েছে!');
+                        showToast('ক্লাউডে সদস্যের তথ্য সফলভাবে আপডেট হয়েছে!');
                         closeModal('memberFormModal');
-                    });
+                    }).catch(err => showToast("ত্রুটি: " + err.message, true));
                 } else {
                     db.collection("members").add(memberPayload).then(() => {
-                        showToast('অ্যাডমিন কর্তৃক নতুন সদস্য সফলভাবে যুক্ত হয়েছে!');
+                        showToast('অ্যাডমিন কর্তৃক ক্লাউডে নতুন সদস্য সফলভাবে যুক্ত হয়েছে!');
                         closeModal('memberFormModal');
-                    }).catch(err => {
-                        showToast('ডাটা সেভ করতে সমস্যা হয়েছে: ' + err.message, true);
-                    });
+                    }).catch(err => showToast("ত্রুটি: " + err.message, true));
                 }
             } else {
                 db.collection("pending_members").add(memberPayload).then(() => {
-                    showToast('আপনার প্রোফাইল জমা হয়েছে! অ্যাডমিন অনুমোদনের পর তা ডিরেক্টরিতে দেখাবে।');
+                    showToast('আপনার প্রোফাইল ক্লাউডে জমা হয়েছে! অ্যাডমিন অনুমোদনের পর তা ডিরেক্টরিতে দেখাবে।');
                     closeModal('memberFormModal');
-                }).catch(err => {
-                    showToast('অনুরোধ পাঠাতে সমস্যা হয়েছে: ' + err.message, true);
-                });
+                }).catch(err => showToast("ত্রুটি: " + err.message, true));
             }
         }
 
@@ -842,7 +793,7 @@
         }
 
         function openEditMyProfileModal() {
-            const found = membersData.find(m => m.bp.toUpperCase() === loggedInBpNumber.toUpperCase());
+            const found = membersData.find(m => m.bp && m.bp.toUpperCase() === loggedInBpNumber.toUpperCase());
             if (!found) {
                 showToast('আপনার বিপি নম্বরের কোনো প্রকাশিত প্রোফাইল ডিরেক্টরিতে নেই। নতুন প্রোফাইল যোগ করুন।', true);
                 openAddMemberModal();
@@ -889,7 +840,7 @@
                 return;
             }
 
-            pendingData.forEach((p, index) => {
+            pendingData.forEach((p) => {
                 const div = document.createElement('div');
                 div.className = "bg-slate-900/90 border border-slate-700 p-4 rounded-xl flex flex-wrap items-center justify-between gap-4";
                 
@@ -905,10 +856,10 @@
                         </div>
                     </div>
                     <div class="flex gap-2">
-                        <button onclick="approvePending('${p.id || index}')" class="px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white font-bold text-xs rounded-lg transition-all">
+                        <button onclick="approvePending('${p.id}')" class="px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white font-bold text-xs rounded-lg transition-all">
                             এপ্রুভ করুন
                         </button>
-                        <button onclick="rejectPending('${p.id || index}')" class="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-lg transition-all">
+                        <button onclick="rejectPending('${p.id}')" class="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-lg transition-all">
                             বাতিল
                         </button>
                     </div>
@@ -917,40 +868,38 @@
             });
         }
 
-        // Fixed approvePending function using .add() to prevent overriding
+        // Approve and move from pending to main members collection in Cloud
         function approvePending(id) {
-            const item = pendingData.find(p => (p.id && p.id === id) || pendingData.indexOf(p).toString() === id);
+            const item = pendingData.find(p => p.id === id);
             if (!item) return;
 
-            if (isFirebaseActive && db) {
+            if (db) {
                 db.collection("members").add(item).then(() => {
                     db.collection("pending_members").doc(id).delete().then(() => {
-                        showToast('নতুন প্রোফাইল সফলভাবে এপ্রুভ করা হয়েছে!');
+                        showToast('ক্লাউডে নতুন প্রোফাইল সফলভাবে এপ্রুভ ও যুক্ত করা হয়েছে!');
                         openAdminPendingModal();
                     });
-                }).catch(err => {
-                    showToast('এপ্রুভ করতে সমস্যা হয়েছে: ' + err.message, true);
-                });
+                }).catch(err => showToast("এপ্রুভ করতে সমস্যা: " + err.message, true));
             }
         }
 
         function rejectPending(id) {
-            if (confirm('এই আবেদনটি বাতিল করতে চান?')) {
-                if (isFirebaseActive && db) {
+            if (confirm('এই আবেদনটি ক্লাউড থেকে বাতিল করতে চান?')) {
+                if (db) {
                     db.collection("pending_members").doc(id).delete().then(() => {
                         showToast('আবেদনটি বাতিল করা হয়েছে');
                         openAdminPendingModal();
-                    });
+                    }).catch(err => showToast("ত্রুটি: " + err.message, true));
                 }
             }
         }
 
         function deleteMember(id) {
-            if (confirm('আপনি কি নিশ্চিত যে এই সদস্যকে মুছে ফেলতে চান?')) {
-                if (isFirebaseActive && db) {
+            if (confirm('আপনি কি নিশ্চিত যে এই সদস্যকে ক্লাউড থেকে স্থায়ীভাবে মুছে ফেলতে চান?')) {
+                if (db) {
                     db.collection("members").doc(id).delete().then(() => {
-                        showToast('সদস্যের ডাটা মুছে ফেলা হয়েছে');
-                    });
+                        showToast('ক্লাউড থেকে সদস্যের ডাটা মুছে ফেলা হয়েছে');
+                    }).catch(err => showToast("ত্রুটি: " + err.message, true));
                 }
             }
         }
@@ -1026,7 +975,7 @@
                 sessionStorage.setItem('POLICE_LOGGED_BP', bpInput);
                 checkSessionState();
                 closeModal('loginModal');
-                showToast('সদস্য পিন ভেরিফাইড! ডিরেক্টরি উন্মুক্ত।');
+                showToast('সদস্য পিন ভেরিফাইড! ক্লাউড ডিরেক্টরি উন্মুক্ত।');
             } else {
                 showToast('ভুল পিন কোড! সঠিক পিন (২০২২) দিন।', true);
             }
@@ -1040,7 +989,7 @@
                 sessionStorage.setItem('POLICE_USER_ROLE', 'admin');
                 checkSessionState();
                 closeModal('loginModal');
-                showToast('অ্যাডমিন মোড অ্যাক্টিভেটেড!');
+                showToast('ক্লাউড অ্যাডমিন মোড অ্যাক্টিভেটেড!');
             } else {
                 showToast('ভুল পাসওয়ার্ড!', true);
             }
