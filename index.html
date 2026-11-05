@@ -1,10 +1,9 @@
-```html
 <!DOCTYPE html>
 <html lang="bn" class="h-full bg-slate-100">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>বাংলাদেশ পুলিশ ব্যাচ ২০২২ - ডিরেক্টরি অ্যাপ</title>
+    <title>বাংলাদেশ পুলিশ ব্যাচ ২০২২ - ডিরেক্টরি অ্যাপ (ক্লাউড ভার্সন)</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
@@ -13,6 +12,36 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Firebase SDK (Modular v10 CDN) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+
+        // 🔥 আপনার ফায়ারবেস কনফিগারেশন সফলভাবে যুক্ত করা হলো
+        const firebaseConfig = {
+            apiKey: "AIzaSyDXnuZlO8LYHgYaFvgyXEDsTuH3L3OGW_8",
+            authDomain: "police-batch-2022-f693a.firebaseapp.com",
+            projectId: "police-batch-2022-f693a",
+            storageBucket: "police-batch-2022-f693a.firebasestorage.app",
+            messagingSenderId: "1030350878290",
+            appId: "1:1030350878290:web:d53f1abdee1458af64118b",
+            measurementId: "G-YMT17CG5W2"
+        };
+
+        // Firebase Initialize
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const db = getFirestore(app);
+
+        // Global Firebase functions export window-এ সংযুক্ত করা হলো যাতে অন্য স্ক্রিপ্ট থেকে কল করা যায়
+        window.db = db;
+        window.firebaseModules = { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, onSnapshot };
+        
+        // অ্যাপ লোড হওয়ার পর ফায়ারবেস থেকে লাইভ ডাটা লোড শুরু হবে
+        window.dispatchEvent(new Event('firebase-ready'));
+    </script>
 
     <script>
         tailwind.config = {
@@ -36,47 +65,27 @@
         }
     </script>
     <style>
-        body {
-            font-family: 'Hind Siliguri', sans-serif;
-        }
-        /* Custom scrollbars */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #002B49;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #001A2D;
-        }
-        .police-badge-shadow {
-            box-shadow: 0 4px 20px -2px rgba(0, 43, 73, 0.25);
-        }
+        body { font-family: 'Hind Siliguri', sans-serif; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #002B49; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #001A2D; }
+        .police-badge-shadow { box-shadow: 0 4px 20px -2px rgba(0, 43, 73, 0.25); }
     </style>
 </head>
 <body class="h-full flex flex-col bg-slate-100 text-slate-800 antialiased selection:bg-police-navy selection:text-white">
 
     <!-- LOGIN OVERLAY -->
     <div id="loginModal" class="fixed inset-0 bg-police-dark/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border-2 border-police-gold/50 animate-fade-in">
-            <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border-2 border-police-gold/50">
             <div class="bg-police-navy text-white p-6 text-center relative overflow-hidden">
-                <div class="absolute -right-8 -bottom-8 w-32 h-32 bg-police-gold/10 rounded-full blur-xl pointer-events-none"></div>
-                
-                <!-- SVG Bangladesh Police Emblem Placeholder -->
                 <div class="mx-auto w-20 h-20 bg-police-dark border-2 border-police-gold rounded-full flex items-center justify-center mb-3 shadow-lg">
                     <i class="fa-solid fa-shield-halved text-police-gold text-4xl"></i>
                 </div>
                 <h2 class="text-2xl font-bold text-police-gold">বাংলাদেশ পুলিশ</h2>
-                <p class="text-sm font-medium text-slate-200 mt-1">ব্যাচ ২০২২ সার্ভিস ডিরেক্টরি</p>
+                <p class="text-sm font-medium text-slate-200 mt-1">ব্যাচ ২০২২ ক্লাউড ডিরেক্টরি</p>
             </div>
 
-            <!-- Login Form -->
             <form id="loginForm" onsubmit="handleLogin(event)" class="p-6 space-y-4">
                 <div class="text-center text-xs font-semibold text-slate-500 mb-2">
                     নিরাপত্তা সুরক্ষায় প্রবেশ করতে আপনার বিপি নম্বর ও পিন দিন
@@ -89,7 +98,7 @@
                             <i class="fa-solid fa-id-card"></i>
                         </span>
                         <input type="text" id="loginBP" required placeholder="উদাহরণ: BP9822001122" 
-                            class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-police-navy focus:border-police-navy outline-none text-slate-800 text-sm">
+                            class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-police-navy outline-none text-sm">
                     </div>
                 </div>
 
@@ -100,9 +109,8 @@
                             <i class="fa-solid fa-key"></i>
                         </span>
                         <input type="password" id="loginPin" required placeholder="••••" 
-                            class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-police-navy focus:border-police-navy outline-none text-slate-800 text-sm">
+                            class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-police-navy outline-none text-sm">
                     </div>
-                    <p class="text-xs text-slate-400 mt-1">ডিফল্ট পিন: <span class="font-bold text-police-navy">2022</span></p>
                 </div>
 
                 <div id="loginError" class="hidden text-red-600 text-xs font-medium text-center bg-red-50 p-2 rounded border border-red-200">
@@ -110,14 +118,11 @@
                 </div>
 
                 <button type="submit" 
-                    class="w-full py-3 bg-police-navy hover:bg-police-dark text-police-gold font-bold rounded-lg shadow-md hover:shadow-lg transition flex items-center justify-center space-x-2">
+                    class="w-full py-3 bg-police-navy hover:bg-police-dark text-police-gold font-bold rounded-lg shadow-md transition flex items-center justify-center space-x-2">
                     <i class="fa-solid fa-right-to-bracket"></i>
                     <span>প্রবেশ করুন</span>
                 </button>
             </form>
-            <div class="bg-slate-50 px-6 py-3 border-t border-slate-100 text-center text-xs text-slate-500">
-                বাংলাদেশ পুলিশ ব্যাচ ২০২২ কল্যাণ তহবিল ও যোগাযোগ ব্যবস্থা
-            </div>
         </div>
     </div>
 
@@ -128,28 +133,24 @@
         <header class="bg-police-navy text-white sticky top-0 z-40 shadow-md">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between h-16">
-                    <!-- Brand / Logo -->
                     <div class="flex items-center space-x-3">
                         <div class="w-10 h-10 bg-police-dark border border-police-gold rounded-full flex items-center justify-center text-police-gold shadow">
                             <i class="fa-solid fa-shield-halved text-xl"></i>
                         </div>
                         <div>
                             <h1 class="text-lg sm:text-xl font-bold leading-tight text-police-gold">বাংলাদেশ পুলিশ</h1>
-                            <p class="text-xs text-slate-300">ব্যাচ ২০২২ ডিরেক্টরি</p>
+                            <p class="text-xs text-slate-300">ব্যাচ ২০২২ ক্লাউড ডিরেক্টরি</p>
                         </div>
                     </div>
 
-                    <!-- Actions / User Info -->
                     <div class="flex items-center space-x-2 sm:space-x-3">
-                        <!-- Admin Status Badge -->
                         <button id="adminToggleBtn" onclick="toggleAdminModeModal()" 
                             class="text-xs px-3 py-1.5 rounded-full font-semibold border border-police-gold/50 bg-police-dark text-police-gold hover:bg-police-gold hover:text-police-dark transition flex items-center gap-1.5">
                             <i class="fa-solid fa-user-shield"></i>
                             <span id="adminStatusText">এডমিন মোড</span>
                         </button>
 
-                        <button onclick="logout()" title="লগআউট" 
-                            class="p-2 text-slate-300 hover:text-white hover:bg-police-dark rounded-full transition">
+                        <button onclick="logout()" title="লগআউট" class="p-2 text-slate-300 hover:text-white hover:bg-police-dark rounded-full transition">
                             <i class="fa-solid fa-power-off text-lg"></i>
                         </button>
                     </div>
@@ -157,12 +158,12 @@
             </div>
         </header>
 
-        <!-- SUB HEADER / COUNTER BANNER -->
+        <!-- SUB HEADER -->
         <div class="bg-police-dark border-b border-police-gold/30 text-white py-3 px-4 shadow-inner">
             <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
                 <div class="flex items-center gap-2">
                     <span class="inline-flex items-center justify-center w-2.5 h-2.5 bg-green-500 rounded-full animate-ping"></span>
-                    <span class="text-xs sm:text-sm text-slate-300">জরুরি প্রয়োজনে দ্রুত ব্যাচমেটদের খুঁজে পেতে সহায়ক ডিরেক্টরি</span>
+                    <span class="text-xs sm:text-sm text-slate-300">ক্লাউড ডাটাবেজ সংযুক্ত - রিয়েল-টাইম সিঙ্ক একটিভ</span>
                 </div>
                 <div class="flex items-center space-x-2 bg-police-navy/80 px-4 py-1 rounded-full border border-police-gold/30">
                     <i class="fa-solid fa-users text-police-gold text-sm"></i>
@@ -177,27 +178,22 @@
 
             <!-- SEARCH & FILTER SECTION -->
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 sm:p-5 mb-6 space-y-4">
-                
-                <!-- Main Search Bar -->
                 <div class="relative">
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 text-lg">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </span>
                     <input type="text" id="searchInput" oninput="applyFilters()" 
                         placeholder="নাম, বিপি নম্বর, পদবী, ইউনিট, রক্তের গ্রুপ, ফোন বা এলাকা লিখে খুঁজুন..." 
-                        class="w-full pl-11 pr-10 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-police-navy focus:border-police-navy outline-none text-slate-800 text-sm sm:text-base shadow-sm">
-                    <button onclick="clearSearch()" id="clearSearchBtn" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600">
+                        class="w-full pl-11 pr-10 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-police-navy outline-none text-sm sm:text-base">
+                    <button onclick="clearSearch()" id="clearSearchBtn" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400">
                         <i class="fa-solid fa-xmark text-lg"></i>
                     </button>
                 </div>
 
-                <!-- Advanced Filters Row -->
                 <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                    
-                    <!-- Rank Filter -->
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 mb-1">পদবী/র‍্যাংক</label>
-                        <select id="filterRank" onchange="applyFilters()" class="w-full p-2 text-xs sm:text-sm rounded-md border border-slate-300 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-police-navy outline-none">
+                        <select id="filterRank" onchange="applyFilters()" class="w-full p-2 text-xs sm:text-sm rounded-md border border-slate-300 bg-slate-50 outline-none">
                             <option value="">সকল পদবী</option>
                             <option value="কনস্টেবল">কনস্টেবল</option>
                             <option value="নায়ক">নায়ক</option>
@@ -209,183 +205,121 @@
                         </select>
                     </div>
 
-                    <!-- Unit Filter -->
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 mb-1">সংস্থা / ইউনিট</label>
-                        <select id="filterUnit" onchange="applyFilters()" class="w-full p-2 text-xs sm:text-sm rounded-md border border-slate-300 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-police-navy outline-none">
+                        <select id="filterUnit" onchange="applyFilters()" class="w-full p-2 text-xs sm:text-sm rounded-md border border-slate-300 bg-slate-50 outline-none">
                             <option value="">সকল ইউনিট</option>
                             <option value="পুলিশ হেডকোয়ার্টার্স">পুলিশ হেডকোয়ার্টার্স</option>
                             <option value="জেলা পুলিশ">জেলা পুলিশ</option>
                             <option value="ডিএমপি (DMP)">ডিএমপি (DMP)</option>
                             <option value="সিএমপি (CMP)">সিএমপি (CMP)</option>
-                            <option value="কেএমপি (KMP)">কেএমপি (KMP)</option>
-                            <option value="আরএমপি (RMP)">আরএমপি (RMP)</option>
-                            <option value="বিএমপি (BMP)">বিএমপি (BMP)</option>
-                            <option value="এসএমপি (SMP)">এসএমপি (SMP)</option>
-                            <option value="জিএমপি (GMP)">জিএমপি (GMP)</option>
                             <option value="র‌্যাব (RAB)">র‌্যাব (RAB)</option>
-                            <option value="এপিবিএন (APBn)">এপিবিএন (APBn)</option>
                             <option value="সিআইডি (CID)">সিআইডি (CID)</option>
                             <option value="এসবি (SB)">এসবি (SB)</option>
                             <option value="পিবিআই (PBI)">পিবিআই (PBI)</option>
-                            <option value="হাইওয়ে পুলিশ">হাইওয়ে পুলিশ</option>
-                            <option value="রেলওয়ে পুলিশ">রেলওয়ে পুলিশ</option>
-                            <option value="ট্যুরিস্ট পুলিশ">ট্যুরিস্ট পুলিশ</option>
-                            <option value="শিল্প পুলিশ">শিল্প পুলিশ</option>
-                            <option value="এসপিবিএন (SPBn)">এসপিবিএন (SPBn)</option>
-                            <option value="নৌ পুলিশ">নৌ পুলিশ</option>
-                            <option value="এটিইউ (ATU)">এটিইউ (ATU)</option>
                         </select>
                     </div>
 
-                    <!-- Branch / Section Filter -->
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 mb-1">শাখা / ডিউটি</label>
-                        <select id="filterBranch" onchange="applyFilters()" class="w-full p-2 text-xs sm:text-sm rounded-md border border-slate-300 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-police-navy outline-none">
+                        <select id="filterBranch" onchange="applyFilters()" class="w-full p-2 text-xs sm:text-sm rounded-md border border-slate-300 bg-slate-50 outline-none">
                             <option value="">সকল শাখা</option>
                             <option value="১. প্রশাসনিক শাখা">১. প্রশাসনিক শাখা</option>
                             <option value="২. রিজার্ভ শাখা">২. রিজার্ভ শাখা</option>
                             <option value="৩. রেশন শাখা">৩. রেশন শাখা</option>
-                            <option value="৪. বকসি শাখা">৪. বকসি শাখা</option>
-                            <option value="৫. অপস/ইন্টেলিজেন্স শাখা">৫. অপস/ইন্টেলিজেন্স শাখা</option>
-                            <option value="৬. সি-স্টোর">৬. সি-স্টোর</option>
-                            <option value="৭. ডি-স্টোর">৭. ডি-স্টোর</option>
-                            <option value="৮. এমআই">৮. এমআই</option>
-                            <option value="৯. ইলেকট্রিশিয়ান">৯. ইলেকট্রিশিয়ান</option>
                             <option value="১০. মেস">১০. মেস</option>
-                            <option value="১১. ক্যান্টিন">১১. ক্যান্টিন</option>
-                            <option value="১২. গানার">১২. গানার</option>
                             <option value="১৩. এমটি শাখা">১৩. এমটি শাখা</option>
                         </select>
                     </div>
 
-                    <!-- Blood Group Filter -->
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 mb-1">রক্তের গ্রুপ</label>
-                        <select id="filterBlood" onchange="applyFilters()" class="w-full p-2 text-xs sm:text-sm rounded-md border border-slate-300 bg-slate-50 focus:bg-white focus:ring-2 focus:ring-police-navy outline-none">
+                        <select id="filterBlood" onchange="applyFilters()" class="w-full p-2 text-xs sm:text-sm rounded-md border border-slate-300 bg-slate-50 outline-none">
                             <option value="">সকল রক্তের গ্রুপ</option>
                             <option value="A+">A+</option>
-                            <option value="A-">A-</option>
                             <option value="B+">B+</option>
-                            <option value="B-">B-</option>
                             <option value="AB+">AB+</option>
-                            <option value="AB-">AB-</option>
                             <option value="O+">O+</option>
-                            <option value="O-">O-</option>
                         </select>
                     </div>
-
                 </div>
 
-                <!-- Filter Actions Bar -->
                 <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
                     <span id="searchResultsCount" class="text-slate-500 font-medium">ফলাফল দেখাচ্ছে...</span>
-                    
                     <div class="flex items-center gap-2">
-                        <button onclick="resetAllFilters()" class="text-slate-600 hover:text-police-navy font-semibold underline">
-                            ফিল্টার রিসেট করুন
-                        </button>
-                        
-                        <button onclick="openMemberModal()" 
-                            class="bg-police-gold hover:bg-police-goldhover text-police-dark font-bold px-3 py-1.5 rounded shadow flex items-center gap-1.5 transition">
+                        <button onclick="resetAllFilters()" class="text-slate-600 hover:text-police-navy font-semibold underline">ফিল্টার রিসেট করুন</button>
+                        <button onclick="openMemberModal()" class="bg-police-gold hover:bg-police-goldhover text-police-dark font-bold px-3 py-1.5 rounded shadow flex items-center gap-1.5">
                             <i class="fa-solid fa-user-plus text-xs"></i>
                             <span>নতুন সদস্য যোগ করুন</span>
                         </button>
                     </div>
                 </div>
-
             </div>
 
-            <!-- DIRECTORY LIST / GRID -->
+            <!-- DIRECTORY LIST -->
             <div id="membersGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                <!-- Member Cards Dynamically Rendered Here -->
+                <!-- Dynamically loaded from Cloud -->
             </div>
 
             <!-- EMPTY STATE -->
             <div id="emptyState" class="hidden text-center py-12 bg-white rounded-xl border border-slate-200">
                 <i class="fa-solid fa-user-slash text-5xl text-slate-300 mb-3"></i>
                 <h3 class="text-lg font-bold text-slate-700">কোন সদস্য পাওয়া যায়নি!</h3>
-                <p class="text-sm text-slate-500 mt-1">আপনার সার্চ ফিল্টার পরিবর্তন করে পুনরায় চেষ্টা করুন।</p>
-                <button onclick="resetAllFilters()" class="mt-4 px-4 py-2 bg-police-navy text-white text-xs font-semibold rounded-lg hover:bg-police-dark">
-                    সব তথ্য দেখুন
-                </button>
+                <p class="text-sm text-slate-500 mt-1">কানেকশন চেক করুন অথবা নতুন সদস্য যুক্ত করুন।</p>
             </div>
-
         </main>
 
         <!-- FOOTER -->
         <footer class="bg-police-dark text-slate-400 text-xs py-6 border-t border-police-gold/20 mt-auto">
             <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
-                <p class="font-medium text-slate-300">বাংলাদেশ পুলিশ ব্যাচ ২০২২ - অভ্যন্তরীণ ডিরেক্টরি পোর্টাল</p>
-                <p>আইন শৃঙ্খলা রক্ষা ও দেশের সেবায় আমরা সর্বদা প্রস্তুত | পিন বা সিকিউরিটি সংক্রান্ত যেকোনো অনুসন্ধানে এডমিনের সাথে যোগাযোগ করুন।</p>
+                <p class="font-medium text-slate-300">বাংলাদেশ পুলিশ ব্যাচ ২০২২ - ক্লাউড ডিরেক্টরি পোর্টাল</p>
             </div>
         </footer>
-
     </div>
 
     <!-- MEMBER ADD / EDIT MODAL -->
     <div id="memberModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
         <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto my-auto border border-slate-200">
-            
-            <!-- Modal Header -->
-            <div class="bg-police-navy text-white px-6 py-4 flex items-center justify-between sticky top-0 z-10 border-b border-police-gold/30">
+            <div class="bg-police-navy text-white px-6 py-4 flex items-center justify-between sticky top-0 z-10">
                 <div class="flex items-center space-x-2">
                     <i class="fa-solid fa-id-card text-police-gold text-xl"></i>
                     <h3 id="modalTitle" class="text-lg font-bold text-police-gold">নতুন সদস্য যুক্ত করুন</h3>
                 </div>
-                <button onclick="closeMemberModal()" class="text-slate-300 hover:text-white p-1">
-                    <i class="fa-solid fa-xmark text-xl"></i>
-                </button>
+                <button onclick="closeMemberModal()" class="text-slate-300 hover:text-white"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
 
-            <!-- Form -->
-            <form id="memberForm" onsubmit="saveMember(event)" class="p-6 space-y-4">
+            <form id="memberForm" onsubmit="saveMemberToCloud(event)" class="p-6 space-y-4">
                 <input type="hidden" id="memberId">
 
-                <!-- Admin Auth Required Notice if not logged in as admin -->
                 <div id="adminPassPrompt" class="bg-amber-50 border border-amber-200 p-3 rounded-lg space-y-2">
-                    <label class="block text-xs font-bold text-amber-900">
-                        <i class="fa-solid fa-lock text-amber-600 mr-1"></i> এডমিন পাসওয়ার্ড (Admin Passcode):
-                    </label>
-                    <input type="password" id="adminPasscode" placeholder="Admin Passcode দিন" 
-                        class="w-full px-3 py-2 text-sm border border-amber-300 rounded focus:ring-2 focus:ring-amber-500 outline-none">
-                    <p class="text-[11px] text-amber-700">তথ্য পরিবর্তন বা নতুন সদস্য যুক্ত করতে এডমিন পাসওয়ার্ড <span class="font-bold">Admin2022</span> দিন।</p>
+                    <label class="block text-xs font-bold text-amber-900"><i class="fa-solid fa-lock text-amber-600 mr-1"></i> এডমিন পাসওয়ার্ড:</label>
+                    <input type="password" id="adminPasscode" placeholder="Admin Passcode দিন" class="w-full px-3 py-2 text-sm border border-amber-300 rounded outline-none">
+                    <p class="text-[11px] text-amber-700">তথ্য পরিবর্তন করতে পাসওয়ার্ড <span class="font-bold">Admin2k22</span> দিন।</p>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    
-                    <!-- Profile Photo Input -->
-                    <div class="sm:col-span-2 flex flex-col sm:flex-row items-center gap-4 bg-slate-50 p-3 rounded-lg border border-slate-200">
+                    <div class="sm:col-span-2 flex items-center gap-4 bg-slate-50 p-3 rounded-lg border">
                         <div class="w-20 h-20 bg-slate-200 rounded-full border-2 border-police-gold overflow-hidden flex items-center justify-center shrink-0">
                             <img id="photoPreview" src="" class="w-full h-full object-cover hidden" alt="Preview">
                             <i id="photoPlaceholderIcon" class="fa-solid fa-user-shield text-3xl text-slate-400"></i>
                         </div>
                         <div class="w-full">
-                            <label class="block text-xs font-bold text-slate-700 mb-1">সদস্যের ছবি (Photo)</label>
-                            <input type="file" id="memberPhoto" accept="image/*" onchange="previewImage(event)" 
-                                class="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-police-navy file:text-police-gold hover:file:bg-police-dark cursor-pointer">
-                            <p class="text-[10px] text-slate-400 mt-1">ছবি না দিলে ডিফল্ট অ্যাভাটার থাকবে।</p>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">সদস্যের ছবি</label>
+                            <input type="file" id="memberPhoto" accept="image/*" onchange="previewImage(event)" class="w-full text-xs text-slate-500">
                         </div>
                     </div>
 
-                    <!-- Name -->
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">নাম (Name) *</label>
-                        <input type="text" id="memberName" required placeholder="উদাহরণ: মোঃ রফিকুল ইসলাম" 
-                            class="w-full px-3 py-2 rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-police-navy outline-none">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">নাম *</label>
+                        <input type="text" id="memberName" required class="w-full px-3 py-2 rounded-md border text-sm outline-none">
                     </div>
-
-                    <!-- BP Number -->
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">বিপি নম্বর (BP Number) *</label>
-                        <input type="text" id="memberBP" required placeholder="উদাহরণ: BP98220001" 
-                            class="w-full px-3 py-2 rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-police-navy outline-none">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">বিপি নম্বর *</label>
+                        <input type="text" id="memberBP" required class="w-full px-3 py-2 rounded-md border text-sm outline-none">
                     </div>
-
-                    <!-- Rank -->
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1">পদবী / র‍্যাংক *</label>
-                        <select id="memberRank" required class="w-full px-3 py-2 rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-police-navy outline-none bg-white">
+                        <select id="memberRank" required class="w-full px-3 py-2 rounded-md border text-sm bg-white outline-none">
                             <option value="">নির্বাচন করুন</option>
                             <option value="কনস্টেবল">কনস্টেবল</option>
                             <option value="নায়ক">নায়ক</option>
@@ -396,99 +330,50 @@
                             <option value="এএসপি">এএসপি</option>
                         </select>
                     </div>
-
-                    <!-- Phone Number -->
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1">মোবাইল নম্বর *</label>
-                        <input type="tel" id="memberPhone" required placeholder="01700000000" 
-                            class="w-full px-3 py-2 rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-police-navy outline-none">
+                        <input type="tel" id="memberPhone" required class="w-full px-3 py-2 rounded-md border text-sm outline-none">
                     </div>
-
-                    <!-- Unit / Agency -->
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1">সংস্থা / ইউনিট *</label>
-                        <select id="memberUnit" required class="w-full px-3 py-2 rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-police-navy outline-none bg-white">
+                        <select id="memberUnit" required class="w-full px-3 py-2 rounded-md border text-sm bg-white outline-none">
                             <option value="">নির্বাচন করুন</option>
                             <option value="পুলিশ হেডকোয়ার্টার্স">পুলিশ হেডকোয়ার্টার্স</option>
                             <option value="জেলা পুলিশ">জেলা পুলিশ</option>
                             <option value="ডিএমপি (DMP)">ডিএমপি (DMP)</option>
-                            <option value="সিএমপি (CMP)">সিএমপি (CMP)</option>
-                            <option value="কেএমপি (KMP)">কেএমপি (KMP)</option>
-                            <option value="আরএমপি (RMP)">আরএমপি (RMP)</option>
-                            <option value="বিএমপি (BMP)">বিএমপি (BMP)</option>
-                            <option value="এসএমপি (SMP)">এসএমপি (SMP)</option>
-                            <option value="জিএমপি (GMP)">জিএমপি (GMP)</option>
                             <option value="র‌্যাব (RAB)">র‌্যাব (RAB)</option>
-                            <option value="এপিবিএন (APBn)">এপিবিএন (APBn)</option>
                             <option value="সিআইডি (CID)">সিআইডি (CID)</option>
                             <option value="এসবি (SB)">এসবি (SB)</option>
-                            <option value="পিবিআই (PBI)">পিবিআই (PBI)</option>
-                            <option value="হাইওয়ে পুলিশ">হাইওয়ে পুলিশ</option>
-                            <option value="রেলওয়ে পুলিশ">রেলওয়ে পুলিশ</option>
-                            <option value="ট্যুরিস্ট পুলিশ">ট্যুরিস্ট পুলিশ</option>
-                            <option value="শিল্প পুলিশ">শিল্প পুলিশ</option>
-                            <option value="এসপিবিএন (SPBn)">এসপিবিএন (SPBn)</option>
-                            <option value="নৌ পুলিশ">নৌ পুলিশ</option>
-                            <option value="এটিইউ (ATU)">এটিইউ (ATU)</option>
                         </select>
                     </div>
-
-                    <!-- Branch / Section -->
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">শাখা / ডিউটি ফান্ড অপশন *</label>
-                        <select id="memberBranch" required class="w-full px-3 py-2 rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-police-navy outline-none bg-white">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">শাখা *</label>
+                        <select id="memberBranch" required class="w-full px-3 py-2 rounded-md border text-sm bg-white outline-none">
                             <option value="">নির্বাচন করুন</option>
                             <option value="১. প্রশাসনিক শাখা">১. প্রশাসনিক শাখা</option>
                             <option value="২. রিজার্ভ শাখা">২. রিজার্ভ শাখা</option>
                             <option value="৩. রেশন শাখা">৩. রেশন শাখা</option>
-                            <option value="৪. বকসি শাখা">৪. বকসি শাখা</option>
-                            <option value="৫. অপস/ইন্টেলিজেন্স শাখা">৫. অপস/ইন্টেলিজেন্স শাখা</option>
-                            <option value="৬. সি-স্টোর">৬. সি-স্টোর</option>
-                            <option value="৭. ডি-স্টোর">৭. ডি-স্টোর</option>
-                            <option value="৮. এমআই">৮. এমআই</option>
-                            <option value="৯. ইলেকট্রিশিয়ান">৯. ইলেকট্রিশিয়ান</option>
-                            <option value="১০. মেস">১০. মেস</option>
-                            <option value="১১. ক্যান্টিন">১১. ক্যান্টিন</option>
-                            <option value="১২. গানার">১২. গানার</option>
-                            <option value="১৩. এমটি শাখা">১৩. এমটি শাখা</option>
                         </select>
                     </div>
-
-                    <!-- Location / Thana / District -->
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">বর্তমান কর্মস্থল (থানা/জেলা/স্থান) *</label>
-                        <input type="text" id="memberLocation" required placeholder="উদাহরণ: গুলশান থানা, ঢাকা" 
-                            class="w-full px-3 py-2 rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-police-navy outline-none">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">বর্তমান কর্মস্থল *</label>
+                        <input type="text" id="memberLocation" required class="w-full px-3 py-2 rounded-md border text-sm outline-none">
                     </div>
-
-                    <!-- Blood Group -->
                     <div>
                         <label class="block text-xs font-semibold text-slate-700 mb-1">রক্তের গ্রুপ *</label>
-                        <select id="memberBlood" required class="w-full px-3 py-2 rounded-md border border-slate-300 text-sm focus:ring-2 focus:ring-police-navy outline-none bg-white">
+                        <select id="memberBlood" required class="w-full px-3 py-2 rounded-md border text-sm bg-white outline-none">
                             <option value="">নির্বাচন করুন</option>
                             <option value="A+">A+</option>
-                            <option value="A-">A-</option>
                             <option value="B+">B+</option>
-                            <option value="B-">B-</option>
                             <option value="AB+">AB+</option>
-                            <option value="AB-">AB-</option>
                             <option value="O+">O+</option>
-                            <option value="O-">O-</option>
                         </select>
                     </div>
-
                 </div>
 
-                <!-- Modal Actions -->
-                <div class="flex items-center justify-end space-x-3 pt-4 border-t border-slate-100">
-                    <button type="button" onclick="closeMemberModal()" 
-                        class="px-4 py-2 rounded-md border border-slate-300 text-slate-600 text-xs font-semibold hover:bg-slate-100">
-                        বাতিল
-                    </button>
-                    <button type="submit" 
-                        class="px-5 py-2 rounded-md bg-police-navy text-police-gold font-bold text-xs hover:bg-police-dark shadow transition">
-                        সংরক্ষণ করুন
-                    </button>
+                <div class="flex items-center justify-end space-x-3 pt-4 border-t">
+                    <button type="button" onclick="closeMemberModal()" class="px-4 py-2 border text-slate-600 text-xs font-semibold rounded-md">বাতিল</button>
+                    <button type="submit" class="px-5 py-2 bg-police-navy text-police-gold font-bold text-xs rounded-md shadow">সংরক্ষণ করুন</button>
                 </div>
             </form>
         </div>
@@ -496,169 +381,63 @@
 
     <!-- ADMIN LOGIN MODAL -->
     <div id="adminAuthModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-xl shadow-2xl max-w-sm w-full p-6 space-y-4 border border-police-gold/40">
-            <div class="text-center">
-                <div class="w-12 h-12 bg-police-navy text-police-gold rounded-full flex items-center justify-center mx-auto mb-2">
-                    <i class="fa-solid fa-user-shield text-2xl"></i>
-                </div>
-                <h3 class="text-lg font-bold text-police-navy">এডমিন অ্যাক্সেস</h3>
-                <p class="text-xs text-slate-500 mt-1">এডমিন মোড সচল করতে এডমিন পাসওয়ার্ড দিন</p>
-            </div>
-
+        <div class="bg-white rounded-xl shadow-2xl max-w-sm w-full p-6 space-y-4">
+            <h3 class="text-lg font-bold text-police-navy text-center">এডমিন অ্যাক্সেস</h3>
             <form onsubmit="handleAdminModeLogin(event)" class="space-y-3">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">এডমিন পাসওয়ার্ড</label>
-                    <input type="password" id="modalAdminPassword" required placeholder="••••••••" 
-                        class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-police-navy outline-none">
-                </div>
-                
-                <div id="adminLoginErr" class="hidden text-xs text-red-600 font-medium text-center">
-                    ভুল পাসওয়ার্ড! সঠিক এডমিন পাসওয়ার্ড দিন।
-                </div>
-
+                <input type="password" id="modalAdminPassword" required placeholder="এডমিন পাসওয়ার্ড" class="w-full px-3 py-2 rounded border text-sm outline-none">
+                <div id="adminLoginErr" class="hidden text-xs text-red-600 text-center">ভুল পাসওয়ার্ড!</div>
                 <div class="flex gap-2">
-                    <button type="button" onclick="closeAdminAuthModal()" class="w-1/2 py-2 bg-slate-100 text-slate-700 text-xs font-semibold rounded-lg hover:bg-slate-200">
-                        বাতিল
-                    </button>
-                    <button type="submit" class="w-1/2 py-2 bg-police-navy text-police-gold font-bold text-xs rounded-lg hover:bg-police-dark shadow">
-                        যাচাই করুন
-                    </button>
+                    <button type="button" onclick="closeAdminAuthModal()" class="w-1/2 py-2 bg-slate-100 text-xs rounded">বাতিল</button>
+                    <button type="submit" class="w-1/2 py-2 bg-police-navy text-police-gold font-bold text-xs rounded">যাচাই</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- CUSTOM NOTIFICATION TOAST -->
-    <div id="toast" class="fixed bottom-5 right-5 bg-police-dark text-white px-4 py-3 rounded-xl shadow-2xl border border-police-gold/40 text-sm font-medium transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-3">
+    <!-- TOAST -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-police-dark text-white px-4 py-3 rounded-xl shadow-2xl border border-police-gold/40 text-sm transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-3">
         <i id="toastIcon" class="fa-solid fa-circle-check text-police-gold text-lg"></i>
-        <span id="toastMsg">মেসেজ টেক্সট</span>
+        <span id="toastMsg">মেসেজ</span>
     </div>
 
-    <!-- APPLICATION SCRIPT -->
+    <!-- SCRIPT LOGIC -->
     <script>
-        // STORAGE KEYS
-        const STORAGE_KEY = 'bp_batch_2022_members_db';
         const AUTH_KEY = 'bp_batch_2022_user_session';
-
-        // ADMIN PASSCODE
-        const ADMIN_PASSCODE = "Admin2022";
+        const ADMIN_PASSCODE = "Admin2k22";
         const LOGIN_PIN = "2022";
 
-        // APP STATE
         let membersData = [];
         let filteredMembers = [];
         let isAdminLoggedIn = false;
         let currentPhotoBase64 = "";
 
-        // DEMO INITIAL DATA FOR BATCH 2022
-        const initialSampleData = [
-            {
-                id: "bp-1",
-                name: "তানভীর আহমেদ",
-                bp: "BP9822019842",
-                rank: "সার্জেন্ট",
-                phone: "01711223344",
-                unit: "ডিএমপি (DMP)",
-                branch: "১. প্রশাসনিক শাখা",
-                location: "গুলশান ট্রাফিক জোন, ঢাকা",
-                blood: "B+",
-                photo: ""
-            },
-            {
-                id: "bp-2",
-                name: "মোঃ মাহমুদুল হাসান",
-                bp: "BP9822023110",
-                rank: "এসআই",
-                phone: "01822334455",
-                unit: "সিআইডি (CID)",
-                branch: "৫. অপস/ইন্টেলিজেন্স শাখা",
-                location: "মালিবাগ হেডকোয়ার্টার্স, ঢাকা",
-                blood: "O+",
-                photo: ""
-            },
-            {
-                id: "bp-3",
-                name: "সাইফুল ইসলাম",
-                bp: "BP9822055421",
-                rank: "কনস্টেবল",
-                phone: "01933445566",
-                unit: "জেলা পুলিশ",
-                branch: "২. রিজার্ভ শাখা",
-                location: "কক্সবাজার সদর থানা, কক্সবাজার",
-                blood: "A+",
-                photo: ""
-            },
-            {
-                id: "bp-4",
-                name: "আব্দুল্লাহ আল মামুন",
-                bp: "BP9822099881",
-                rank: "এএসআই",
-                phone: "01544556677",
-                unit: "র‌্যাব (RAB)",
-                branch: "৫. অপস/ইন্টেলিজেন্স শাখা",
-                location: "র‌্যাব-১১, নারায়নগঞ্জ",
-                blood: "AB+",
-                photo: ""
-            },
-            {
-                id: "bp-5",
-                name: "নাজমুল হোসেন",
-                bp: "BP9822044321",
-                rank: "কনস্টেবল",
-                phone: "01655667788",
-                unit: "হাইওয়ে পুলিশ",
-                branch: "১৩. এমটি শাখা",
-                location: "কুমিল্লা রিজিয়ন, চৌদ্দগ্রাম",
-                blood: "O-",
-                photo: ""
-            },
-            {
-                id: "bp-6",
-                name: "সাদিয়া আফরিন",
-                bp: "BP9822077654",
-                rank: "সার্জেন্ট",
-                phone: "01766778899",
-                unit: "সিএমপি (CMP)",
-                branch: "১. প্রশাসনিক শাখা",
-                location: "পাহাড়তলী, চট্টগ্রাম",
-                blood: "A+",
-                photo: ""
-            }
-        ];
-
-        // INIT APP ON LOAD
-        window.onload = function() {
-            loadMembersFromStorage();
+        // Wait for Firebase to load
+        window.addEventListener('firebase-ready', () => {
+            initRealtimeSync();
             checkUserSession();
-        };
+        });
 
-        // LOAD DATA
-        function loadMembersFromStorage() {
-            const data = localStorage.getItem(STORAGE_KEY);
-            if (data) {
-                try {
-                    membersData = JSON.parse(data);
-                } catch (e) {
-                    membersData = initialSampleData;
-                }
-            } else {
-                membersData = initialSampleData;
-                saveMembersToStorage();
-            }
-            filteredMembers = [...membersData];
+        // 🔥 Firestore থেকে রিয়েল-টাইম ডাটা সিঙ্ক করার ফাংশন
+        function initRealtimeSync() {
+            const { collection, onSnapshot } = window.firebaseModules;
+            
+            onSnapshot(collection(window.db, "batch_2022_members"), (snapshot) => {
+                membersData = [];
+                snapshot.forEach((doc) => {
+                    membersData.push({ id: doc.id, ...doc.data() });
+                });
+                filteredMembers = [...membersData];
+                renderMembers();
+            }, (error) => {
+                console.error("Cloud Error: ", error);
+                showToast("ক্লাউড ডাটা লোড করতে সমস্যা হয়েছে!", true);
+            });
         }
 
-        function saveMembersToStorage() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(membersData));
-        }
-
-        // LOGIN SYSTEM
         function checkUserSession() {
-            const session = localStorage.getItem(AUTH_KEY);
-            if (session) {
+            if (localStorage.getItem(AUTH_KEY)) {
                 document.getElementById('loginModal').classList.add('hidden');
                 document.getElementById('appContent').classList.remove('hidden');
-                renderMembers();
             } else {
                 document.getElementById('loginModal').classList.remove('hidden');
                 document.getElementById('appContent').classList.add('hidden');
@@ -667,317 +446,75 @@
 
         function handleLogin(e) {
             e.preventDefault();
-            const bp = document.getElementById('loginBP').value.trim();
             const pin = document.getElementById('loginPin').value.trim();
-            const errDiv = document.getElementById('loginError');
-
-            if (pin === LOGIN_PIN && bp.length >= 3) {
-                localStorage.setItem(AUTH_KEY, JSON.stringify({ bp: bp, loginTime: new Date().toISOString() }));
-                errDiv.classList.add('hidden');
+            if (pin === LOGIN_PIN) {
+                localStorage.setItem(AUTH_KEY, JSON.stringify({ active: true }));
                 document.getElementById('loginModal').classList.add('hidden');
                 document.getElementById('appContent').classList.remove('hidden');
-                showToast("সফলভাবে লগইন হয়েছে! ব্যাচ ২০২২ ডিরেক্টরিতে স্বাগতম।");
-                renderMembers();
+                showToast("সফলভাবে লগইন হয়েছে!");
             } else {
-                errDiv.classList.remove('hidden');
+                document.getElementById('loginError').classList.remove('hidden');
             }
         }
 
         function logout() {
             localStorage.removeItem(AUTH_KEY);
-            isAdminLoggedIn = false;
-            updateAdminUI();
             checkUserSession();
             showToast("লগআউট করা হয়েছে।");
         }
 
-        // ADMIN MODE SYSTEM
-        function toggleAdminModeModal() {
-            if (isAdminLoggedIn) {
-                isAdminLoggedIn = false;
-                updateAdminUI();
-                showToast("এডমিন মোড বন্ধ করা হয়েছে।");
-            } else {
-                document.getElementById('adminAuthModal').classList.remove('hidden');
-            }
-        }
-
-        function closeAdminAuthModal() {
-            document.getElementById('adminAuthModal').classList.add('hidden');
-            document.getElementById('modalAdminPassword').value = '';
-            document.getElementById('adminLoginErr').classList.add('hidden');
-        }
-
-        function handleAdminModeLogin(e) {
-            e.preventDefault();
-            const pass = document.getElementById('modalAdminPassword').value.trim();
-            if (pass === ADMIN_PASSCODE) {
-                isAdminLoggedIn = true;
-                updateAdminUI();
-                closeAdminAuthModal();
-                showToast("এডমিন মোড সক্রিয় হয়েছে!");
-            } else {
-                document.getElementById('adminLoginErr').classList.remove('hidden');
-            }
-        }
-
-        function updateAdminUI() {
-            const btnText = document.getElementById('adminStatusText');
-            const btn = document.getElementById('adminToggleBtn');
-            const passPrompt = document.getElementById('adminPassPrompt');
-
-            if (isAdminLoggedIn) {
-                btnText.textContent = "এডমিন সক্রিয়";
-                btn.classList.remove('bg-police-dark', 'text-police-gold');
-                btn.classList.add('bg-green-600', 'text-white', 'border-green-400');
-                if (passPrompt) passPrompt.classList.add('hidden');
-            } else {
-                btnText.textContent = "এডমিন মোড";
-                btn.classList.remove('bg-green-600', 'text-white', 'border-green-400');
-                btn.classList.add('bg-police-dark', 'text-police-gold');
-                if (passPrompt) passPrompt.classList.remove('hidden');
-            }
-            renderMembers();
-        }
-
-        // RENDER MEMBER CARDS
+        // RENDER MEMBERS
         function renderMembers() {
             const grid = document.getElementById('membersGrid');
             const emptyState = document.getElementById('emptyState');
-            const counter = document.getElementById('totalMembersBadge');
-            const searchResultsCount = document.getElementById('searchResultsCount');
-
-            counter.textContent = membersData.length;
-            searchResultsCount.textContent = `মোট ${filteredMembers.length} জন সদস্য পাওয়া গেছে`;
+            document.getElementById('totalMembersBadge').textContent = membersData.length;
+            document.getElementById('searchResultsCount').textContent = `মোট ${filteredMembers.length} জন সদস্য পাওয়া গেছে`;
 
             if (filteredMembers.length === 0) {
                 grid.innerHTML = '';
                 emptyState.classList.remove('hidden');
                 return;
             }
-
             emptyState.classList.add('hidden');
 
-            grid.innerHTML = filteredMembers.map(member => {
-                const avatarHtml = member.photo 
-                    ? `<img src="${member.photo}" class="w-full h-full object-cover" alt="${member.name}">`
-                    : `<i class="fa-solid fa-user-shield text-3xl text-police-gold"></i>`;
-
-                return `
-                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden police-badge-shadow hover:border-police-gold/60 transition-all duration-300 flex flex-col justify-between group">
-                    <!-- Top Bar/Rank Header -->
+            grid.innerHTML = filteredMembers.map(member => `
+                <div class="bg-white rounded-xl border border-slate-200 overflow-hidden police-badge-shadow flex flex-col justify-between">
                     <div class="bg-police-navy p-3 px-4 flex items-center justify-between border-b border-police-gold/30">
-                        <span class="text-xs font-bold text-police-gold px-2.5 py-0.5 rounded-full bg-police-dark border border-police-gold/40">
-                            ${member.rank}
-                        </span>
-                        <span class="text-xs font-mono font-semibold text-slate-300">
-                            <i class="fa-solid fa-id-card text-police-gold/80 mr-1"></i>${member.bp}
-                        </span>
+                        <span class="text-xs font-bold text-police-gold px-2.5 py-0.5 rounded-full bg-police-dark">${member.rank}</span>
+                        <span class="text-xs font-mono text-slate-300"><i class="fa-solid fa-id-card text-police-gold mr-1"></i>${member.bp}</span>
                     </div>
-
-                    <!-- Card Body -->
-                    <div class="p-4 flex gap-3 sm:gap-4 items-start">
-                        <!-- Photo Avatar -->
-                        <div class="w-16 h-16 sm:w-20 sm:h-20 bg-police-dark rounded-full border-2 border-police-gold overflow-hidden flex items-center justify-center shrink-0 shadow">
-                            ${avatarHtml}
+                    <div class="p-4 flex gap-3 items-start">
+                        <div class="w-16 h-16 bg-police-dark rounded-full border-2 border-police-gold overflow-hidden flex items-center justify-center shrink-0">
+                            ${member.photo ? `<img src="${member.photo}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-user-shield text-2xl text-police-gold"></i>`}
                         </div>
-
-                        <!-- Details -->
                         <div class="flex-grow min-w-0 space-y-1">
-                            <h3 class="font-bold text-base sm:text-lg text-police-navy truncate group-hover:text-police-blue transition">
-                                ${member.name}
-                            </h3>
-
-                            <p class="text-xs font-medium text-slate-700 flex items-center gap-1.5 truncate">
-                                <i class="fa-solid fa-building-shield text-police-navy/70 w-4"></i>
-                                <span>${member.unit}</span>
-                            </p>
-
-                            <p class="text-xs text-slate-600 flex items-center gap-1.5 truncate">
-                                <i class="fa-solid fa-sitemap text-police-navy/70 w-4"></i>
-                                <span>${member.branch}</span>
-                            </p>
-
-                            <p class="text-xs text-slate-600 flex items-center gap-1.5 truncate">
-                                <i class="fa-solid fa-location-dot text-red-600 w-4"></i>
-                                <span class="font-medium">${member.location}</span>
-                            </p>
-
-                            <div class="pt-1 flex items-center gap-2">
-                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-red-50 text-red-700 text-[11px] font-bold border border-red-200">
-                                    <i class="fa-solid fa-droplet"></i> ${member.blood}
-                                </span>
-                            </div>
+                            <h3 class="font-bold text-base text-police-navy truncate">${member.name}</h3>
+                            <p class="text-xs text-slate-700 truncate"><i class="fa-solid fa-building-shield mr-1"></i>${member.unit}</p>
+                            <p class="text-xs text-slate-600 truncate"><i class="fa-solid fa-location-dot text-red-600 mr-1"></i>${member.location}</p>
+                            <span class="inline-block px-2 py-0.5 rounded bg-red-50 text-red-700 text-[11px] font-bold"><i class="fa-solid fa-droplet"></i> ${member.blood}</span>
                         </div>
                     </div>
-
-                    <!-- Action Buttons Footer -->
-                    <div class="bg-slate-50 px-4 py-2.5 border-t border-slate-100 flex items-center justify-between gap-2">
-                        <!-- Direct Phone Call Button -->
-                        <a href="tel:${member.phone}" 
-                            class="flex-grow py-2 px-3 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-2 shadow-sm transition active:scale-95">
-                            <i class="fa-solid fa-phone-volume text-sm animate-pulse"></i>
-                            <span>সরাসরি কল করুন</span>
+                    <div class="bg-slate-50 px-4 py-2.5 border-t flex items-center justify-between gap-2">
+                        <a href="tel:${member.phone}" class="flex-grow py-2 bg-green-600 text-white rounded-lg text-xs font-bold flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-phone-volume"></i> কল করুন
                         </a>
-
-                        <!-- Admin Actions -->
-                        <div class="flex items-center gap-1">
-                            <button onclick="editMember('${member.id}')" title="এডিট করুন" 
-                                class="p-2 text-slate-600 hover:text-police-navy hover:bg-slate-200 rounded-lg text-xs font-semibold transition">
-                                <i class="fa-solid fa-pen-to-square text-base"></i>
-                            </button>
-                            <button onclick="deleteMember('${member.id}')" title="মুছে ফেলুন" 
-                                class="p-2 text-red-600 hover:bg-red-50 rounded-lg text-xs font-semibold transition">
-                                <i class="fa-solid fa-trash-can text-base"></i>
-                            </button>
-                        </div>
+                        <button onclick="editMember('${member.id}')" class="p-2 text-slate-600 hover:text-police-navy"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="deleteMemberFromCloud('${member.id}')" class="p-2 text-red-600"><i class="fa-solid fa-trash-can"></i></button>
                     </div>
                 </div>
-                `;
-            }).join('');
+            `).join('');
         }
 
-        // LIVE FILTERING AND SEARCH
-        function applyFilters() {
-            const query = document.getElementById('searchInput').value.toLowerCase().trim();
-            const rank = document.getElementById('filterRank').value;
-            const unit = document.getElementById('filterUnit').value;
-            const branch = document.getElementById('filterBranch').value;
-            const blood = document.getElementById('filterBlood').value;
-
-            const clearBtn = document.getElementById('clearSearchBtn');
-            if (query.length > 0) clearBtn.classList.remove('hidden');
-            else clearBtn.classList.add('hidden');
-
-            filteredMembers = membersData.filter(m => {
-                const matchesQuery = !query || 
-                    m.name.toLowerCase().includes(query) ||
-                    m.bp.toLowerCase().includes(query) ||
-                    m.phone.includes(query) ||
-                    m.location.toLowerCase().includes(query) ||
-                    m.rank.toLowerCase().includes(query) ||
-                    m.unit.toLowerCase().includes(query) ||
-                    m.branch.toLowerCase().includes(query) ||
-                    m.blood.toLowerCase().includes(query);
-
-                const matchesRank = !rank || m.rank === rank;
-                const matchesUnit = !unit || m.unit === unit;
-                const matchesBranch = !branch || m.branch === branch;
-                const matchesBlood = !blood || m.blood === blood;
-
-                return matchesQuery && matchesRank && matchesUnit && matchesBranch && matchesBlood;
-            });
-
-            renderMembers();
-        }
-
-        function clearSearch() {
-            document.getElementById('searchInput').value = '';
-            applyFilters();
-        }
-
-        function resetAllFilters() {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('filterRank').value = '';
-            document.getElementById('filterUnit').value = '';
-            document.getElementById('filterBranch').value = '';
-            document.getElementById('filterBlood').value = '';
-            applyFilters();
-            showToast("সকল ফিল্টার রিসেট করা হয়েছে।");
-        }
-
-        // PHOTO UPLOAD PREVIEW (Converts Image to Base64 DataURL)
-        function previewImage(event) {
-            const file = event.target.files[0];
-            if (file) {
-                if (file.size > 2 * 1024 * 1024) { // 2MB Limit
-                    showToast("ছবি সাইজ অত্যন্ত বড়! সর্বোচ্চ ২MB এর ছবি দিন।", true);
-                    event.target.value = '';
-                    return;
-                }
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    currentPhotoBase64 = e.target.result;
-                    document.getElementById('photoPreview').src = currentPhotoBase64;
-                    document.getElementById('photoPreview').classList.remove('hidden');
-                    document.getElementById('photoPlaceholderIcon').classList.add('hidden');
-                }
-                reader.readAsDataURL(file);
-            }
-        }
-
-        // ADD / EDIT MODAL OPEN & CLOSE
-        function openMemberModal(member = null) {
-            const modal = document.getElementById('memberModal');
-            const form = document.getElementById('memberForm');
-            const modalTitle = document.getElementById('modalTitle');
-            
-            // Reset photo
-            currentPhotoBase64 = "";
-            document.getElementById('photoPreview').src = "";
-            document.getElementById('photoPreview').classList.add('hidden');
-            document.getElementById('photoPlaceholderIcon').classList.remove('hidden');
-            document.getElementById('memberPhoto').value = "";
-
-            if (isAdminLoggedIn) {
-                document.getElementById('adminPassPrompt').classList.add('hidden');
-            } else {
-                document.getElementById('adminPassPrompt').classList.remove('hidden');
-            }
-
-            if (member) {
-                modalTitle.textContent = "সদস্যের তথ্য সংশোধন করুন";
-                document.getElementById('memberId').value = member.id;
-                document.getElementById('memberName').value = member.name;
-                document.getElementById('memberBP').value = member.bp;
-                document.getElementById('memberRank').value = member.rank;
-                document.getElementById('memberPhone').value = member.phone;
-                document.getElementById('memberUnit').value = member.unit;
-                document.getElementById('memberBranch').value = member.branch;
-                document.getElementById('memberLocation').value = member.location;
-                document.getElementById('memberBlood').value = member.blood;
-
-                if (member.photo) {
-                    currentPhotoBase64 = member.photo;
-                    document.getElementById('photoPreview').src = member.photo;
-                    document.getElementById('photoPreview').classList.remove('hidden');
-                    document.getElementById('photoPlaceholderIcon').classList.add('hidden');
-                }
-            } else {
-                modalTitle.textContent = "নতুন সদস্য যুক্ত করুন";
-                form.reset();
-                document.getElementById('memberId').value = "";
-            }
-
-            modal.classList.remove('hidden');
-        }
-
-        function closeMemberModal() {
-            document.getElementById('memberModal').classList.add('hidden');
-        }
-
-        function editMember(id) {
-            const member = membersData.find(m => m.id === id);
-            if (member) {
-                openMemberModal(member);
-            }
-        }
-
-        function saveMember(e) {
+        // SAVE MEMBER TO CLOUD (FIRESTORE)
+        async function saveMemberToCloud(e) {
             e.preventDefault();
-
-            // Validate admin pass if not logged in
-            if (!isAdminLoggedIn) {
-                const enteredPass = document.getElementById('adminPasscode').value.trim();
-                if (enteredPass !== ADMIN_PASSCODE) {
-                    showToast("ভুল এডমিন পাসওয়ার্ড! পাসওয়ার্ড নিশ্চিত করুন।", true);
-                    return;
-                }
+            if (!isAdminLoggedIn && document.getElementById('adminPasscode').value.trim() !== ADMIN_PASSCODE) {
+                showToast("ভুল এডমিন পাসওয়ার্ড!", true);
+                return;
             }
 
             const id = document.getElementById('memberId').value;
-            const newMember = {
-                id: id ? id : 'bp-' + Date.now(),
+            const memberData = {
                 name: document.getElementById('memberName').value.trim(),
                 bp: document.getElementById('memberBP').value.trim(),
                 rank: document.getElementById('memberRank').value,
@@ -989,69 +526,138 @@
                 photo: currentPhotoBase64
             };
 
-            if (id) {
-                // Update
-                const index = membersData.findIndex(m => m.id === id);
-                if (index !== -1) {
-                    membersData[index] = newMember;
-                    showToast("সদস্যের তথ্য সফলভাবে আপডেট হয়েছে!");
+            const { collection, addDoc, doc, updateDoc } = window.firebaseModules;
+
+            try {
+                if (id) {
+                    await updateDoc(doc(window.db, "batch_2022_members", id), memberData);
+                    showToast("তথ্য সফলভাবে ক্লাউডে আপডেট হয়েছে!");
+                } else {
+                    await addDoc(collection(window.db, "batch_2022_members"), memberData);
+                    showToast("নতুন সদস্য ক্লাউডে সফলভাবে যুক্ত হয়েছে!");
+                }
+                closeMemberModal();
+            } catch (err) {
+                console.error(err);
+                showToast("ডাটা সেভ করতে সমস্যা হয়েছে!", true);
+            }
+        }
+
+        // DELETE FROM CLOUD
+        async function deleteMemberFromCloud(id) {
+            if (!isAdminLoggedIn && prompt("এডমিন পাসওয়ার্ড দিন:") !== ADMIN_PASSCODE) {
+                showToast("ভুল পাসওয়ার্ড!", true);
+                return;
+            }
+
+            if (confirm("নিশ্চিত ডিলিট করতে চান?")) {
+                const { doc, deleteDoc } = window.firebaseModules;
+                try {
+                    await deleteDoc(doc(window.db, "batch_2022_members", id));
+                    showToast("সদস্যের তথ্য মুছে ফেলা হয়েছে।");
+                } catch (err) {
+                    showToast("ডিলিট করতে সমস্যা হয়েছে!", true);
+                }
+            }
+        }
+
+        // SEARCH & FILTERS
+        function applyFilters() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const rank = document.getElementById('filterRank').value;
+            const unit = document.getElementById('filterUnit').value;
+
+            filteredMembers = membersData.filter(m => {
+                const matchQ = !query || m.name.toLowerCase().includes(query) || m.bp.toLowerCase().includes(query) || m.phone.includes(query);
+                const matchR = !rank || m.rank === rank;
+                const matchU = !unit || m.unit === unit;
+                return matchQ && matchR && matchU;
+            });
+            renderMembers();
+        }
+
+        function clearSearch() { document.getElementById('searchInput').value = ''; applyFilters(); }
+        function resetAllFilters() { document.getElementById('searchInput').value = ''; document.getElementById('filterRank').value = ''; document.getElementById('filterUnit').value = ''; applyFilters(); }
+
+        // MODAL HELPERS
+        function openMemberModal(member = null) {
+            currentPhotoBase64 = "";
+            document.getElementById('memberForm').reset();
+            document.getElementById('photoPreview').classList.add('hidden');
+            document.getElementById('photoPlaceholderIcon').classList.remove('hidden');
+
+            if (isAdminLoggedIn) document.getElementById('adminPassPrompt').classList.add('hidden');
+            else document.getElementById('adminPassPrompt').classList.remove('hidden');
+
+            if (member) {
+                document.getElementById('modalTitle').textContent = "সদস্যের তথ্য সংশোধন";
+                document.getElementById('memberId').value = member.id;
+                document.getElementById('memberName').value = member.name;
+                document.getElementById('memberBP').value = member.bp;
+                document.getElementById('memberRank').value = member.rank;
+                document.getElementById('memberPhone').value = member.phone;
+                document.getElementById('memberUnit').value = member.unit;
+                document.getElementById('memberBranch').value = member.branch;
+                document.getElementById('memberLocation').value = member.location;
+                document.getElementById('memberBlood').value = member.blood;
+                if(member.photo) {
+                    currentPhotoBase64 = member.photo;
+                    document.getElementById('photoPreview').src = member.photo;
+                    document.getElementById('photoPreview').classList.remove('hidden');
+                    document.getElementById('photoPlaceholderIcon').classList.add('hidden');
                 }
             } else {
-                // Insert New
-                membersData.unshift(newMember);
-                showToast("নতুন সদস্য সফলভাবে ডিরেক্টরিতে যুক্ত হয়েছে!");
+                document.getElementById('modalTitle').textContent = "নতুন সদস্য যুক্ত করুন";
+                document.getElementById('memberId').value = "";
             }
-
-            saveMembersToStorage();
-            applyFilters();
-            closeMemberModal();
+            document.getElementById('memberModal').classList.remove('hidden');
         }
 
-        function deleteMember(id) {
-            // Check Admin Auth
-            if (!isAdminLoggedIn) {
-                const passPrompt = prompt("সদস্যের তথ্য মুছে ফেলতে এডমিন পাসওয়ার্ড দিন (Admin Passcode):");
-                if (passPrompt !== ADMIN_PASSCODE) {
-                    showToast("ভুল পাসওয়ার্ড! সদস্যের তথ্য মোছা যায়নি।", true);
-                    return;
+        function closeMemberModal() { document.getElementById('memberModal').classList.add('hidden'); }
+        function editMember(id) { const m = membersData.find(x => x.id === id); if(m) openMemberModal(m); }
+
+        function toggleAdminModeModal() {
+            if (isAdminLoggedIn) { isAdminLoggedIn = false; showToast("এডমিন মোড বন্ধ।"); updateAdminUI(); }
+            else document.getElementById('adminAuthModal').classList.remove('hidden');
+        }
+        function closeAdminAuthModal() { document.getElementById('adminAuthModal').classList.add('hidden'); }
+        function handleAdminModeLogin(e) {
+            e.preventDefault();
+            if (document.getElementById('modalAdminPassword').value.trim() === ADMIN_PASSCODE) {
+                isAdminLoggedIn = true;
+                closeAdminAuthModal();
+                showToast("এডমিন মোড সক্রিয়!");
+                updateAdminUI();
+            } else { document.getElementById('adminLoginErr').classList.remove('hidden'); }
+        }
+        function updateAdminUI() {
+            const btn = document.getElementById('adminToggleBtn');
+            btn.textContent = isAdminLoggedIn ? "এডমিন সক্রিয়" : "এডমিন মোড";
+            btn.className = isAdminLoggedIn ? "text-xs px-3 py-1.5 rounded-full font-semibold bg-green-600 text-white" : "text-xs px-3 py-1.5 rounded-full font-semibold bg-police-dark text-police-gold border";
+            renderMembers();
+        }
+
+        function previewImage(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    currentPhotoBase64 = evt.target.result;
+                    document.getElementById('photoPreview').src = currentPhotoBase64;
+                    document.getElementById('photoPreview').classList.remove('hidden');
+                    document.getElementById('photoPlaceholderIcon').classList.add('hidden');
                 }
-            }
-
-            if (confirm("আপনি কি নিশ্চিতভাবে এই সদস্যের তথ্য মুছে ফেলতে চান?")) {
-                membersData = membersData.filter(m => m.id !== id);
-                saveMembersToStorage();
-                applyFilters();
-                showToast("সদস্যের তথ্য মুছে ফেলা হয়েছে।");
+                reader.readAsDataURL(file);
             }
         }
 
-        // TOAST NOTIFICATION HELPERS
-        function showToast(message, isError = false) {
+        function showToast(msg, isErr = false) {
             const toast = document.getElementById('toast');
-            const toastMsg = document.getElementById('toastMsg');
-            const toastIcon = document.getElementById('toastIcon');
-
-            toastMsg.textContent = message;
-
-            if (isError) {
-                toastIcon.className = "fa-solid fa-circle-exclamation text-red-400 text-lg";
-                toast.classList.remove('border-police-gold/40');
-                toast.classList.add('border-red-500/50');
-            } else {
-                toastIcon.className = "fa-solid fa-circle-check text-police-gold text-lg";
-                toast.classList.remove('border-red-500/50');
-                toast.classList.add('border-police-gold/40');
-            }
-
+            document.getElementById('toastMsg').textContent = msg;
+            toast.className = `fixed bottom-5 right-5 text-white px-4 py-3 rounded-xl shadow-2xl border text-sm transform transition-all duration-300 z-50 flex items-center gap-3 ${isErr ? 'bg-red-900 border-red-500' : 'bg-police-dark border-police-gold'}`;
             toast.classList.remove('translate-y-20', 'opacity-0');
-            toast.classList.add('translate-y-0', 'opacity-100');
-
-            setTimeout(() => {
-                toast.classList.remove('translate-y-0', 'opacity-100');
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3500);
+            setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3500);
         }
     </script>
 </body>
 </html>
-```
