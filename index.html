@@ -781,7 +781,7 @@
             showToast('সকল ফিল্টার রিসেট করা হয়েছে');
         }
 
-        // Save or Update Member Profile (Fixed for multiple independent entries)
+        // Save or Update Member Profile (Fixed with .add() for independent new entries)
         function saveMember(e) {
             e.preventDefault();
 
@@ -813,7 +813,6 @@
                         closeModal('memberFormModal');
                     });
                 } else {
-                    // Using .add() ensures a unique new entry is created every time without conflicts
                     db.collection("members").add(memberPayload).then(() => {
                         showToast('অ্যাডমিন কর্তৃক নতুন সদস্য সফলভাবে যুক্ত হয়েছে!');
                         closeModal('memberFormModal');
@@ -822,7 +821,6 @@
                     });
                 }
             } else {
-                // Regular member submission goes to pending queue safely using .add()
                 db.collection("pending_members").add(memberPayload).then(() => {
                     showToast('আপনার প্রোফাইল জমা হয়েছে! অ্যাডমিন অনুমোদনের পর তা ডিরেক্টরিতে দেখাবে।');
                     closeModal('memberFormModal');
@@ -919,28 +917,19 @@
             });
         }
 
+        // Fixed approvePending function using .add() to prevent overriding
         function approvePending(id) {
             const item = pendingData.find(p => (p.id && p.id === id) || pendingData.indexOf(p).toString() === id);
             if (!item) return;
 
             if (isFirebaseActive && db) {
-                db.collection("members").where("bp", "==", item.bp).get().then((querySnapshot) => {
-                    if (!querySnapshot.empty) {
-                        const docId = querySnapshot.docs[0].id;
-                        db.collection("members").doc(docId).update(item).then(() => {
-                            db.collection("pending_members").doc(id).delete().then(() => {
-                                showToast('প্রোফাইল আপডেট সফলভাবে এপ্রুভ হয়েছে!');
-                                openAdminPendingModal();
-                            });
-                        });
-                    } else {
-                        db.collection("members").add(item).then(() => {
-                            db.collection("pending_members").doc(id).delete().then(() => {
-                                showToast('নতুন প্রোফাইল সফলভাবে এপ্রুভ করা হয়েছে!');
-                                openAdminPendingModal();
-                            });
-                        });
-                    }
+                db.collection("members").add(item).then(() => {
+                    db.collection("pending_members").doc(id).delete().then(() => {
+                        showToast('নতুন প্রোফাইল সফলভাবে এপ্রুভ করা হয়েছে!');
+                        openAdminPendingModal();
+                    });
+                }).catch(err => {
+                    showToast('এপ্রুভ করতে সমস্যা হয়েছে: ' + err.message, true);
                 });
             }
         }
