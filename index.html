@@ -111,6 +111,12 @@
                     <span class="hidden sm:inline" id="submitBtnText">প্রোফাইল জমা দিন</span>
                 </button>
 
+                <!-- Edit My Profile Button (For Logged-in Members) -->
+                <button id="editMyProfileNavBtn" onclick="openEditMyProfileModal()" class="hidden px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-lg transition-all flex items-center gap-1.5">
+                    <i class="fa-solid fa-user-pen"></i>
+                    <span class="hidden sm:inline">আমার প্রোফাইল এডিট</span>
+                </button>
+
                 <!-- Admin Pending Approvals Button -->
                 <button id="adminPendingBtn" onclick="openAdminPendingModal()" class="hidden px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl shadow-lg transition-all flex items-center gap-1.5">
                     <i class="fa-solid fa-user-clock"></i>
@@ -136,7 +142,7 @@
                     <i class="fa-solid fa-shield-halved"></i>
                 </div>
                 <h2 class="text-xl sm:text-2xl font-bold text-white font-bangla">বাংলাদেশ পুলিশ ব্যাচ ২০২২ ডিরেক্টরিতে স্বাগতম</h2>
-                <p class="text-xs sm:text-sm text-gray-300">তথ্য দেখতে এবং আপনার প্রোফাইল যুক্ত করতে অনুগ্রহ করে ব্যাচ পিন (`২০২২`) দিয়ে লগইন করুন।</p>
+                <p class="text-xs sm:text-sm text-gray-300">তথ্য দেখতে এবং আপনার প্রোফাইল যুক্ত করতে অনুগ্রহ করে আপনার বিপি নম্বর ও পিন (`২০২২`) দিয়ে লগইন করুন।</p>
                 <button onclick="openLoginModal()" class="px-6 py-3 bg-police-accent hover:bg-police-gold text-slate-950 font-bold rounded-xl shadow-xl transition-all text-sm inline-flex items-center gap-2">
                     <i class="fa-solid fa-key"></i> পিন দিয়ে প্রবেশ করুন
                 </button>
@@ -347,8 +353,8 @@
             <!-- Member PIN Form -->
             <form id="memberLoginForm" onsubmit="handleMemberLogin(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-medium text-gray-300 mb-1">বিপি নম্বর (BP Number)</label>
-                    <input type="text" id="loginBpNumber" required placeholder="উদাহরণ: BP2022XXXX" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-police-accent outline-none">
+                    <label class="block text-xs font-medium text-gray-300 mb-1">বিপি নম্বর (BP Number) *</label>
+                    <input type="text" id="loginBpNumber" required placeholder="উদাহরণ: BP2022XXXX" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-police-accent outline-none uppercase">
                 </div>
                 <div>
                     <label class="block text-xs font-medium text-gray-300 mb-1">লগইন পিন (PIN) *</label>
@@ -417,7 +423,7 @@
 
                     <div>
                         <label class="block text-xs font-medium text-gray-300 mb-1">বিপি নম্বর (BP No.) *</label>
-                        <input type="text" id="memberBp" required placeholder="BP2022..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
+                        <input type="text" id="memberBp" required placeholder="BP2022..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none uppercase">
                     </div>
 
                     <div>
@@ -522,7 +528,7 @@
                     <button type="button" onclick="closeModal('memberFormModal')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-xs text-gray-300 font-semibold rounded-xl transition-all">
                         বাতিল
                     </button>
-                    <button type="submit" class="px-6 py-2 bg-police-accent hover:bg-police-gold text-slate-950 font-bold text-xs rounded-xl shadow-lg transition-all">
+                    <button type="submit" id="formSubmitBtn" class="px-6 py-2 bg-police-accent hover:bg-police-gold text-slate-950 font-bold text-xs rounded-xl shadow-lg transition-all">
                         অনুমোদনের জন্য জমা দিন
                     </button>
                 </div>
@@ -568,6 +574,7 @@
         let membersData = [];
         let pendingData = [];
         let currentUserRole = 'guest'; // 'guest', 'member', 'admin'
+        let loggedInBpNumber = '';
         let memberImageBase64 = '';
 
         window.onload = function() {
@@ -596,7 +603,6 @@
         function subscribeToCloudStorage() {
             if (!db) return;
             
-            // Listen to Approved Members
             db.collection("members").onSnapshot((snapshot) => {
                 const cloudMembers = [];
                 snapshot.forEach((doc) => {
@@ -606,7 +612,6 @@
                 renderMembersGrid();
             });
 
-            // Listen to Pending Approvals
             db.collection("pending_members").onSnapshot((snapshot) => {
                 const cloudPending = [];
                 snapshot.forEach((doc) => {
@@ -686,7 +691,7 @@
 
             filtered.forEach(m => {
                 const card = document.createElement('div');
-                card.className = "glass-card rounded-2xl p-5 border border-police-accent/20 hover:border-police-accent/60 transition-all duration-300 shadow-xl flex flex-col justify-between relative group";
+                card.className = "glass-card rounded-2xl p-5 border border-police-accent/25 hover:border-police-accent/60 transition-all duration-300 shadow-xl flex flex-col justify-between relative group";
                 
                 const photoSrc = m.photo ? m.photo : `https://placehold.co/120x120/0b192c/fbbf24?text=${encodeURIComponent((m.name || 'P').charAt(0))}`;
 
@@ -776,12 +781,13 @@
             showToast('সকল ফিল্টার রিসেট করা হয়েছে');
         }
 
-        // Save Member Profile (Sends to Pending if regular member, or direct if admin)
+        // Save or Update Member Profile
         function saveMember(e) {
             e.preventDefault();
 
+            const editId = document.getElementById('editMemberId').value.trim();
             const name = document.getElementById('memberName').value.trim();
-            const bp = document.getElementById('memberBp').value.trim();
+            const bp = document.getElementById('memberBp').value.trim().toUpperCase();
             const rank = document.getElementById('memberRank').value;
             const unit = document.getElementById('memberUnit').value;
             const branch = document.getElementById('memberBranch').value;
@@ -801,29 +807,70 @@
             }
 
             if (currentUserRole === 'admin') {
-                // Admin directly adds to main members
-                if (isFirebaseActive && db) {
+                if (editId) {
+                    db.collection("members").doc(editId).update(memberPayload).then(() => {
+                        showToast('সদস্যের তথ্য সফলভাবে আপডেট হয়েছে!');
+                        closeModal('memberFormModal');
+                    });
+                } else {
                     db.collection("members").add(memberPayload).then(() => {
                         showToast('অ্যাডমিন কর্তৃক সদস্য সফলভাবে যুক্ত হয়েছে!');
                         closeModal('memberFormModal');
                     });
                 }
             } else {
-                // Regular member submission goes to pending queue
-                if (isFirebaseActive && db) {
-                    db.collection("pending_members").add(memberPayload).then(() => {
-                        showToast('আপনার প্রোফাইল জমা হয়েছে! অ্যাডমিন অনুমোদনের পর তা ডিরেক্টরিতে দেখাবে।');
-                        closeModal('memberFormModal');
-                    });
-                } else {
-                    memberPayload.id = Date.now().toString();
-                    pendingData.push(memberPayload);
-                    saveLocalData();
-                    updatePendingCounter();
-                    showToast('অনুমোদনের জন্য জমা দেওয়া হয়েছে!');
+                // If member updates their own profile, send to pending for admin check or update directly if allowed
+                db.collection("pending_members").add(memberPayload).then(() => {
+                    showToast('আপনার প্রোফাইল আপডেট রিকোয়েস্ট জমা হয়েছে! অ্যাডমিন অনুমোদনের পর তা আপডেট হবে।');
                     closeModal('memberFormModal');
-                }
+                });
             }
+        }
+
+        // Open Modal to Add New Profile
+        function openAddMemberModal() {
+            document.getElementById('editMemberId').value = '';
+            document.getElementById('memberDataForm').reset();
+            document.getElementById('memberBp').disabled = false;
+            document.getElementById('photoPreviewBox').innerHTML = `<i class="fa-solid fa-user text-2xl text-gray-500"></i>`;
+            document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-user-plus"></i> নতুন প্রোফাইল জমা দিন`;
+            document.getElementById('formSubmitBtn').innerText = 'অনুমোদনের জন্য জমা দিন';
+            memberImageBase64 = '';
+            openModal('memberFormModal');
+        }
+
+        // Open Modal to Edit Logged-in Member's Profile
+        function openEditMyProfileModal() {
+            const found = membersData.find(m => m.bp.toUpperCase() === loggedInBpNumber.toUpperCase());
+            if (!found) {
+                showToast('আপনার বিপি নম্বরের কোনো প্রকাশিত প্রোফাইল ডিরেক্টরিতে পাওয়া যায়নি। নতুন প্রোফাইল যোগ করুন।', true);
+                openAddMemberModal();
+                return;
+            }
+
+            document.getElementById('editMemberId').value = found.id;
+            document.getElementById('memberName').value = found.name || '';
+            document.getElementById('memberBp').value = found.bp || '';
+            document.getElementById('memberBp').disabled = true; // BP cannot be changed
+            document.getElementById('memberRank').value = found.rank || 'কনস্টেবল';
+            document.getElementById('memberUnit').value = found.unit || 'পুলিশ হেডকোয়ার্টার্স';
+            document.getElementById('memberBranch').value = found.branch || 'প্রশাসনিক শাখা';
+            document.getElementById('memberBlood').value = found.blood || 'A+';
+            document.getElementById('memberLocation').value = found.location || '';
+            document.getElementById('memberPhone').value = found.phone || '';
+            document.getElementById('memberWhatsapp').value = found.whatsapp || '';
+            document.getElementById('memberFacebook').value = found.facebook || '';
+
+            memberImageBase64 = found.photo || '';
+            if (found.photo) {
+                document.getElementById('photoPreviewBox').innerHTML = `<img src="${found.photo}" class="w-full h-full object-cover">`;
+            } else {
+                document.getElementById('photoPreviewBox').innerHTML = `<i class="fa-solid fa-user text-2xl text-gray-500"></i>`;
+            }
+
+            document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-user-pen"></i> আমার প্রোফাইল এডিট করুন`;
+            document.getElementById('formSubmitBtn').innerText = 'আপডেট রিকোয়েস্ট জমা দিন';
+            openModal('memberFormModal');
         }
 
         // Admin Approval Actions
@@ -875,11 +922,24 @@
             if (!item) return;
 
             if (isFirebaseActive && db) {
-                db.collection("members").add(item).then(() => {
-                    db.collection("pending_members").doc(id).delete().then(() => {
-                        showToast('প্রোফাইল সফলভাবে এপ্রুভ করা হয়েছে!');
-                        openAdminPendingModal();
-                    });
+                // Check if member with same BP already exists to update instead of duplicate
+                db.collection("members").where("bp", "==", item.bp).get().then((querySnapshot) => {
+                    if (!querySnapshot.empty) {
+                        const docId = querySnapshot.docs[0].id;
+                        db.collection("members").doc(docId).update(item).then(() => {
+                            db.collection("pending_members").doc(id).delete().then(() => {
+                                showToast('প্রোফাইল আপডেট সফলভাবে এপ্রুভ হয়েছে!');
+                                openAdminPendingModal();
+                            });
+                        });
+                    } else {
+                        db.collection("members").add(item).then(() => {
+                            db.collection("pending_members").doc(id).delete().then(() => {
+                                showToast('নতুন প্রোফাইল সফলভাবে এপ্রুভ করা হয়েছে!');
+                                openAdminPendingModal();
+                            });
+                        });
+                    }
                 });
             }
         }
@@ -935,7 +995,9 @@
         function openLoginModal() {
             if (currentUserRole !== 'guest') {
                 currentUserRole = 'guest';
+                loggedInBpNumber = '';
                 sessionStorage.removeItem('POLICE_USER_ROLE');
+                sessionStorage.removeItem('POLICE_LOGGED_BP');
                 checkSessionState();
                 showToast('লগআউট করা হয়েছে');
                 return;
@@ -964,10 +1026,14 @@
 
         function handleMemberLogin(e) {
             e.preventDefault();
+            const bpInput = document.getElementById('loginBpNumber').value.trim().toUpperCase();
             const pin = document.getElementById('loginPin').value.trim();
+
             if (pin === '2022' || pin === '২০২২') {
                 currentUserRole = 'member';
+                loggedInBpNumber = bpInput;
                 sessionStorage.setItem('POLICE_USER_ROLE', 'member');
+                sessionStorage.setItem('POLICE_LOGGED_BP', bpInput);
                 checkSessionState();
                 closeModal('loginModal');
                 showToast('সদস্য পিন ভেরিফাইড! ডিরেক্টরি উন্মুক্ত।');
@@ -992,10 +1058,13 @@
 
         function checkSessionState() {
             const savedRole = sessionStorage.getItem('POLICE_USER_ROLE');
+            const savedBp = sessionStorage.getItem('POLICE_LOGGED_BP');
             if (savedRole) currentUserRole = savedRole;
+            if (savedBp) loggedInBpNumber = savedBp;
 
             const authBtnText = document.getElementById('authBtnText');
             const addMemberBtn = document.getElementById('addMemberBtn');
+            const editMyProfileNavBtn = document.getElementById('editMyProfileNavBtn');
             const userRoleText = document.getElementById('userRoleText');
             const lockedScreen = document.getElementById('lockedStateScreen');
             const unlockedApp = document.getElementById('unlockedAppContainer');
@@ -1013,27 +1082,22 @@
                     userRoleText.innerText = 'অ্যাডমিন মোড (এপ্রুভাল ও ডিলিট সক্রিয়)';
                     userRoleText.className = "text-xs px-2.5 py-1 rounded-lg bg-red-600/20 text-red-400 border border-red-600/40 font-semibold";
                     submitBtnText.innerText = 'সরাসরি সদস্য যোগ করুন';
+                    editMyProfileNavBtn.classList.add('hidden');
                 } else {
                     authBtnText.innerText = 'লগআউট';
-                    userRoleText.innerText = 'ব্যাচমেট সদস্য এক্সেস (ভেরিফাইড)';
+                    userRoleText.innerText = `ব্যাচমেট সদস্য (${loggedInBpNumber})`;
                     userRoleText.className = "text-xs px-2.5 py-1 rounded-lg bg-police-accent/20 text-police-gold border border-police-accent/40 font-semibold";
-                    submitBtnText.innerText = 'নিজের প্রোফাইল জমা দিন';
+                    submitBtnText.innerText = 'নতুন প্রোফাইল জমা দিন';
+                    editMyProfileNavBtn.classList.remove('hidden');
                 }
             } else {
                 lockedScreen.classList.remove('hidden');
                 unlockedApp.classList.add('hidden');
                 addMemberBtn.classList.add('hidden');
+                editMyProfileNavBtn.classList.add('hidden');
                 document.getElementById('adminPendingBtn').classList.add('hidden');
                 authBtnText.innerText = 'লগইন করুন';
             }
-        }
-
-        function openAddMemberModal() {
-            document.getElementById('editMemberId').value = '';
-            document.getElementById('memberDataForm').reset();
-            document.getElementById('photoPreviewBox').innerHTML = `<i class="fa-solid fa-user text-2xl text-gray-500"></i>`;
-            memberImageBase64 = '';
-            openModal('memberFormModal');
         }
 
         function showToast(msg, isError = false) {
