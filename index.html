@@ -111,8 +111,8 @@
                     <span class="hidden sm:inline" id="submitBtnText">প্রোফাইল জমা দিন</span>
                 </button>
 
-                <!-- Edit My Profile Button (For Logged-in Members) -->
-                <button id="editMyProfileNavBtn" onclick="openEditMyProfileModal()" class="hidden px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-lg transition-all flex items-center gap-1.5">
+                <!-- Edit My Profile Button -->
+                <button id="editMyProfileNavBtn" onclick="openEditMyProfileModal()" class="hidden px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-lg transition-all flex items-center gap-1.5">
                     <i class="fa-solid fa-user-pen"></i>
                     <span class="hidden sm:inline">আমার প্রোফাইল এডিট</span>
                 </button>
@@ -142,7 +142,7 @@
                     <i class="fa-solid fa-shield-halved"></i>
                 </div>
                 <h2 class="text-xl sm:text-2xl font-bold text-white font-bangla">বাংলাদেশ পুলিশ ব্যাচ ২০২২ ডিরেক্টরিতে স্বাগতম</h2>
-                <p class="text-xs sm:text-sm text-gray-300">তথ্য দেখতে এবং আপনার প্রোফাইল যুক্ত করতে অনুগ্রহ করে আপনার বিপি নম্বর ও পিন (`২০২২`) দিয়ে লগইন করুন।</p>
+                <p class="text-xs sm:text-sm text-gray-300">তথ্য দেখতে এবং আপনার প্রোফাইল যুক্ত করতে অনুগ্রহ করে ব্যাচ পিন (`২০২২`) দিয়ে লগইন করুন।</p>
                 <button onclick="openLoginModal()" class="px-6 py-3 bg-police-accent hover:bg-police-gold text-slate-950 font-bold rounded-xl shadow-xl transition-all text-sm inline-flex items-center gap-2">
                     <i class="fa-solid fa-key"></i> পিন দিয়ে প্রবেশ করুন
                 </button>
@@ -691,7 +691,7 @@
 
             filtered.forEach(m => {
                 const card = document.createElement('div');
-                card.className = "glass-card rounded-2xl p-5 border border-police-accent/25 hover:border-police-accent/60 transition-all duration-300 shadow-xl flex flex-col justify-between relative group";
+                card.className = "glass-card rounded-2xl p-5 border border-police-accent/20 hover:border-police-accent/60 transition-all duration-300 shadow-xl flex flex-col justify-between relative group";
                 
                 const photoSrc = m.photo ? m.photo : `https://placehold.co/120x120/0b192c/fbbf24?text=${encodeURIComponent((m.name || 'P').charAt(0))}`;
 
@@ -819,15 +819,15 @@
                     });
                 }
             } else {
-                // If member updates their own profile, send to pending for admin check or update directly if allowed
+                // Member submission goes to pending for approval
                 db.collection("pending_members").add(memberPayload).then(() => {
-                    showToast('আপনার প্রোফাইল আপডেট রিকোয়েস্ট জমা হয়েছে! অ্যাডমিন অনুমোদনের পর তা আপডেট হবে।');
+                    showToast('আপনার প্রোফাইল আপডেট/জমা রিকোয়েস্ট পাঠানো হয়েছে! অ্যাডমিন অনুমোদনের পর তা আপডেট হবে।');
                     closeModal('memberFormModal');
                 });
             }
         }
 
-        // Open Modal to Add New Profile
+        // Open Add Modal
         function openAddMemberModal() {
             document.getElementById('editMemberId').value = '';
             document.getElementById('memberDataForm').reset();
@@ -839,11 +839,11 @@
             openModal('memberFormModal');
         }
 
-        // Open Modal to Edit Logged-in Member's Profile
+        // Open Edit My Profile Modal (Based on Logged-in BP)
         function openEditMyProfileModal() {
             const found = membersData.find(m => m.bp.toUpperCase() === loggedInBpNumber.toUpperCase());
             if (!found) {
-                showToast('আপনার বিপি নম্বরের কোনো প্রকাশিত প্রোফাইল ডিরেক্টরিতে পাওয়া যায়নি। নতুন প্রোফাইল যোগ করুন।', true);
+                showToast('আপনার বিপি নম্বরের কোনো প্রকাশিত প্রোফাইল ডিরেক্টরিতে নেই। নতুন প্রোফাইল যোগ করুন।', true);
                 openAddMemberModal();
                 return;
             }
@@ -851,7 +851,7 @@
             document.getElementById('editMemberId').value = found.id;
             document.getElementById('memberName').value = found.name || '';
             document.getElementById('memberBp').value = found.bp || '';
-            document.getElementById('memberBp').disabled = true; // BP cannot be changed
+            document.getElementById('memberBp').disabled = true; // BP restricted
             document.getElementById('memberRank').value = found.rank || 'কনস্টেবল';
             document.getElementById('memberUnit').value = found.unit || 'পুলিশ হেডকোয়ার্টার্স';
             document.getElementById('memberBranch').value = found.branch || 'প্রশাসনিক শাখা';
@@ -922,7 +922,6 @@
             if (!item) return;
 
             if (isFirebaseActive && db) {
-                // Check if member with same BP already exists to update instead of duplicate
                 db.collection("members").where("bp", "==", item.bp).get().then((querySnapshot) => {
                     if (!querySnapshot.empty) {
                         const docId = querySnapshot.docs[0].id;
