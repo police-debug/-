@@ -455,9 +455,10 @@
                             <option value="এমআই">৯. এমআই</option>
                             <option value="ইলেকট্রিশিয়ান">১০. ইলেকট্রিশিয়ান</option>
                             <option value="মেস">১১. মেস</option>
-                            <option value="ক্যান্টিন">১২. ক্যান্টিন</option>
-                            <option value="গানার">১৩. গানার</option>
-                            <option value="এমটি শাখা">১৪. এমটি শাখা</option>
+                            <option value="জিডি">১২. জিডি</option>
+                            <option value="ক্যান্টিন">১৩. ক্যান্টিন</option>
+                            <option value="গানার">১৪. গানার</option>
+                            <option value="এমটি শাখা">১৫. এমটি শাখা</option>
                             <option value="অন্যান্য শাখা">অন্যান্য শাখা</option>
                         </select>
                     </div>
@@ -530,34 +531,7 @@
         let currentUserRole = 'guest'; // 'guest', 'member', 'admin'
         let memberImageBase64 = '';
 
-        // Default Demo Members Fallback
-        const demoMembers = [
-            {
-                id: '101',
-                name: 'মোঃ তানভীর আহমেদ',
-                bp: 'BP922001122',
-                rank: 'এসআই',
-                unit: 'DMP',
-                branch: 'অপস/ইন্টেলিজেন্স শাখা',
-                location: 'মিরপুর মডেল থানা, ঢাকা',
-                blood: 'O+',
-                phone: '01711002233',
-                photo: ''
-            },
-            {
-                id: '102',
-                name: 'আরিফ হোসেন',
-                bp: 'BP922003344',
-                rank: 'কনস্টেবল',
-                unit: 'জেলা পুলিশ',
-                branch: 'রিজার্ভ শাখা',
-                location: 'কুমিল্লা পুলিশ লাইনস',
-                blood: 'A+',
-                phone: '01822334455',
-                photo: ''
-            }
-        ];
-
+       
         // Initialize Application & Firebase
         window.onload = function() {
             initFirebase();
@@ -760,7 +734,7 @@
                 return;
             }
 
-            const id = document.getElementById('editMemberId').value;
+            const id = document.getElementById('editMemberId').value.trim();
             const name = document.getElementById('memberName').value.trim();
             const bp = document.getElementById('memberBp').value.trim();
             const rank = document.getElementById('memberRank').value;
@@ -781,15 +755,19 @@
 
             if (isFirebaseActive && db) {
                 if (id) {
+                    // Update existing member
                     db.collection("members").doc(id).update(memberPayload).then(() => {
                         showToast('সদস্যের তথ্য ক্লাউডে সফলভাবে আপডেট হয়েছে!');
+                        closeModal('memberFormModal');
                     }).catch(err => {
                         console.error("Cloud update error:", err);
                         showToast('ক্লাউড আপডেটে সমস্যা হয়েছে', true);
                     });
                 } else {
+                    // Add new member with auto-generated unique ID
                     db.collection("members").add(memberPayload).then(() => {
                         showToast('নতুন সদস্য ক্লাউডে সফলভাবে যুক্ত হয়েছে!');
+                        closeModal('memberFormModal');
                     }).catch(err => {
                         console.error("Cloud insert error:", err);
                         showToast('ক্লাউড এন্ট্রিতে সমস্যা হয়েছে', true);
@@ -808,9 +786,8 @@
                 saveLocalData();
                 renderMembersGrid();
                 showToast('ডাটা সেভ করা হয়েছে (লোকাল)');
+                closeModal('memberFormModal');
             }
-
-            closeModal('memberFormModal');
         }
 
         function editMember(id) {
