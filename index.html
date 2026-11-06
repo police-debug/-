@@ -157,7 +157,44 @@
                     </div>
                 </div>
 
-          <section class="glass-card p-4 sm:p-6 rounded-2xl mb-8 shadow-2xl space-y-4">
+                <div class="md:col-span-3 glass-card p-5 rounded-2xl flex flex-wrap items-center justify-between gap-4 border-l-4 border-l-red-600 shadow-xl">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-full bg-red-600/20 text-red-500 flex items-center justify-center text-xl animate-pulse">
+                            <i class="fa-solid fa-phone-volume"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-bold text-white text-sm sm:text-base font-bangla">জরুরি ব্যাচমেট সহায়তা নেটওয়ার্ক (বাংলাদেশ পুলিশ ব্যাচ ২০২২)</h2>
+                            <p class="text-xs text-gray-300">দেশের যেকোনো প্রান্ত থেকে যেকোনো প্রয়োজনে সহকর্মীদের সরাসরি কল দিয়ে সাহায্যে যুক্ত হোন।</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <button onclick="filterByBloodGroup('O+')" class="px-3 py-1.5 bg-red-950/70 hover:bg-red-900 border border-red-700 text-red-400 text-xs font-bold rounded-lg transition-all flex items-center gap-1">
+                            <i class="fa-solid fa-droplet text-red-500"></i> O+ রক্ত
+                        </button>
+                        <button onclick="resetFilters()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-gray-300 text-xs font-medium rounded-lg transition-all flex items-center gap-1">
+                            <i class="fa-solid fa-rotate-left"></i> ফিল্টার রিসেট
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="userInfoBadge" class="glass-card p-4 rounded-2xl mb-6 flex flex-wrap items-center justify-between gap-3 border-l-4 border-l-police-accent">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-user-lock text-xl text-police-accent"></i>
+                    <div>
+                        <p class="text-xs text-gray-400">আপনার বর্তমান এক্সেস মোড:</p>
+                        <span id="userRoleText" class="text-xs font-bold text-police-gold">সদস্য</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span id="cloudStatusBadge" class="px-3 py-1 bg-green-950/80 border border-green-600 text-green-400 text-xs font-semibold rounded-lg flex items-center gap-1.5">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> ফায়ারস্টোর ক্লাউড লাইভ সিন্ক
+                    </span>
+                </div>
+            </div>
+
+            <section class="glass-card p-4 sm:p-6 rounded-2xl mb-8 shadow-2xl space-y-4">
                 <div class="relative">
                     <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-gray-400 text-sm"></i>
                     <input type="text" id="searchInput" oninput="applyFilters()" placeholder="নাম, বিপি নম্বর, কর্মস্থল/থানা, জেলা, ট্রেনিং সেন্টার, পদবী বা ফোন নম্বর লিখে লাইভ সার্চ করুন..." class="w-full bg-slate-900/90 border border-slate-700 focus:border-police-accent rounded-xl pl-11 pr-4 py-3 text-sm text-white placeholder-gray-400 outline-none transition-all shadow-inner">
@@ -726,7 +763,7 @@
             }
         }
 
-        // Updated saveMember with robust document updating and fallback query
+        // ত্রুটি সংশোধিত saveMember ফাংশন (আইডি না পেলে সরাসরি বিপি দিয়ে খুঁজে আপডেট করবে)
         async function saveMember(e) {
             e.preventDefault();
             if (!db) {
@@ -734,7 +771,7 @@
                 return;
             }
 
-            const editId = document.getElementById('editMemberId').value.trim();
+            let editId = document.getElementById('editMemberId').value.trim();
             const name = document.getElementById('memberName').value.trim();
             let bp = document.getElementById('memberBp').value.trim().toUpperCase();
             if(!bp.startsWith('BP')) bp = 'BP' + bp;
@@ -760,36 +797,42 @@
             }
 
             if (currentUserRole === 'admin' || editId) {
-                if (editId) {
-                    db.collection("members").doc(editId).update(memberPayload).then(() => {
+                // যদি editId খালি থাকে কিন্তু বিপি দিয়ে অলরেডি মেম্বার লিস্টে থাকে, তবে সেই বিপি নম্বর দিয়ে ডকুমেন্ট খুঁজে আপডেট করব
+                const performUpdate = (docId) => {
+                    db.collection("members").doc(docId).update(memberPayload).then(() => {
                         showToast('সদস্যের তথ্য সফলভাবে আপডেট হয়েছে!');
                         closeModal('memberFormModal');
-                    }).catch(err => {
-                        // Fallback query by BP number if docId fails
-                        db.collection("members").where("bp", "==", bp).get().then((querySnapshot) => {
-                            if (!querySnapshot.empty) {
-                                const docId = querySnapshot.docs[0].id;
-                                db.collection("members").doc(docId).update(memberPayload).then(() => {
-                                    showToast('সদস্যের তথ্য সফলভাবে আপডেট হয়েছে!');
-                                    closeModal('memberFormModal');
-                                });
-                            } else {
-                                showToast("ত্রুটি: " + err.message, true);
-                            }
-                        });
-                    });
-                } else {
-                    const existing = membersData.find(m => m.bp === bp);
-                    if (existing) {
-                        showToast('এই বিপি নম্বরের কোনো সদস্য ইতোমধ্যে নিবন্ধিত আছে!', true);
-                        return;
-                    }
-
-                    db.collection("members").add(memberPayload).then(() => {
-                        showToast('নতুন সদস্য সফলভাবে ক্লাউডে যুক্ত হয়েছে!');
-                        closeModal('memberFormModal');
                     }).catch(err => showToast("ত্রুটি: " + err.message, true));
+                };
+
+                if (editId) {
+                    db.collection("members").doc(editId).get().then((docSnapshot) => {
+                        if (docSnapshot.exists) {
+                            performUpdate(editId);
+                        } else {
+                            // আইডি না পেলে বিপি দিয়ে কুয়েরি করব
+                            queryAndUpdateByBp();
+                        }
+                    }).catch(() => { queryAndUpdateByBp(); });
+                } else {
+                    queryAndUpdateByBp();
                 }
+
+                function queryAndUpdateByBp() {
+                    db.collection("members").where("bp", "==", bp).get().then((querySnapshot) => {
+                        if (!querySnapshot.empty) {
+                            const docId = querySnapshot.docs[0].id;
+                            performUpdate(docId);
+                        } else {
+                            // যদি কোনোভাবেই ডেটাবেজে ডকুমেন্ট না পাওয়া যায়, তবে নতুন হিসেবে যুক্ত হবে
+                            db.collection("members").add(memberPayload).then(() => {
+                                showToast('সদস্যের তথ্য সফলভাবে ক্লাউডে যুক্ত হয়েছে!');
+                                closeModal('memberFormModal');
+                            }).catch(err => showToast("ত্রুটি: " + err.message, true));
+                        }
+                    });
+                }
+
             } else {
                 const existing = membersData.find(m => m.bp === bp);
                 if (existing) {
