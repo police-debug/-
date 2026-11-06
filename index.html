@@ -157,44 +157,7 @@
                     </div>
                 </div>
 
-                <div class="md:col-span-3 glass-card p-5 rounded-2xl flex flex-wrap items-center justify-between gap-4 border-l-4 border-l-red-600 shadow-xl">
-                    <div class="flex items-center gap-3">
-                        <div class="w-11 h-11 rounded-full bg-red-600/20 text-red-500 flex items-center justify-center text-xl animate-pulse">
-                            <i class="fa-solid fa-phone-volume"></i>
-                        </div>
-                        <div>
-                            <h2 class="font-bold text-white text-sm sm:text-base font-bangla">জরুরি ব্যাচমেট সহায়তা নেটওয়ার্ক (বাংলাদেশ পুলিশ ব্যাচ ২০২২)</h2>
-                            <p class="text-xs text-gray-300">দেশের যেকোনো প্রান্ত থেকে যেকোনো প্রয়োজনে সহকর্মীদের সরাসরি কল দিয়ে সাহায্যে যুক্ত হোন।</p>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center gap-2 flex-wrap">
-                        <button onclick="filterByBloodGroup('O+')" class="px-3 py-1.5 bg-red-950/70 hover:bg-red-900 border border-red-700 text-red-400 text-xs font-bold rounded-lg transition-all flex items-center gap-1">
-                            <i class="fa-solid fa-droplet text-red-500"></i> O+ রক্ত
-                        </button>
-                        <button onclick="resetFilters()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-gray-300 text-xs font-medium rounded-lg transition-all flex items-center gap-1">
-                            <i class="fa-solid fa-rotate-left"></i> ফিল্টার রিসেট
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div id="userInfoBadge" class="glass-card p-4 rounded-2xl mb-6 flex flex-wrap items-center justify-between gap-3 border-l-4 border-l-police-accent">
-                <div class="flex items-center gap-3">
-                    <i class="fa-solid fa-user-lock text-xl text-police-accent"></i>
-                    <div>
-                        <p class="text-xs text-gray-400">আপনার বর্তমান এক্সেস মোড:</p>
-                        <span id="userRoleText" class="text-xs font-bold text-police-gold">সদস্য</span>
-                    </div>
-                </div>
-                <div class="flex items-center gap-2">
-                    <span id="cloudStatusBadge" class="px-3 py-1 bg-green-950/80 border border-green-600 text-green-400 text-xs font-semibold rounded-lg flex items-center gap-1.5">
-                        <i class="fa-solid fa-cloud-arrow-up"></i> ফায়ারস্টোর ক্লাউড লাইভ সিন্ক
-                    </span>
-                </div>
-            </div>
-
-            <section class="glass-card p-4 sm:p-6 rounded-2xl mb-8 shadow-2xl space-y-4">
+          <section class="glass-card p-4 sm:p-6 rounded-2xl mb-8 shadow-2xl space-y-4">
                 <div class="relative">
                     <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-gray-400 text-sm"></i>
                     <input type="text" id="searchInput" oninput="applyFilters()" placeholder="নাম, বিপি নম্বর, কর্মস্থল/থানা, জেলা, ট্রেনিং সেন্টার, পদবী বা ফোন নম্বর লিখে লাইভ সার্চ করুন..." class="w-full bg-slate-900/90 border border-slate-700 focus:border-police-accent rounded-xl pl-11 pr-4 py-3 text-sm text-white placeholder-gray-400 outline-none transition-all shadow-inner">
@@ -363,7 +326,7 @@
         </div>
     </div>
 
-    <!-- Profile Form Modal (Bengali UI & New Fields Added) -->
+    <!-- Profile Form Modal -->
     <div id="memberFormModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="glass-card max-w-2xl w-full p-6 rounded-2xl shadow-2xl relative border border-police-accent/40 my-8">
             <button onclick="closeModal('memberFormModal')" class="absolute top-4 right-4 text-gray-400 hover:text-white text-lg">
@@ -474,13 +437,11 @@
                         </select>
                     </div>
 
-                    <!-- নতুন ফিল্ড: নিজ জেলা -->
                     <div>
                         <label class="block text-xs font-medium text-gray-300 mb-1">নিজ জেলা *</label>
                         <input type="text" id="memberDistrict" required placeholder="যেমন: ঢাকা, চট্টগ্রাম..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
                     </div>
 
-                    <!-- নতুন ফিল্ড: ট্রেনিং সেন্টার -->
                     <div>
                         <label class="block text-xs font-medium text-gray-300 mb-1">ট্রেনিং সেন্টার *</label>
                         <select id="memberTraining" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
@@ -758,7 +719,6 @@
             showToast('সকল ফিল্টার রিসেট করা হয়েছে');
         }
 
-        // বিপি নম্বর ফিল্ডে স্বয়ংক্রিয়ভাবে BP প্রিফিক্স যুক্ত করার ফাংশন
         function formatBpInput(input) {
             let val = input.value.trim().toUpperCase();
             if (!val.startsWith('BP')) {
@@ -766,7 +726,7 @@
             }
         }
 
-        // Save or Update directly to Firestore Cloud Database
+        // Updated saveMember with robust document updating and fallback query
         async function saveMember(e) {
             e.preventDefault();
             if (!db) {
@@ -799,15 +759,26 @@
                 memberPayload.photo = memberImageBase64;
             }
 
-            // চ. যদি অ্যাডমিন হন অথবা নিজের প্রোফাইল এডিট করেন (editId থাকলে), তবে সরাসরি এপ্রুভ ছাড়াই আপডেট বা সেভ হবে
             if (currentUserRole === 'admin' || editId) {
                 if (editId) {
                     db.collection("members").doc(editId).update(memberPayload).then(() => {
                         showToast('সদস্যের তথ্য সফলভাবে আপডেট হয়েছে!');
                         closeModal('memberFormModal');
-                    }).catch(err => showToast("ত্রুটি: " + err.message, true));
+                    }).catch(err => {
+                        // Fallback query by BP number if docId fails
+                        db.collection("members").where("bp", "==", bp).get().then((querySnapshot) => {
+                            if (!querySnapshot.empty) {
+                                const docId = querySnapshot.docs[0].id;
+                                db.collection("members").doc(docId).update(memberPayload).then(() => {
+                                    showToast('সদস্যের তথ্য সফলভাবে আপডেট হয়েছে!');
+                                    closeModal('memberFormModal');
+                                });
+                            } else {
+                                showToast("ত্রুটি: " + err.message, true);
+                            }
+                        });
+                    });
                 } else {
-                    // ঙ. একই বিপি দিয়ে ডুপ্লিকেট চেক
                     const existing = membersData.find(m => m.bp === bp);
                     if (existing) {
                         showToast('এই বিপি নম্বরের কোনো সদস্য ইতোমধ্যে নিবন্ধিত আছে!', true);
@@ -820,7 +791,6 @@
                     }).catch(err => showToast("ত্রুটি: " + err.message, true));
                 }
             } else {
-                // নতুন সাধারণ সদস্য প্রথমবার এন্ট্রি করার সময় পেন্ডিং এ যাবে
                 const existing = membersData.find(m => m.bp === bp);
                 if (existing) {
                     showToast('এই বিপি নম্বরের সদস্য ইতোমধ্যে ডিরেক্টরিতে বিদ্যমান!', true);
@@ -854,10 +824,10 @@
                 return;
             }
 
-            document.getElementById('editMemberId').value = found.id;
+            document.getElementById('editMemberId').value = found.id || '';
             document.getElementById('memberName').value = found.name || '';
             document.getElementById('memberBp').value = found.bp || '';
-            document.getElementById('memberBp').disabled = true; // বিপি নম্বর এডিট করা যাবে না
+            document.getElementById('memberBp').disabled = true; 
             document.getElementById('memberRank').value = found.rank || 'কনস্টেবল';
             document.getElementById('memberUnit').value = found.unit || 'পুলিশ হেডকোয়ার্টার্স';
             document.getElementById('memberBranch').value = found.branch || 'প্রশাসনিক শাখা';
