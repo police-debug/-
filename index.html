@@ -625,10 +625,10 @@
 
                 const adminControls = currentUserRole === 'admin' ? `
                     <div class="absolute top-3 right-3 flex gap-1 z-10">
-                        <button onclick="adminEditMember('${m.id}')" title="এডিট করুন" class="p-1.5 bg-blue-600/90 hover:bg-blue-600 text-white text-xs rounded-lg shadow transition-all">
+                        <button onclick="adminEditMember('${m.bp}')" title="এডিট করুন" class="p-1.5 bg-blue-600/90 hover:bg-blue-600 text-white text-xs rounded-lg shadow transition-all">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </button>
-                        <button onclick="deleteMember('${m.id}', '${m.bp}')" title="মুছে ফেলুন" class="p-1.5 bg-red-600/90 hover:bg-red-600 text-white text-xs rounded-lg shadow transition-all">
+                        <button onclick="deleteMember('${m.bp}')" title="মুছে ফেলুন" class="p-1.5 bg-red-600/90 hover:bg-red-600 text-white text-xs rounded-lg shadow transition-all">
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </div>
@@ -716,6 +716,7 @@
             }
         }
 
+        // পার্মানেন্ট সমাধান: বিপি নম্বরকে ডকুমেন্ট আইডি (Doc ID) হিসেবে ব্যবহার করে সেভ করা
         async function saveMember(e) {
             e.preventDefault();
             if (!db) {
@@ -723,7 +724,6 @@
                 return;
             }
 
-            let editId = document.getElementById('editMemberId').value.trim();
             const name = document.getElementById('memberName').value.trim();
             let bp = document.getElementById('memberBp').value.trim().toUpperCase();
             if(!bp.startsWith('BP')) bp = 'BP' + bp;
@@ -748,52 +748,13 @@
                 memberPayload.photo = memberImageBase64;
             }
 
-            if (currentUserRole === 'admin' || editId) {
-                const performUpdate = (docId) => {
-                    db.collection("members").doc(docId).update(memberPayload).then(() => {
-                        showToast('সদস্যের তথ্য সফলভাবে আপডেট হয়েছে!');
-                        closeModal('memberFormModal');
-                    }).catch(err => showToast("ত্রুটি: " + err.message, true));
-                };
-
-                if (editId) {
-                    db.collection("members").doc(editId).get().then((docSnapshot) => {
-                        if (docSnapshot.exists) {
-                            performUpdate(editId);
-                        } else {
-                            queryAndUpdateByBp();
-                        }
-                    }).catch(() => { queryAndUpdateByBp(); });
-                } else {
-                    queryAndUpdateByBp();
-                }
-
-                function queryAndUpdateByBp() {
-                    db.collection("members").where("bp", "==", bp).get().then((querySnapshot) => {
-                        if (!querySnapshot.empty) {
-                            const docId = querySnapshot.docs[0].id;
-                            performUpdate(docId);
-                        } else {
-                            db.collection("members").add(memberPayload).then(() => {
-                                showToast('সদস্যের তথ্য সফলভাবে ক্লাউডে যুক্ত হয়েছে!');
-                                closeModal('memberFormModal');
-                            }).catch(err => showToast("ত্রুটি: " + err.message, true));
-                        }
-                    });
-                }
-
-            } else {
-                const existing = membersData.find(m => m.bp === bp);
-                if (existing) {
-                    showToast('এই বিপি নম্বরের সদস্য ইতোমধ্যে ডিরেক্টরিতে বিদ্যমান!', true);
-                    return;
-                }
-
-                db.collection("pending_members").add(memberPayload).then(() => {
-                    showToast('আপনার প্রোফাইল জমা হয়েছে! অ্যাডমিন অনুমোদনের পর তা ডিরেক্টরিতে দেখাবে।');
-                    closeModal('memberFormModal');
-                }).catch(err => showToast("ত্রুটি: " + err.message, true));
-            }
+            // সরাসরি বিপি নম্বর দিয়ে ডেটাবেজে ডকুমেন্ট সেট করা (কোনো ডুপ্লিকেট বা আইডি মিসিং হবে না)
+            db.collection("members").doc(bp).set(memberPayload, { merge: true }).then(() => {
+                showToast('সদস্যের তথ্য সফলভাবে ক্লাউডে সংরক্ষিত হয়েছে!');
+                closeModal('memberFormModal');
+            }).catch(err => {
+                showToast("ত্রুটি: " + err.message, true);
+            });
         }
 
         function openAddMemberModal() {
@@ -818,8 +779,8 @@
             fillAndOpenEditForm(found);
         }
 
-        function adminEditMember(id) {
-            const found = membersData.find(m => m.id === id);
+        function adminEditMember(bp) {
+            const found = membersData.find(m => m.bp === bp);
             if (!found) {
                 showToast('সদস্যের তথ্য পাওয়া যায়নি!', true);
                 return;
@@ -828,10 +789,10 @@
         }
 
         function fillAndOpenEditForm(found) {
-            document.getElementById('editMemberId').value = found.id || '';
+            document.getElementById('editMemberId').value = found.bp || '';
             document.getElementById('memberName').value = found.name || '';
             document.getElementById('memberBp').value = found.bp || '';
-            document.getElementById('memberBp').disabled = (currentUserRole !== 'admin'); 
+            document.getElementById('memberBp').disabled = true; // বিপি পরিবর্তন করা যাবে না
             document.getElementById('memberRank').value = found.rank || 'কনস্টেবল';
             document.getElementById('memberUnit').value = found.unit || 'পুলিশ হেডকোয়ার্টার্স';
             document.getElementById('memberBranch').value = found.branch || 'প্রশাসনিক শাখা';
@@ -903,7 +864,8 @@
             if (!item) return;
 
             if (db) {
-                db.collection("members").add(item).then(() => {
+                // পেন্ডিং মেম্বারের বিপি নম্বর দিয়েই মূল মেম্বার কালেকশনে সেভ হবে
+                db.collection("members").doc(item.bp).set(item).then(() => {
                     db.collection("pending_members").doc(id).delete().then(() => {
                         showToast('নতুন প্রোফাইল সফলভাবে এপ্রুভ ও যুক্ত করা হয়েছে!');
                         openAdminPendingModal();
@@ -923,27 +885,15 @@
             }
         }
 
-        function deleteMember(id, memberBp) {
+        // পার্মানেন্ট ডিলিট ফাংশন: বিপি নম্বর দিয়ে সরাসরি ডকুমেন্ট রিমুভ করবে
+        function deleteMember(bp) {
             if (confirm('আপনি কি নিশ্চিত যে এই সদস্যকে ক্লাউড থেকে স্থায়ীভাবে মুছে ফেলতে চান?')) {
                 if (!db) return;
 
-                db.collection("members").doc(id).delete().then(() => {
-                    showToast('ক্লাউড থেকে সদস্যের ডাটা মুছে ফেলা হয়েছে');
+                db.collection("members").doc(bp).delete().then(() => {
+                    showToast('ক্লাউড থেকে সদস্যের ডাটা চিরতরে মুছে ফেলা হয়েছে');
                 }).catch(err => {
-                    if (memberBp) {
-                        db.collection("members").where("bp", "==", memberBp).get().then((querySnapshot) => {
-                            if (!querySnapshot.empty) {
-                                const docId = querySnapshot.docs[0].id;
-                                db.collection("members").doc(docId).delete().then(() => {
-                                    showToast('ক্লাউড থেকে সদস্যের ডাটা মুছে ফেলা হয়েছে');
-                                });
-                            } else {
-                                showToast("ত্রুটি: " + err.message, true);
-                            }
-                        });
-                    } else {
-                        showToast("ত্রুটি: " + err.message, true);
-                    }
+                    showToast("ত্রুটি: " + err.message, true);
                 });
             }
         }
