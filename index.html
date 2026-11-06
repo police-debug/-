@@ -139,7 +139,6 @@
     <!-- Emergency Blood & Notice Bar Section -->
     <div id="noticeBloodBar" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 hidden">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Notice Board Box -->
             <div class="glass-card p-4 rounded-2xl border-l-4 border-police-accent flex items-start gap-3">
                 <i class="fa-solid fa-bullhorn text-police-accent text-xl mt-1"></i>
                 <div class="flex-1">
@@ -148,7 +147,6 @@
                 </div>
             </div>
 
-            <!-- Emergency Blood Request Trigger -->
             <div class="glass-card p-4 rounded-2xl border-l-4 border-red-500 flex items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-full bg-red-600/20 text-red-500 flex items-center justify-center font-bold text-lg animate-pulse">
@@ -298,7 +296,6 @@
     </footer>
 
     <!-- Modals Section -->
-    <!-- Emergency Blood Request Modal -->
     <div id="bloodModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
         <div class="glass-card max-w-md w-full p-6 rounded-2xl shadow-2xl relative border border-red-600/40">
             <button onclick="closeModal('bloodModal')" class="absolute top-4 right-4 text-gray-400 hover:text-white text-lg">
@@ -572,7 +569,6 @@
                 <i class="fa-solid fa-user-clock"></i> অ্যাডমিন কন্ট্রোল প্যানেল (পেন্ডিং রিকোয়েস্ট ও নোটিশ)
             </h3>
             
-            <!-- Update Notice Section -->
             <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700 space-y-2">
                 <label class="block text-xs font-bold text-police-gold">জরুরি নোটিশ আপডেট করুন</label>
                 <div class="flex gap-2">
@@ -845,13 +841,6 @@
                     closeModal('memberFormModal');
                 }).catch(err => { hideLoading(); showToast("ত্রুটি: " + err.message, true); });
             } else {
-                const existing = membersData.find(m => m.bp === bp);
-                if (existing) {
-                    hideLoading();
-                    showToast('এই বিপি নম্বরের সদস্য ইতোমধ্যে ডিরেক্টরিতে বিদ্যমান!', true);
-                    return;
-                }
-
                 db.collection("pending_members").add(memberPayload).then(() => {
                     hideLoading();
                     showToast('আপনার প্রোফাইল জমা হয়েছে! অ্যাডমিন অনুমোদনের পর তা দেখাবে।');
@@ -910,17 +899,31 @@
             openModal('memberFormModal');
         }
 
+        // ফিক্সড ডিলিট ফাংশন
         function deleteMember(id, memberBp) {
             if (confirm('আপনি কি নিশ্চিত যে এই সদস্যকে স্থায়ীভাবে মুছে ফেলতে চান?')) {
+                if (!db) return;
                 showLoading();
-                db.collection("members").doc(memberBp || id).delete().then(() => {
+
+                const targetDocId = memberBp ? memberBp.trim().toUpperCase() : id;
+                db.collection("members").doc(targetDocId).delete().then(() => {
+                    db.collection("members").doc(id).delete().catch(() => {});
                     hideLoading();
-                    showToast('সদস্য মুছে ফেলা হয়েছে');
-                }).catch(() => {
-                    db.collection("members").doc(id).delete().then(() => {
+                    showToast('ক্লাউড থেকে সদস্যের ডাটা সফলভাবে মুছে ফেলা হয়েছে');
+                }).catch((error) => {
+                    db.collection("members").where("bp", "==", memberBp).get().then((querySnapshot) => {
+                        let batch = db.batch();
+                        querySnapshot.forEach((doc) => {
+                            batch.delete(doc.ref);
+                        });
+                        batch.commit().then(() => {
+                            hideLoading();
+                            showToast('সদস্যের ডাটা মুছে ফেলা হয়েছে');
+                        });
+                    }).catch(err => {
                         hideLoading();
-                        showToast('সদস্য মুছে ফেলা হয়েছে');
-                    }).catch(err => { hideLoading(); showToast("ত্রুটি: " + err.message, true); });
+                        showToast("ডিলিট করতে সমস্যা হয়েছে: " + err.message, true);
+                    });
                 });
             }
         }
