@@ -628,7 +628,7 @@
                         <button onclick="adminEditMember('${m.id}')" title="এডিট করুন" class="p-1.5 bg-blue-600/90 hover:bg-blue-600 text-white text-xs rounded-lg shadow transition-all">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </button>
-                        <button onclick="deleteMember('${m.id}')" title="মুছে ফেলুন" class="p-1.5 bg-red-600/90 hover:bg-red-600 text-white text-xs rounded-lg shadow transition-all">
+                        <button onclick="deleteMember('${m.id}', '${m.bp}')" title="মুছে ফেলুন" class="p-1.5 bg-red-600/90 hover:bg-red-600 text-white text-xs rounded-lg shadow transition-all">
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </div>
@@ -923,13 +923,28 @@
             }
         }
 
-        function deleteMember(id) {
+        function deleteMember(id, memberBp) {
             if (confirm('আপনি কি নিশ্চিত যে এই সদস্যকে ক্লাউড থেকে স্থায়ীভাবে মুছে ফেলতে চান?')) {
-                if (db) {
-                    db.collection("members").doc(id).delete().then(() => {
-                        showToast('ক্লাউড থেকে সদস্যের ডাটা মুছে ফেলা হয়েছে');
-                    }).catch(err => showToast("ত্রুটি: " + err.message, true));
-                }
+                if (!db) return;
+
+                db.collection("members").doc(id).delete().then(() => {
+                    showToast('ক্লাউড থেকে সদস্যের ডাটা মুছে ফেলা হয়েছে');
+                }).catch(err => {
+                    if (memberBp) {
+                        db.collection("members").where("bp", "==", memberBp).get().then((querySnapshot) => {
+                            if (!querySnapshot.empty) {
+                                const docId = querySnapshot.docs[0].id;
+                                db.collection("members").doc(docId).delete().then(() => {
+                                    showToast('ক্লাউড থেকে সদস্যের ডাটা মুছে ফেলা হয়েছে');
+                                });
+                            } else {
+                                showToast("ত্রুটি: " + err.message, true);
+                            }
+                        });
+                    } else {
+                        showToast("ত্রুটি: " + err.message, true);
+                    }
+                });
             }
         }
 
