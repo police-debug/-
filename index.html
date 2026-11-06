@@ -14,6 +14,9 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Tiro+Bangla:ital@0;1&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
+    <!-- html2pdf.js for Export PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
     <!-- Firebase SDK Compat Core & Firestore -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -75,6 +78,12 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-police-accent selection:text-slate-950">
 
+    <!-- Global Loading Overlay Spinner -->
+    <div id="loadingOverlay" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex flex-col items-center justify-center">
+        <div class="w-16 h-16 border-4 border-police-accent border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p class="text-sm font-bold text-police-gold font-bangla animate-pulse">ক্লাউড ডাটা প্রসেস হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...</p>
+    </div>
+
     <!-- Top Navigation Header -->
     <header class="sticky top-0 z-40 glass-nav shadow-2xl">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
@@ -93,7 +102,7 @@
                 </div>
             </div>
 
-            <div class="flex items-center gap-2 sm:gap-3">
+            <div class="flex items-center gap-2 sm:gap-3 flex-wrap justify-end">
                 <div class="flex items-center gap-2 bg-gradient-to-r from-police-navy to-slate-900 border border-police-accent/40 px-3 py-1.5 rounded-xl shadow-inner">
                     <div class="w-7 h-7 rounded-lg bg-police-accent/20 flex items-center justify-center text-police-accent">
                         <i class="fa-solid fa-users text-xs sm:text-sm"></i>
@@ -127,6 +136,36 @@
         </div>
     </header>
 
+    <!-- Emergency Blood & Notice Bar Section -->
+    <div id="noticeBloodBar" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 hidden">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Notice Board Box -->
+            <div class="glass-card p-4 rounded-2xl border-l-4 border-police-accent flex items-start gap-3">
+                <i class="fa-solid fa-bullhorn text-police-accent text-xl mt-1"></i>
+                <div class="flex-1">
+                    <h4 class="text-xs font-bold text-police-gold uppercase tracking-wider mb-1">ব্যাচ নোটিশ বোর্ড</h4>
+                    <p id="noticeBoardText" class="text-xs text-gray-200">বর্তমানে কোনো জরুরি নোটিশ নেই।</p>
+                </div>
+            </div>
+
+            <!-- Emergency Blood Request Trigger -->
+            <div class="glass-card p-4 rounded-2xl border-l-4 border-red-500 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-red-600/20 text-red-500 flex items-center justify-center font-bold text-lg animate-pulse">
+                        <i class="fa-solid fa-droplet"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-red-400 uppercase tracking-wider">জরুরি রক্ত প্রয়োজন?</h4>
+                        <p class="text-[11px] text-gray-300">ব্যাচমেটদের কাছে রিকোয়েস্ট পাঠান</p>
+                    </div>
+                </div>
+                <button onclick="openBloodModal()" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl shadow-md transition-all">
+                    রিকোয়েস্ট দিন
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Main Content Area -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-1">
         
@@ -146,9 +185,15 @@
         <div id="unlockedAppContainer" class="hidden space-y-6">
             
             <section class="glass-card p-4 sm:p-6 rounded-2xl mb-8 shadow-2xl space-y-4">
-                <div class="relative">
-                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-gray-400 text-sm"></i>
-                    <input type="text" id="searchInput" oninput="applyFilters()" placeholder="নাম, বিপি নম্বর, কর্মস্থল/থানা, জেলা, ট্রেনিং সেন্টার, পদবী বা ফোন নম্বর লিখে লাইভ সার্চ করুন..." class="w-full bg-slate-900/90 border border-slate-700 focus:border-police-accent rounded-xl pl-11 pr-4 py-3 text-sm text-white placeholder-gray-400 outline-none transition-all shadow-inner">
+                <div class="flex flex-col sm:flex-row gap-3 items-center justify-between">
+                    <div class="relative w-full">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-gray-400 text-sm"></i>
+                        <input type="text" id="searchInput" oninput="applyFilters()" placeholder="নাম, বিপি নম্বর, কর্মস্থল/থানা, জেলা, ট্রেনিং সেন্টার, পদবী বা ফোন নম্বর লিখে লাইভ সার্চ করুন..." class="w-full bg-slate-900/90 border border-slate-700 focus:border-police-accent rounded-xl pl-11 pr-4 py-3 text-sm text-white placeholder-gray-400 outline-none transition-all shadow-inner">
+                    </div>
+                    <button onclick="exportDirectoryPDF()" class="w-full sm:w-auto px-4 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 flex-shrink-0">
+                        <i class="fa-solid fa-file-pdf text-sm"></i>
+                        <span>পিডিএফ ডাউনলোড</span>
+                    </button>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -252,7 +297,48 @@
         </div>
     </footer>
 
-    <!-- Modals -->
+    <!-- Modals Section -->
+    <!-- Emergency Blood Request Modal -->
+    <div id="bloodModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="glass-card max-w-md w-full p-6 rounded-2xl shadow-2xl relative border border-red-600/40">
+            <button onclick="closeModal('bloodModal')" class="absolute top-4 right-4 text-gray-400 hover:text-white text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="text-center mb-4">
+                <i class="fa-solid fa-droplet text-red-500 text-3xl mb-2"></i>
+                <h3 class="text-lg font-bold text-white font-bangla">জরুরি রক্তের আবেদন</h3>
+                <p class="text-xs text-gray-300">আপনার প্রয়োজনীয় তথ্য নিচে জমা দিন</p>
+            </div>
+            <form onsubmit="handleBloodSubmit(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">রক্তের গ্রুপ *</label>
+                    <select id="reqBloodGroup" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-red-500 outline-none">
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">হাসপাতাল ও লোকেশন *</label>
+                    <input type="text" id="reqBloodLocation" required placeholder="যেমন: ঢাকা মেডিকেল কলেজ হাসপাতাল" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-red-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">যোগাযোগের মোবাইল নম্বর *</label>
+                    <input type="tel" id="reqBloodPhone" required placeholder="017XXXXXXXX" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-red-500 outline-none">
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl text-xs shadow-lg transition-all">
+                    রিকোয়েস্ট পাঠান
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
     <div id="loginModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
         <div class="glass-card max-w-md w-full p-6 rounded-2xl shadow-2xl relative border border-police-accent/40">
             <button onclick="closeModal('loginModal')" class="absolute top-4 right-4 text-gray-400 hover:text-white text-lg">
@@ -476,15 +562,29 @@
         </div>
     </div>
 
+    <!-- Admin Pending & Notice Modal -->
     <div id="adminPendingModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="glass-card max-w-4xl w-full p-6 rounded-2xl shadow-2xl relative border border-red-600/40 my-8">
+        <div class="glass-card max-w-4xl w-full p-6 rounded-2xl shadow-2xl relative border border-red-600/40 my-8 space-y-6">
             <button onclick="closeModal('adminPendingModal')" class="absolute top-4 right-4 text-gray-400 hover:text-white text-lg">
                 <i class="fa-solid fa-xmark"></i>
             </button>
-            <h3 class="text-lg font-bold text-red-400 font-bangla mb-4 flex items-center gap-2">
-                <i class="fa-solid fa-user-clock"></i> পেন্ডিং প্রোফাইল অনুমোদন প্যানেল (ক্লাউড অ্যাডমিন)
+            <h3 class="text-lg font-bold text-red-400 font-bangla flex items-center gap-2">
+                <i class="fa-solid fa-user-clock"></i> অ্যাডমিন কন্ট্রোল প্যানেল (পেন্ডিং রিকোয়েস্ট ও নোটিশ)
             </h3>
-            <div id="pendingListContainer" class="space-y-3 max-h-[60vh] overflow-y-auto pr-2">
+            
+            <!-- Update Notice Section -->
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700 space-y-2">
+                <label class="block text-xs font-bold text-police-gold">জরুরি নোটিশ আপডেট করুন</label>
+                <div class="flex gap-2">
+                    <input type="text" id="adminNoticeInput" placeholder="নতুন নোটিশ এখানে লিখুন..." class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
+                    <button onclick="saveNotice()" class="px-4 py-2 bg-police-accent hover:bg-police-gold text-slate-950 font-bold text-xs rounded-lg shadow">পাবলিশ</button>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="text-sm font-bold text-white mb-2">পেন্ডিং আবেদনসমূহ</h4>
+                <div id="pendingListContainer" class="space-y-3 max-h-[50vh] overflow-y-auto pr-2">
+                </div>
             </div>
         </div>
     </div>
@@ -518,7 +618,11 @@
             checkSessionState();
         };
 
+        function showLoading() { document.getElementById('loadingOverlay').classList.remove('hidden'); }
+        function hideLoading() { document.getElementById('loadingOverlay').classList.add('hidden'); }
+
         function initFirebaseCloud() {
+            showLoading();
             try {
                 if (!firebase.apps.length) {
                     firebase.initializeApp(firebaseConfig);
@@ -528,6 +632,7 @@
             } catch (error) {
                 console.error("Cloud Connection Failed:", error);
                 showToast("ক্লাউড সার্ভারের সাথে সংযোগ স্থাপন করা যায়নি!", true);
+                hideLoading();
             }
         }
 
@@ -540,8 +645,10 @@
                     membersData.push({ id: doc.id, ...doc.data() });
                 });
                 renderMembersGrid();
+                hideLoading();
             }, (error) => {
                 console.error("Error reading members from cloud:", error);
+                hideLoading();
             });
 
             db.collection("pending_members").onSnapshot((snapshot) => {
@@ -551,8 +658,12 @@
                 });
                 updatePendingCounter();
                 if (currentUserRole === 'admin') renderPendingList();
-            }, (error) => {
-                console.error("Error reading pending requests from cloud:", error);
+            });
+
+            db.collection("settings").doc("notice").onSnapshot((doc) => {
+                if (doc.exists && doc.data().text) {
+                    document.getElementById('noticeBoardText').innerText = doc.data().text;
+                }
             });
         }
 
@@ -690,24 +801,7 @@
             });
         }
 
-        function applyFilters() {
-            renderMembersGrid();
-        }
-
-        function filterByBloodGroup(blood) {
-            document.getElementById('bloodFilter').value = blood;
-            applyFilters();
-        }
-
-        function resetFilters() {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('rankFilter').value = '';
-            document.getElementById('unitFilter').value = '';
-            document.getElementById('branchFilter').value = '';
-            document.getElementById('bloodFilter').value = '';
-            applyFilters();
-            showToast('সকল ফিল্টার রিসেট করা হয়েছে');
-        }
+        function applyFilters() { renderMembersGrid(); }
 
         function formatBpInput(input) {
             let val = input.value.trim().toUpperCase();
@@ -718,11 +812,9 @@
 
         async function saveMember(e) {
             e.preventDefault();
-            if (!db) {
-                showToast("ক্লাউড সার্ভারের সাথে সংযোগ নেই!", true);
-                return;
-            }
+            if (!db) { showToast("ক্লাউড সার্ভারের সাথে সংযোগ নেই!", true); return; }
 
+            showLoading();
             let editId = document.getElementById('editMemberId').value.trim();
             const name = document.getElementById('memberName').value.trim();
             let bp = document.getElementById('memberBp').value.trim().toUpperCase();
@@ -744,55 +836,27 @@
                 updatedAt: new Date().toISOString()
             };
 
-            if (memberImageBase64) {
-                memberPayload.photo = memberImageBase64;
-            }
+            if (memberImageBase64) { memberPayload.photo = memberImageBase64; }
 
             if (currentUserRole === 'admin' || editId) {
-                const performUpdate = (docId) => {
-                    db.collection("members").doc(docId).update(memberPayload).then(() => {
-                        showToast('সদস্যের তথ্য সফলভাবে আপডেট হয়েছে!');
-                        closeModal('memberFormModal');
-                    }).catch(err => showToast("ত্রুটি: " + err.message, true));
-                };
-
-                if (editId) {
-                    db.collection("members").doc(editId).get().then((docSnapshot) => {
-                        if (docSnapshot.exists) {
-                            performUpdate(editId);
-                        } else {
-                            queryAndUpdateByBp();
-                        }
-                    }).catch(() => { queryAndUpdateByBp(); });
-                } else {
-                    queryAndUpdateByBp();
-                }
-
-                function queryAndUpdateByBp() {
-                    db.collection("members").where("bp", "==", bp).get().then((querySnapshot) => {
-                        if (!querySnapshot.empty) {
-                            const docId = querySnapshot.docs[0].id;
-                            performUpdate(docId);
-                        } else {
-                            db.collection("members").add(memberPayload).then(() => {
-                                showToast('সদস্যের তথ্য সফলভাবে ক্লাউডে যুক্ত হয়েছে!');
-                                closeModal('memberFormModal');
-                            }).catch(err => showToast("ত্রুটি: " + err.message, true));
-                        }
-                    });
-                }
-
+                db.collection("members").doc(bp).set(memberPayload, { merge: true }).then(() => {
+                    hideLoading();
+                    showToast('সদস্যের তথ্য সফলভাবে আপডেট হয়েছে!');
+                    closeModal('memberFormModal');
+                }).catch(err => { hideLoading(); showToast("ত্রুটি: " + err.message, true); });
             } else {
                 const existing = membersData.find(m => m.bp === bp);
                 if (existing) {
+                    hideLoading();
                     showToast('এই বিপি নম্বরের সদস্য ইতোমধ্যে ডিরেক্টরিতে বিদ্যমান!', true);
                     return;
                 }
 
                 db.collection("pending_members").add(memberPayload).then(() => {
-                    showToast('আপনার প্রোফাইল জমা হয়েছে! অ্যাডমিন অনুমোদনের পর তা ডিরেক্টরিতে দেখাবে।');
+                    hideLoading();
+                    showToast('আপনার প্রোফাইল জমা হয়েছে! অ্যাডমিন অনুমোদনের পর তা দেখাবে।');
                     closeModal('memberFormModal');
-                }).catch(err => showToast("ত্রুটি: " + err.message, true));
+                }).catch(err => { hideLoading(); showToast("ত্রুটি: " + err.message, true); });
             }
         }
 
@@ -811,7 +875,7 @@
         function openEditMyProfileModal() {
             const found = membersData.find(m => m.bp && m.bp.toUpperCase() === loggedInBpNumber.toUpperCase());
             if (!found) {
-                showToast('আপনার বিপি নম্বরের কোনো প্রকাশিত প্রোফাইল ডিরেক্টরিতে নেই। নতুন প্রোফাইল যোগ করুন।', true);
+                showToast('আপনার প্রোফাইল ডিরেক্টরিতে পাওয়া যায়নি। নতুন তৈরি করুন।', true);
                 openAddMemberModal();
                 return;
             }
@@ -820,18 +884,14 @@
 
         function adminEditMember(id) {
             const found = membersData.find(m => m.id === id);
-            if (!found) {
-                showToast('সদস্যের তথ্য পাওয়া যায়নি!', true);
-                return;
-            }
-            fillAndOpenEditForm(found);
+            if (found) fillAndOpenEditForm(found);
         }
 
         function fillAndOpenEditForm(found) {
             document.getElementById('editMemberId').value = found.id || '';
             document.getElementById('memberName').value = found.name || '';
             document.getElementById('memberBp').value = found.bp || '';
-            document.getElementById('memberBp').disabled = (currentUserRole !== 'admin'); 
+            document.getElementById('memberBp').disabled = (currentUserRole !== 'admin');
             document.getElementById('memberRank').value = found.rank || 'কনস্টেবল';
             document.getElementById('memberUnit').value = found.unit || 'পুলিশ হেডকোয়ার্টার্স';
             document.getElementById('memberBranch').value = found.branch || 'প্রশাসনিক শাখা';
@@ -846,13 +906,65 @@
             memberImageBase64 = found.photo || '';
             if (found.photo) {
                 document.getElementById('photoPreviewBox').innerHTML = `<img src="${found.photo}" class="w-full h-full object-cover">`;
-            } else {
-                document.getElementById('photoPreviewBox').innerHTML = `<i class="fa-solid fa-user text-2xl text-gray-500"></i>`;
             }
-
-            document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-user-pen"></i> প্রোফাইল এডিট করুন`;
-            document.getElementById('formSubmitBtn').innerText = 'আপডেট করুন';
             openModal('memberFormModal');
+        }
+
+        function deleteMember(id, memberBp) {
+            if (confirm('আপনি কি নিশ্চিত যে এই সদস্যকে স্থায়ীভাবে মুছে ফেলতে চান?')) {
+                showLoading();
+                db.collection("members").doc(memberBp || id).delete().then(() => {
+                    hideLoading();
+                    showToast('সদস্য মুছে ফেলা হয়েছে');
+                }).catch(() => {
+                    db.collection("members").doc(id).delete().then(() => {
+                        hideLoading();
+                        showToast('সদস্য মুছে ফেলা হয়েছে');
+                    }).catch(err => { hideLoading(); showToast("ত্রুটি: " + err.message, true); });
+                });
+            }
+        }
+
+        function openBloodModal() { openModal('bloodModal'); }
+        function handleBloodSubmit(e) {
+            e.preventDefault();
+            const blood = document.getElementById('reqBloodGroup').value;
+            const loc = document.getElementById('reqBloodLocation').value;
+            const phone = document.getElementById('reqBloodPhone').value;
+            
+            const msg = `জরুরি রক্ত প্রয়োজন (${blood})! স্থান: ${loc}, কল করুন: ${phone}`;
+            if (db) {
+                db.collection("settings").doc("notice").set({ text: msg }, { merge: true }).then(() => {
+                    showToast('রক্তের রিকোয়েস্ট নোটিশ বোর্ডে পোস্ট হয়েছে!');
+                    closeModal('bloodModal');
+                });
+            }
+        }
+
+        function saveNotice() {
+            const txt = document.getElementById('adminNoticeInput').value.trim();
+            if (txt && db) {
+                db.collection("settings").doc("notice").set({ text: txt }, { merge: true }).then(() => {
+                    showToast('নোটিশ আপডেট হয়েছে');
+                    document.getElementById('adminNoticeInput').value = '';
+                });
+            }
+        }
+
+        function exportDirectoryPDF() {
+            showLoading();
+            const element = document.getElementById('membersGrid');
+            const opt = {
+                margin:       0.5,
+                filename:     'Police_Batch_2022_Directory.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save().then(() => {
+                hideLoading();
+                showToast('পিডিএফ তৈরি সম্পন্ন হয়েছে!');
+            }).catch(() => hideLoading());
         }
 
         function openAdminPendingModal() {
@@ -864,34 +976,21 @@
         function renderPendingList() {
             const container = document.getElementById('pendingListContainer');
             container.innerHTML = '';
-
             if (pendingData.length === 0) {
-                container.innerHTML = `<p class="text-center text-xs text-gray-400 py-6">বর্তমানে কোনো পেন্ডিং রিকোয়েস্ট নেই।</p>`;
+                container.innerHTML = `<p class="text-center text-xs text-gray-400 py-4">কোনো পেন্ডিং রিকোয়েস্ট নেই।</p>`;
                 return;
             }
-
             pendingData.forEach((p) => {
                 const div = document.createElement('div');
-                div.className = "bg-slate-900/90 border border-slate-700 p-4 rounded-xl flex flex-wrap items-center justify-between gap-4";
-                
+                div.className = "bg-slate-800 p-3 rounded-lg flex items-center justify-between gap-2";
                 div.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 rounded-full bg-police-accent/20 border border-police-accent flex items-center justify-center font-bold text-police-gold text-sm overflow-hidden">
-                            ${p.photo ? `<img src="${p.photo}" class="w-full h-full object-cover">` : p.name.charAt(0)}
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-sm text-white">${p.name} <span class="text-xs text-police-gold">(${p.rank})</span></h4>
-                            <p class="text-[11px] text-gray-300">বিপি: ${p.bp} | জেলা: ${p.district} | ইউনিট: ${p.unit}</p>
-                            <p class="text-[10px] text-gray-400">ট্রেনিং: ${p.training}</p>
-                        </div>
+                    <div>
+                        <h5 class="text-xs font-bold text-white">${p.name} (${p.bp})</h5>
+                        <p class="text-[10px] text-gray-300">${p.rank} - ${p.unit}</p>
                     </div>
-                    <div class="flex gap-2">
-                        <button onclick="approvePending('${p.id}')" class="px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white font-bold text-xs rounded-lg transition-all">
-                            এপ্রুভ করুন
-                        </button>
-                        <button onclick="rejectPending('${p.id}')" class="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-lg transition-all">
-                            বাতিল
-                        </button>
+                    <div class="flex gap-1">
+                        <button onclick="approvePending('${p.id}')" class="px-2 py-1 bg-green-600 text-white text-[10px] font-bold rounded">এপ্রুভ</button>
+                        <button onclick="rejectPending('${p.id}')" class="px-2 py-1 bg-red-600 text-white text-[10px] font-bold rounded">বাতিল</button>
                     </div>
                 `;
                 container.appendChild(div);
@@ -900,73 +999,29 @@
 
         function approvePending(id) {
             const item = pendingData.find(p => p.id === id);
-            if (!item) return;
-
-            if (db) {
-                db.collection("members").add(item).then(() => {
+            if (item && db) {
+                showLoading();
+                db.collection("members").doc(item.bp).set(item).then(() => {
                     db.collection("pending_members").doc(id).delete().then(() => {
-                        showToast('নতুন প্রোফাইল সফলভাবে এপ্রুভ ও যুক্ত করা হয়েছে!');
-                        openAdminPendingModal();
+                        hideLoading();
+                        showToast('প্রোফাইল এপ্রুভ হয়েছে!');
+                        renderPendingList();
                     });
-                }).catch(err => showToast("এপ্রুভ করতে সমস্যা: " + err.message, true));
+                });
             }
         }
 
         function rejectPending(id) {
-            if (confirm('এই আবেদনটি বাতিল করতে চান?')) {
-                if (db) {
-                    db.collection("pending_members").doc(id).delete().then(() => {
-                        showToast('আবেদনটি বাতিল করা হয়েছে');
-                        openAdminPendingModal();
-                    }).catch(err => showToast("ত্রুটি: " + err.message, true));
-                }
-            }
-        }
-
-        // স্থায়ী এবং নিশ্চিত ডিলিট ফাংশন (আইডি বা বিপি নম্বর যাই হোক সরাসরি ফায়ারস্টোর থেকে মুছে ফেলবে)
-        function deleteMember(id, memberBp) {
-            if (confirm('আপনি কি নিশ্চিত যে এই সদস্যকে ক্লাউড থেকে স্থায়ীভাবে মুছে ফেলতে চান?')) {
-                if (!db) return;
-
-                // প্রথম ধাপ: সরাসরি ডকুমেন্ট আইডি দিয়ে ডিলিট করার চেষ্টা
-                db.collection("members").doc(id).delete().then(() => {
-                    showToast('ক্লাউড থেকে সদস্যের ডাটা মুছে ফেলা হয়েছে');
-                }).catch(() => {
-                    // দ্বিতীয় ধাপ: যদি ডকুমেন্ট আইডি কাজ না করে, তবে বিপি (BP) নম্বর দিয়ে কুয়েরি করে ডিলিট করবে
-                    if (memberBp) {
-                        db.collection("members").where("bp", "==", memberBp).get().then((querySnapshot) => {
-                            if (!querySnapshot.empty) {
-                                querySnapshot.forEach((doc) => {
-                                    doc.ref.delete().then(() => {
-                                        showToast('ক্লাউড থেকে সদস্যের ডাটা মুছে ফেলা হয়েছে');
-                                    });
-                                });
-                            } else {
-                                // তৃতীয় ধাপ: যদি বিপি বড়হাতে বা ছোটহাতে থাকে তার জন্য চেষ্টা
-                                db.collection("members").get().then((allDocs) => {
-                                    let foundDoc = null;
-                                    allDocs.forEach((doc) => {
-                                        const dData = doc.data();
-                                        if (doc.id === id || (dData.bp && dData.bp.toLowerCase() === memberBp.toLowerCase())) {
-                                            foundDoc = doc.ref;
-                                        }
-                                    });
-                                    if (foundDoc) {
-                                        foundDoc.delete().then(() => {
-                                            showToast('ক্লাউড থেকে সদস্যের ডাটা মুছে ফেলা হয়েছে');
-                                        });
-                                    } else {
-                                        showToast("সদস্য ডাটাবেজে পাওয়া যায়নি!", true);
-                                    }
-                                });
-                            }
-                        });
-                    } else {
-                        showToast("সদস্যের সঠিক তথ্য পাওয়া যায়নি!", true);
-                    }
+            if (confirm('আবেদনটি বাতিল করতে চান?') && db) {
+                db.collection("pending_members").doc(id).delete().then(() => {
+                    showToast('আবেদনটি বাতিল হয়েছে');
+                    renderPendingList();
                 });
             }
         }
+
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
         function togglePasswordVisibility(inputId, iconId) {
             const input = document.getElementById(inputId);
@@ -990,7 +1045,7 @@
                     img.onload = function() {
                         const canvas = document.createElement('canvas');
                         const ctx = canvas.getContext('2d');
-                        const MAX_WIDTH = 500;
+                        const MAX_WIDTH = 400;
                         const scaleSize = MAX_WIDTH / img.width;
                         canvas.width = MAX_WIDTH;
                         canvas.height = img.height * scaleSize;
@@ -1002,9 +1057,6 @@
                 reader.readAsDataURL(file);
             }
         }
-
-        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
         function openLoginModal() {
             if (currentUserRole !== 'guest') {
@@ -1083,11 +1135,13 @@
             const lockedScreen = document.getElementById('lockedStateScreen');
             const unlockedApp = document.getElementById('unlockedAppContainer');
             const submitBtnText = document.getElementById('submitBtnText');
+            const noticeBloodBar = document.getElementById('noticeBloodBar');
 
             if (currentUserRole !== 'guest') {
                 lockedScreen.classList.add('hidden');
                 unlockedApp.classList.remove('hidden');
                 addMemberBtn.classList.remove('hidden');
+                noticeBloodBar.classList.remove('hidden');
                 renderMembersGrid();
                 updatePendingCounter();
 
@@ -1105,6 +1159,7 @@
                 unlockedApp.classList.add('hidden');
                 addMemberBtn.classList.add('hidden');
                 editMyProfileNavBtn.classList.add('hidden');
+                noticeBloodBar.classList.add('hidden');
                 document.getElementById('adminPendingBtn').classList.add('hidden');
                 authBtnText.innerText = 'লগইন করুন';
             }
@@ -1127,9 +1182,7 @@
             }
 
             toast.classList.remove('hidden');
-            setTimeout(() => {
-                toast.classList.add('hidden');
-            }, 3000);
+            setTimeout(() => { toast.classList.add('hidden'); }, 3000);
         }
 
         function toBanglaDigit(num) {
