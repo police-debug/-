@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -18,8 +17,9 @@
     <!-- html2pdf.js for Export PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
-    <!-- Firebase App & Firestore SDKs -->
+    <!-- Firebase App, Auth & Firestore SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
     <script>
@@ -471,7 +471,6 @@
                             <i id="adminEyeIcon" class="fa-solid fa-eye-slash text-xs"></i>
                         </button>
                     </div>
-                    <p class="text-[10px] text-gray-400 mt-1"></p>
                 </div>
                 <button type="submit" class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-lg transition-all text-sm">
                     অ্যাডমিন প্যানেলে প্রবেশ করুন
@@ -704,6 +703,7 @@
         };
 
         let db = null;
+        let auth = null;
         let isCloudAvailable = false;
         let membersData = [];
         let pendingData = [];
@@ -730,7 +730,16 @@
                     firebase.initializeApp(firebaseConfig);
                 }
                 db = firebase.firestore();
+                auth = firebase.auth();
                 isCloudAvailable = true;
+                
+                // Track auth state
+                auth.onAuthStateChanged((user) => {
+                    if (user) {
+                        console.log("Firebase Auth User Active:", user.email);
+                    }
+                });
+
                 listenToCloudDatabase();
             } catch (error) {
                 console.warn("Cloud offline fallback mode:", error);
@@ -740,6 +749,17 @@
                 loadLocalBackupData();
                 hideLoading();
             }
+        }
+
+        // XSS Sanitization helper function
+        function sanitizeInput(str) {
+            if (!str) return '';
+            return str.toString()
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
         }
 
         function loadLocalBackupData() {
@@ -764,7 +784,6 @@
         function listenToCloudDatabase() {
             if (!db) return;
             
-            // Listen to active members
             db.collection("members").onSnapshot((snapshot) => {
                 membersData = [];
                 snapshot.forEach((doc) => {
@@ -779,7 +798,6 @@
                 hideLoading();
             });
 
-            // Listen to pending requests
             db.collection("pending_members").onSnapshot((snapshot) => {
                 pendingData = [];
                 snapshot.forEach((doc) => {
@@ -789,7 +807,6 @@
                 if (currentUserRole === 'admin') renderPendingList();
             });
 
-            // Listen to notices
             db.collection("settings").doc("notice").onSnapshot((doc) => {
                 if (doc.exists && doc.data().text) {
                     document.getElementById('noticeBoardText').innerText = doc.data().text;
@@ -797,7 +814,6 @@
                 }
             });
 
-            // Listen to logs
             db.collection("logs").orderBy("timestamp", "desc").limit(25).onSnapshot((snapshot) => {
                 auditLogs = [];
                 snapshot.forEach((doc) => {
@@ -808,8 +824,8 @@
 
         function addAuditLog(action, details) {
             const logItem = {
-                action: action,
-                details: details,
+                action: sanitizeInput(action),
+                details: sanitizeInput(details),
                 user: currentUserRole === 'admin' ? 'অ্যাডমিন' : (loggedInBpNumber || 'সদস্য'),
                 timestamp: new Date().toLocaleString('bn-BD')
             };
@@ -961,11 +977,11 @@
                             <img src="${photoSrc}" alt="${m.name}" class="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover border-2 border-police-accent shadow-md flex-shrink-0">
                             <div class="pr-10">
                                 <span class="px-2 py-0.5 bg-police-accent/20 text-police-accent text-[11px] font-bold rounded-md border border-police-accent/30 inline-block mb-1">
-                                    ${m.rank || 'সদস্য'}
+                                    ${sanitizeInput(m.rank || 'সদস্য')}
                                 </span>
-                                <h4 class="font-bold text-sm sm:text-base text-white leading-snug hover:text-police-gold transition-colors">${m.name}</h4>
+                                <h4 class="font-bold text-sm sm:text-base text-white leading-snug hover:text-police-gold transition-colors">${sanitizeInput(m.name)}</h4>
                                 <p class="text-xs text-gray-300 font-mono flex items-center gap-1">
-                                    <i class="fa-solid fa-id-card text-police-accent text-[10px]"></i> ${m.bp}
+                                    <i class="fa-solid fa-id-card text-police-accent text-[10px]"></i> ${sanitizeInput(m.bp)}
                                 </p>
                             </div>
                         </div>
@@ -973,20 +989,20 @@
                         <div class="space-y-2 text-xs text-gray-300 bg-slate-900/80 p-3 rounded-xl border border-slate-800 mb-4">
                             <div class="flex justify-between items-center">
                                 <span class="text-gray-400 font-medium">নিজ জেলা:</span>
-                                <span class="font-bold text-white">${m.district || 'প্রযোজ্য নয়'}</span>
+                                <span class="font-bold text-white">${sanitizeInput(m.district || 'প্রযোজ্য নয়')}</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-gray-400 font-medium">সংস্থা / ইউনিট:</span>
-                                <span class="font-bold text-white bg-police-navy px-2 py-0.5 rounded border border-police-accent/20">${m.unit}</span>
+                                <span class="font-bold text-white bg-police-navy px-2 py-0.5 rounded border border-police-accent/20">${sanitizeInput(m.unit)}</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-gray-400 font-medium">কর্মস্থল:</span>
-                                <span class="text-gray-200 text-right truncate max-w-[150px]">${m.location}</span>
+                                <span class="text-gray-200 text-right truncate max-w-[150px]">${sanitizeInput(m.location)}</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-gray-400 font-medium">রক্তের গ্রুপ:</span>
-                                <span class="text-red-400 font-bold bg-red-950/60 px-2 py-0.5 rounded border border-red-800/45 cursor-pointer" onclick="filterByBloodGroup('${m.blood}')">
-                                    <i class="fa-solid fa-droplet text-[10px] mr-1"></i>${m.blood}
+                                <span class="text-red-400 font-bold bg-red-950/60 px-2 py-0.5 rounded border border-red-800/45 cursor-pointer" onclick="filterByBloodGroup('${sanitizeInput(m.blood)}')">
+                                    <i class="fa-solid fa-droplet text-[10px] mr-1"></i>${sanitizeInput(m.blood)}
                                 </span>
                             </div>
                         </div>
@@ -996,7 +1012,7 @@
                         <button onclick="viewMemberProfile('${m.id}')" class="flex-1 py-2 bg-police-light hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow transition-all flex items-center justify-center gap-1.5">
                             <i class="fa-solid fa-eye"></i> বিস্তারিত
                         </button>
-                        ${m.phone ? `<a href="tel:${m.phone}" class="px-3 py-2 bg-green-600 hover:bg-green-500 text-white font-bold text-xs rounded-xl shadow flex items-center justify-center gap-1.5 transition-all"><i class="fa-solid fa-phone"></i> কল</a>` : ''}
+                        ${m.phone ? `<a href="tel:${sanitizeInput(m.phone)}" class="px-3 py-2 bg-green-600 hover:bg-green-500 text-white font-bold text-xs rounded-xl shadow flex items-center justify-center gap-1.5 transition-all"><i class="fa-solid fa-phone"></i> কল</a>` : ''}
                     </div>
                 `;
 
@@ -1013,42 +1029,42 @@
             document.getElementById('profileModalDetails').innerHTML = `
                 <div class="text-center mb-6">
                     <img src="${photoSrc}" class="w-24 h-24 rounded-full border-4 border-police-accent mx-auto mb-3 object-cover shadow-xl">
-                    <span class="px-3 py-1 bg-police-accent/20 text-police-gold text-xs font-bold rounded-full border border-police-accent/40 inline-block mb-1">${m.rank || 'সদস্য'}</span>
-                    <h3 class="text-xl font-bold text-white font-bangla">${m.name}</h3>
-                    <p class="text-sm font-mono text-police-gold"><i class="fa-solid fa-id-card"></i> ${m.bp}</p>
+                    <span class="px-3 py-1 bg-police-accent/20 text-police-gold text-xs font-bold rounded-full border border-police-accent/40 inline-block mb-1">${sanitizeInput(m.rank || 'সদস্য')}</span>
+                    <h3 class="text-xl font-bold text-white font-bangla">${sanitizeInput(m.name)}</h3>
+                    <p class="text-sm font-mono text-police-gold"><i class="fa-solid fa-id-card"></i> ${sanitizeInput(m.bp)}</p>
                 </div>
 
                 <div class="space-y-2.5 text-xs bg-slate-900/90 p-4 rounded-xl border border-slate-800 mb-6">
                     <div class="flex justify-between border-b border-slate-800 pb-2">
                         <span class="text-gray-400">সংস্থা / ইউনিট:</span>
-                        <span class="font-bold text-white">${m.unit}</span>
+                        <span class="font-bold text-white">${sanitizeInput(m.unit)}</span>
                     </div>
                     <div class="flex justify-between border-b border-slate-800 pb-2">
                         <span class="text-gray-400">শাখা / ফান্ড:</span>
-                        <span class="font-bold text-police-gold">${m.branch}</span>
+                        <span class="font-bold text-police-gold">${sanitizeInput(m.branch)}</span>
                     </div>
                     <div class="flex justify-between border-b border-slate-800 pb-2">
                         <span class="text-gray-400">কর্মস্থল / থানা:</span>
-                        <span class="font-bold text-white">${m.location}</span>
+                        <span class="font-bold text-white">${sanitizeInput(m.location)}</span>
                     </div>
                     <div class="flex justify-between border-b border-slate-800 pb-2">
                         <span class="text-gray-400">নিজ জেলা:</span>
-                        <span class="font-bold text-white">${m.district || 'N/A'}</span>
+                        <span class="font-bold text-white">${sanitizeInput(m.district || 'N/A')}</span>
                     </div>
                     <div class="flex justify-between border-b border-slate-800 pb-2">
                         <span class="text-gray-400">ট্রেনিং সেন্টার:</span>
-                        <span class="font-bold text-white">${m.training || 'N/A'}</span>
+                        <span class="font-bold text-white">${sanitizeInput(m.training || 'N/A')}</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-gray-400">রক্তের গ্রুপ:</span>
-                        <span class="font-bold text-red-400"><i class="fa-solid fa-droplet text-red-500 mr-1"></i>${m.blood}</span>
+                        <span class="font-bold text-red-400"><i class="fa-solid fa-droplet text-red-500 mr-1"></i>${sanitizeInput(m.blood)}</span>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    ${m.phone ? `<a href="tel:${m.phone}" class="w-full py-2.5 bg-green-600 hover:bg-green-500 text-white font-bold text-xs rounded-xl shadow-lg flex items-center justify-center gap-2"><i class="fa-solid fa-phone"></i> কল করুন (${m.phone})</a>` : ''}
-                    ${m.whatsapp ? `<a href="https://wa.me/${m.whatsapp}" target="_blank" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-lg flex items-center justify-center gap-2"><i class="fa-brands fa-whatsapp"></i> হোয়াটসঅ্যাপ</a>` : ''}
-                    ${m.facebook ? `<a href="${m.facebook}" target="_blank" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl shadow-lg flex items-center justify-center gap-2 sm:col-span-2"><i class="fa-brands fa-facebook"></i> ফেসবুক প্রোফাইল</a>` : ''}
+                    ${m.phone ? `<a href="tel:${sanitizeInput(m.phone)}" class="w-full py-2.5 bg-green-600 hover:bg-green-500 text-white font-bold text-xs rounded-xl shadow-lg flex items-center justify-center gap-2"><i class="fa-solid fa-phone"></i> কল করুন (${sanitizeInput(m.phone)})</a>` : ''}
+                    ${m.whatsapp ? `<a href="https://wa.me/${sanitizeInput(m.whatsapp)}" target="_blank" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-lg flex items-center justify-center gap-2"><i class="fa-brands fa-whatsapp"></i> হোয়াটসঅ্যাপ</a>` : ''}
+                    ${m.facebook ? `<a href="${sanitizeInput(m.facebook)}" target="_blank" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl shadow-lg flex items-center justify-center gap-2 sm:col-span-2"><i class="fa-brands fa-facebook"></i> ফেসবুক প্রোফাইল</a>` : ''}
                 </div>
             `;
             openModal('viewProfileModal');
@@ -1084,22 +1100,23 @@
             showLoading('তথ্য সুরক্ষিতভাবে সেভ হচ্ছে...');
 
             let editId = document.getElementById('editMemberId').value.trim();
-            const name = document.getElementById('memberName').value.trim();
-            let bp = document.getElementById('memberBp').value.trim().toUpperCase();
+            const name = sanitizeInput(document.getElementById('memberName').value.trim());
+            let bp = sanitizeInput(document.getElementById('memberBp').value.trim().toUpperCase());
             if(!bp.startsWith('BP')) bp = 'BP' + bp;
 
-            const pin = document.getElementById('memberPin').value.trim() || '2022';
-            const rank = document.getElementById('memberRank').value;
-            const unit = document.getElementById('memberUnit').value;
-            const branch = document.getElementById('memberBranch').value;
-            const blood = document.getElementById('memberBlood').value;
-            const district = document.getElementById('memberDistrict').value.trim();
-            const training = document.getElementById('memberTraining').value;
-            const location = document.getElementById('memberLocation').value.trim();
-            const phone = document.getElementById('memberPhone').value.trim();
-            const whatsapp = document.getElementById('memberWhatsapp').value.trim();
-            const facebook = document.getElementById('memberFacebook').value.trim();
+            const pin = sanitizeInput(document.getElementById('memberPin').value.trim() || '2022');
+            const rank = sanitizeInput(document.getElementById('memberRank').value);
+            const unit = sanitizeInput(document.getElementById('memberUnit').value);
+            const branch = sanitizeInput(document.getElementById('memberBranch').value);
+            const blood = sanitizeInput(document.getElementById('memberBlood').value);
+            const district = sanitizeInput(document.getElementById('memberDistrict').value.trim());
+            const training = sanitizeInput(document.getElementById('memberTraining').value);
+            const location = sanitizeInput(document.getElementById('memberLocation').value.trim());
+            const phone = sanitizeInput(document.getElementById('memberPhone').value.trim());
+            const whatsapp = sanitizeInput(document.getElementById('memberWhatsapp').value.trim());
+            const facebook = sanitizeInput(document.getElementById('memberFacebook').value.trim());
 
+            // ইউনিক বিপি প্রটেকশন ও ডুপ্লিকেট চেকিং
             const memberPayload = {
                 name, bp, pin, rank, unit, branch, blood, district, training, location, phone, whatsapp, facebook,
                 updatedAt: new Date().toISOString()
@@ -1109,6 +1126,7 @@
 
             if (isCloudAvailable && db) {
                 if (currentUserRole === 'admin' || editId) {
+                    // এডিট বা অ্যাডমিন আপডেট মোড (সঠিক প্রোফাইল আপডেট ফিটনেস নিশ্চিত করা হয়েছে)
                     db.collection("members").doc(bp).set(memberPayload, { merge: true }).then(() => {
                         addAuditLog('প্রোফাইল আপডেট', `${name} (${bp})-এর তথ্য আপডেট করা হয়েছে`);
                         hideLoading();
@@ -1119,21 +1137,29 @@
                         fallbackSaveLocal(memberPayload, bp);
                     });
                 } else {
+                    // নতুন রেজিস্ট্রেশনের ক্ষেত্রে ইউনিক বিপি চেক
                     db.collection("members").doc(bp).get().then((docSnap) => {
                         if (docSnap.exists) {
                             hideLoading();
-                            showToast('এই বিপি নম্বরটি ইতোমধ্যে বিদ্যমান!', true);
+                            showToast('এই বিপি নম্বরটি ইতোমধ্যে ডিরেক্টরিতে বিদ্যমান!', true);
                             return;
                         }
-                        db.collection("pending_members").doc(bp).set(memberPayload).then(() => {
-                            addAuditLog('নতুন আবেদন', `${name} (${bp})-এর প্রোফাইল জমা দেওয়া হয়েছে`);
-                            hideLoading();
-                            showToast('আপনার প্রোফাইল জমা হয়েছে! অনুমোদনের পর ডিরেক্টরিতে দেখাবে।');
-                            closeModal('memberFormModal');
-                        }).catch(err => {
-                            hideLoading();
-                            fallbackSaveLocal(memberPayload, bp);
+                        db.collection("pending_members").doc(bp).get().then((pendingSnap) => {
+                            if (pendingSnap.exists) {
+                                hideLoading();
+                                showToast('এই বিপি নম্বরের আবেদন ইতোমধ্যে পেন্ডিং রয়েছে!', true);
+                                return;
+                            }
+                            db.collection("pending_members").doc(bp).set(memberPayload).then(() => {
+                                addAuditLog('নতুন আবেদন', `${name} (${bp})-এর প্রোফাইল জমা দেওয়া হয়েছে`);
+                                hideLoading();
+                                showToast('আপনার প্রোফাইল জমা হয়েছে! অনুমোদনের পর ডিরেক্টরিতে দেখাবে।');
+                                closeModal('memberFormModal');
+                            });
                         });
+                    }).catch(err => {
+                        hideLoading();
+                        fallbackSaveLocal(memberPayload, bp);
                     });
                 }
             } else {
@@ -1244,9 +1270,9 @@
         function openBloodModal() { openModal('bloodModal'); }
         function handleBloodSubmit(e) {
             e.preventDefault();
-            const blood = document.getElementById('reqBloodGroup').value;
-            const loc = document.getElementById('reqBloodLocation').value;
-            const phone = document.getElementById('reqBloodPhone').value;
+            const blood = sanitizeInput(document.getElementById('reqBloodGroup').value);
+            const loc = sanitizeInput(document.getElementById('reqBloodLocation').value);
+            const phone = sanitizeInput(document.getElementById('reqBloodPhone').value);
             
             const msg = `জরুরি রক্ত প্রয়োজন (${blood})! স্থান: ${loc}, কল করুন: ${phone}`;
             showLoading('নোটিশ পোস্ট হচ্ছে...');
@@ -1274,7 +1300,7 @@
 
         function handleNoticeSubmit(e) {
             e.preventDefault();
-            const txt = document.getElementById('adminNoticeInput').value.trim();
+            const txt = sanitizeInput(document.getElementById('adminNoticeInput').value.trim());
             if (txt) {
                 showLoading('নোটিশ আপডেট হচ্ছে...');
                 if (isCloudAvailable && db) {
@@ -1331,8 +1357,8 @@
                     <div class="flex items-center gap-3">
                         <img src="${p.photo || 'https://placehold.co/80x80/0b192c/fbbf24?text=P'}" class="w-12 h-12 rounded-full object-cover border border-police-accent">
                         <div>
-                            <h5 class="text-xs font-bold text-white">${p.name} (${p.bp})</h5>
-                            <p class="text-[10px] text-gray-300">${p.rank} - ${p.unit} | জেলা: ${p.district}</p>
+                            <h5 class="text-xs font-bold text-white">${sanitizeInput(p.name)} (${sanitizeInput(p.bp)})</h5>
+                            <p class="text-[10px] text-gray-300">${sanitizeInput(p.rank)} - ${sanitizeInput(p.unit)} | জেলা: ${sanitizeInput(p.district)}</p>
                         </div>
                     </div>
                     <div class="flex gap-1.5">
@@ -1427,6 +1453,9 @@
 
         function openLoginModal() {
             if (currentUserRole !== 'guest') {
+                if (auth) {
+                    auth.signOut().catch(() => {});
+                }
                 currentUserRole = 'guest';
                 loggedInBpNumber = '';
                 sessionStorage.removeItem('POLICE_USER_ROLE');
@@ -1480,6 +1509,13 @@
                 loggedInBpNumber = bpInput;
                 sessionStorage.setItem('POLICE_USER_ROLE', 'member');
                 sessionStorage.setItem('POLICE_LOGGED_BP', bpInput);
+                
+                // Firebase Auth Sign-in simulation / support if enabled
+                if (auth) {
+                    const fakeEmail = `${bpInput.toLowerCase()}@policebatch2022.gov.bd`;
+                    auth.signInWithEmailAndPassword(fakeEmail, pinInput).catch(() => {});
+                }
+
                 checkSessionState();
                 closeModal('loginModal');
                 showToast('সদস্য হিসেবে সফলভাবে লগইন হয়েছে!');
@@ -1494,6 +1530,11 @@
             if (pass === 'Admin2k22') {
                 currentUserRole = 'admin';
                 sessionStorage.setItem('POLICE_USER_ROLE', 'admin');
+                
+                if (auth) {
+                    auth.signInWithEmailAndPassword('admin@policebatch2022.gov.bd', 'Admin2k22').catch(() => {});
+                }
+
                 checkSessionState();
                 closeModal('loginModal');
                 addAuditLog('অ্যাডমিন লগইন', 'অ্যাডমিন প্যানেলে প্রবেশ করা হয়েছে');
@@ -1581,4 +1622,3 @@
     </script>
 </body>
 </html>
-```
