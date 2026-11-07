@@ -595,6 +595,21 @@
                     </div>
 
                     <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">সর্বশেষ রক্তদানের তারিখ (ঐচ্ছিক)</label>
+                        <input type="date" id="memberLastDonation" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">সার্ভিস স্ট্যাটাস / বদলি হিস্ট্রি *</label>
+                        <select id="memberServiceStatus" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
+                            <option value="ইন-সার্ভিস">ইন-সার্ভিস (সক্রিয়)</option>
+                            <option value="স্টাডি লিভ">স্টাডি লিভ (অধ্যয়ন ছুটি)</option>
+                            <option value="ডেপুটেশন">ডেপুটেশন</option>
+                            <option value="অন্যান্য বদলি/অবস্থা">অন্যান্য বদলি/অবস্থা</option>
+                        </select>
+                    </div>
+
+                    <div>
                         <label class="block text-xs font-medium text-gray-300 mb-1">নিজ জেলা *</label>
                         <input type="text" id="memberDistrict" required placeholder="যেমন: ঢাকা, চট্টগ্রাম..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
                     </div>
@@ -733,7 +748,6 @@
                 auth = firebase.auth();
                 isCloudAvailable = true;
                 
-                // Track auth state
                 auth.onAuthStateChanged((user) => {
                     if (user) {
                         console.log("Firebase Auth User Active:", user.email);
@@ -956,6 +970,27 @@
                 
                 const photoSrc = m.photo ? m.photo : `https://placehold.co/120x120/0b192c/fbbf24?text=${encodeURIComponent((m.name || 'P').charAt(0))}`;
 
+                // রক্তদানের ৩ মাসের শর্ত ও অটো-রিমাইন্ডার লজিক
+                let donationBadge = '';
+                if (m.lastDonation) {
+                    const lastDate = new Date(m.lastDonation);
+                    const today = new Date();
+                    const diffMonths = (today.getFullYear() - lastDate.getFullYear()) * 12 + (today.getMonth() - lastDate.getMonth());
+                    if (diffMonths >= 3) {
+                        donationBadge = `<span class="text-[10px] bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded border border-emerald-800"><i class="fa-solid fa-check"></i> রক্তদানে প্রস্তুত</span>`;
+                    } else {
+                        donationBadge = `<span class="text-[10px] bg-amber-950 text-amber-400 px-2 py-0.5 rounded border border-amber-800"><i class="fa-solid fa-clock"></i> ৩ মাসের বিরতিতে</span>`;
+                    }
+                } else {
+                    donationBadge = `<span class="text-[10px] bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded border border-emerald-800"><i class="fa-solid fa-check"></i> উপলব্ধ রক্তদাতা</span>`;
+                }
+
+                // সার্ভিস স্ট্যাটাসের জন্য কালার ব্যাজ
+                let statusBadgeColor = 'bg-police-navy text-police-gold border-police-accent/20';
+                const sStatus = m.serviceStatus || 'ইন-সার্ভিস';
+                if (sStatus === 'স্টাডি লিভ') statusBadgeColor = 'bg-blue-950 text-blue-300 border-blue-800';
+                if (sStatus === 'ডেপুটেশন') statusBadgeColor = 'bg-purple-950 text-purple-300 border-purple-800';
+
                 const canEditThis = (currentUserRole === 'admin') || (currentUserRole === 'member' && m.bp && m.bp.toUpperCase() === loggedInBpNumber.toUpperCase());
                 const actionControls = canEditThis ? `
                     <div class="absolute top-3 right-3 flex gap-1 z-10">
@@ -988,6 +1023,10 @@
 
                         <div class="space-y-2 text-xs text-gray-300 bg-slate-900/80 p-3 rounded-xl border border-slate-800 mb-4">
                             <div class="flex justify-between items-center">
+                                <span class="text-gray-400 font-medium">সার্ভিস স্ট্যাটাস:</span>
+                                <span class="font-bold px-2 py-0.5 rounded border ${statusBadgeColor}">${sanitizeInput(sStatus)}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
                                 <span class="text-gray-400 font-medium">নিজ জেলা:</span>
                                 <span class="font-bold text-white">${sanitizeInput(m.district || 'প্রযোজ্য নয়')}</span>
                             </div>
@@ -1005,6 +1044,7 @@
                                     <i class="fa-solid fa-droplet text-[10px] mr-1"></i>${sanitizeInput(m.blood)}
                                 </span>
                             </div>
+                            ${donationBadge ? `<div class="pt-1 flex justify-end">${donationBadge}</div>` : ''}
                         </div>
                     </div>
 
@@ -1036,6 +1076,10 @@
 
                 <div class="space-y-2.5 text-xs bg-slate-900/90 p-4 rounded-xl border border-slate-800 mb-6">
                     <div class="flex justify-between border-b border-slate-800 pb-2">
+                        <span class="text-gray-400">সার্ভিস স্ট্যাটাস / বদলি:</span>
+                        <span class="font-bold text-police-gold">${sanitizeInput(m.serviceStatus || 'ইন-সার্ভিস')}</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-800 pb-2">
                         <span class="text-gray-400">সংস্থা / ইউনিট:</span>
                         <span class="font-bold text-white">${sanitizeInput(m.unit)}</span>
                     </div>
@@ -1055,9 +1099,13 @@
                         <span class="text-gray-400">ট্রেনিং সেন্টার:</span>
                         <span class="font-bold text-white">${sanitizeInput(m.training || 'N/A')}</span>
                     </div>
-                    <div class="flex justify-between">
+                    <div class="flex justify-between border-b border-slate-800 pb-2">
                         <span class="text-gray-400">রক্তের গ্রুপ:</span>
                         <span class="font-bold text-red-400"><i class="fa-solid fa-droplet text-red-500 mr-1"></i>${sanitizeInput(m.blood)}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">সর্বশেষ রক্তদানের তারিখ:</span>
+                        <span class="font-bold text-white">${sanitizeInput(m.lastDonation || 'প্রযোজ্য নয়')}</span>
                     </div>
                 </div>
 
@@ -1109,6 +1157,8 @@
             const unit = sanitizeInput(document.getElementById('memberUnit').value);
             const branch = sanitizeInput(document.getElementById('memberBranch').value);
             const blood = sanitizeInput(document.getElementById('memberBlood').value);
+            const lastDonation = sanitizeInput(document.getElementById('memberLastDonation').value);
+            const serviceStatus = sanitizeInput(document.getElementById('memberServiceStatus').value);
             const district = sanitizeInput(document.getElementById('memberDistrict').value.trim());
             const training = sanitizeInput(document.getElementById('memberTraining').value);
             const location = sanitizeInput(document.getElementById('memberLocation').value.trim());
@@ -1116,9 +1166,8 @@
             const whatsapp = sanitizeInput(document.getElementById('memberWhatsapp').value.trim());
             const facebook = sanitizeInput(document.getElementById('memberFacebook').value.trim());
 
-            // ইউনিক বিপি প্রটেকশন ও ডুপ্লিকেট চেকিং
             const memberPayload = {
-                name, bp, pin, rank, unit, branch, blood, district, training, location, phone, whatsapp, facebook,
+                name, bp, pin, rank, unit, branch, blood, lastDonation, serviceStatus, district, training, location, phone, whatsapp, facebook,
                 updatedAt: new Date().toISOString()
             };
 
@@ -1126,7 +1175,6 @@
 
             if (isCloudAvailable && db) {
                 if (currentUserRole === 'admin' || editId) {
-                    // এডিট বা অ্যাডমিন আপডেট মোড (সঠিক প্রোফাইল আপডেট ফিটনেস নিশ্চিত করা হয়েছে)
                     db.collection("members").doc(bp).set(memberPayload, { merge: true }).then(() => {
                         addAuditLog('প্রোফাইল আপডেট', `${name} (${bp})-এর তথ্য আপডেট করা হয়েছে`);
                         hideLoading();
@@ -1137,7 +1185,6 @@
                         fallbackSaveLocal(memberPayload, bp);
                     });
                 } else {
-                    // নতুন রেজিস্ট্রেশনের ক্ষেত্রে ইউনিক বিপি চেক
                     db.collection("members").doc(bp).get().then((docSnap) => {
                         if (docSnap.exists) {
                             hideLoading();
@@ -1220,6 +1267,8 @@
             document.getElementById('memberUnit').value = found.unit || 'পুলিশ হেডকোয়ার্টার্স';
             document.getElementById('memberBranch').value = found.branch || 'প্রশাসনিক শাখা';
             document.getElementById('memberBlood').value = found.blood || 'A+';
+            document.getElementById('memberLastDonation').value = found.lastDonation || '';
+            document.getElementById('memberServiceStatus').value = found.serviceStatus || 'ইন-সার্ভিস';
             document.getElementById('memberDistrict').value = found.district || '';
             document.getElementById('memberTraining').value = found.training || 'পুলিশ একাডেমি, সারদা';
             document.getElementById('memberLocation').value = found.location || '';
@@ -1319,22 +1368,6 @@
                     closeModal('adminNoticeModal');
                 }
             }
-        }
-
-        function exportDirectoryPDF() {
-            showLoading('পিডিএফ তৈরি হচ্ছে...');
-            const element = document.getElementById('membersGrid');
-            const opt = {
-                margin:       0.3,
-                filename:     'Police_Batch_2022_Directory.pdf',
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2 },
-                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
-            };
-            html2pdf().set(opt).from(element).save().then(() => {
-                hideLoading();
-                showToast('পিডিএফ ডাউনলোড সম্পন্ন হয়েছে!');
-            }).catch(() => hideLoading());
         }
 
         function openAdminPendingModal() {
@@ -1510,7 +1543,6 @@
                 sessionStorage.setItem('POLICE_USER_ROLE', 'member');
                 sessionStorage.setItem('POLICE_LOGGED_BP', bpInput);
                 
-                // Firebase Auth Sign-in simulation / support if enabled
                 if (auth) {
                     const fakeEmail = `${bpInput.toLowerCase()}@policebatch2022.gov.bd`;
                     auth.signInWithEmailAndPassword(fakeEmail, pinInput).catch(() => {});
@@ -1611,7 +1643,7 @@
                 toastIcon.className = "fa-solid fa-circle-check text-police-accent text-xl";
             }
 
-            toast.classList.remove('hidden');
+            toast.classList.add('hidden');
             setTimeout(() => { toast.classList.add('hidden'); }, 3000);
         }
 
