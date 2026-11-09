@@ -733,9 +733,14 @@
                 auth = firebase.auth();
                 isCloudAvailable = true;
                 
+                // অটো অ্যানোনিমাস সাইন-ইন নিশ্চিত করা (403 Error দূর করার জন্য)
+                auth.signInAnonymously().catch(err => {
+                    console.warn("Anonymous auth failed or disabled:", err);
+                });
+
                 auth.onAuthStateChanged((user) => {
                     if (user) {
-                        console.log("Firebase Auth User Active:", user.email);
+                        console.log("Firebase Auth User Active:", user.uid);
                     }
                 });
 
@@ -955,7 +960,6 @@
                 
                 const photoSrc = m.photo ? m.photo : `https://placehold.co/120x120/0b192c/fbbf24?text=${encodeURIComponent((m.name || 'P').charAt(0))}`;
 
-                // রক্তদানের ৩ মাসের শর্ত ও অটো-রিমাইন্ডার লজিক
                 let donationBadge = '';
                 if (m.lastDonation) {
                     const lastDate = new Date(m.lastDonation);
@@ -970,7 +974,6 @@
                     donationBadge = `<span class="text-[10px] bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded border border-emerald-800"><i class="fa-solid fa-check"></i> উপলব্ধ রক্তদাতা</span>`;
                 }
 
-                // সার্ভিস স্ট্যাটাসের জন্য কালার ব্যাজ
                 let statusBadgeColor = 'bg-police-navy text-police-gold border-police-accent/20';
                 const sStatus = m.serviceStatus || 'ইন-সার্ভিস';
                 if (sStatus === 'স্টাডি লিভ') statusBadgeColor = 'bg-blue-950 text-blue-300 border-blue-800';
@@ -1528,11 +1531,6 @@
                 sessionStorage.setItem('POLICE_USER_ROLE', 'member');
                 sessionStorage.setItem('POLICE_LOGGED_BP', bpInput);
                 
-                if (auth) {
-                    const fakeEmail = `${bpInput.toLowerCase()}@policebatch2022.gov.bd`;
-                    auth.signInWithEmailAndPassword(fakeEmail, pinInput).catch(() => {});
-                }
-
                 checkSessionState();
                 closeModal('loginModal');
                 showToast('সদস্য হিসেবে সফলভাবে লগইন হয়েছে!');
@@ -1548,10 +1546,6 @@
                 currentUserRole = 'admin';
                 sessionStorage.setItem('POLICE_USER_ROLE', 'admin');
                 
-                if (auth) {
-                    auth.signInWithEmailAndPassword('admin@policebatch2022.gov.bd', 'Admin2k22').catch(() => {});
-                }
-
                 checkSessionState();
                 closeModal('loginModal');
                 addAuditLog('অ্যাডমিন লগইন', 'অ্যাডমিন প্যানেলে প্রবেশ করা হয়েছে');
