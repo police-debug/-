@@ -124,7 +124,7 @@
 
                 <button id="addMemberBtn" onclick="openAddMemberModal()" class="hidden px-2.5 py-1.5 sm:px-4 sm:py-2 bg-police-accent hover:bg-police-gold text-slate-950 text-xs sm:text-sm font-bold rounded-xl shadow-lg transition-all flex items-center gap-1.5 active:scale-95">
                     <i class="fa-solid fa-user-plus"></i>
-                    <span class="hidden sm:inline" id="submitBtnText">প্রোফাইল জমা দিন</span>
+                    <span class="hidden sm:inline" id="submitBtnText">সদস্য যোগ করুন</span>
                 </button>
 
                 <button id="editMyProfileNavBtn" onclick="openEditMyProfileModal()" class="hidden px-2.5 py-1.5 sm:px-4 sm:py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-lg transition-all flex items-center gap-1.5">
@@ -231,10 +231,15 @@
                     <i class="fa-solid fa-shield-halved"></i>
                 </div>
                 <h2 class="text-xl sm:text-2xl font-bold text-white font-bangla">বাংলাদেশ পুলিশ ব্যাচ ২০২২ ডিরেক্টরিতে স্বাগতম</h2>
-                <p class="text-xs sm:text-sm text-gray-300 leading-relaxed">তথ্য দেখতে এবং আপনার তথ্য যোগ করতে অনুগ্রহ করে আপনার বিপি নম্বর এবং ব্যাচ পিন দিয়ে নিরাপদে প্রবেশ করুন।</p>
-                <button onclick="openLoginModal()" class="px-6 py-3 bg-police-accent hover:bg-police-gold text-slate-950 font-bold rounded-xl shadow-xl transition-all text-sm inline-flex items-center gap-2">
-                    <i class="fa-solid fa-key"></i> সিকিউরড পিন দিয়ে প্রবেশ করুন
-                </button>
+                <p class="text-xs sm:text-sm text-gray-300 leading-relaxed">তথ্য দেখতে এবং আপনার তথ্য যোগ করতে অনুগ্রহ করে আপনার বিপি নম্বর এবং পিন দিয়ে লগইন করুন অথবা নতুন হয়ে থাকলে নিচের বাটনে ক্লিক করে রেজিস্ট্রেশন করুন।</p>
+                <div class="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+                    <button onclick="openLoginModal()" class="px-6 py-3 bg-police-accent hover:bg-police-gold text-slate-950 font-bold rounded-xl shadow-xl transition-all text-sm inline-flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-key"></i> লগইন করুন
+                    </button>
+                    <button onclick="openAddMemberModal()" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-xl transition-all text-sm inline-flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-user-plus"></i> নতুন অ্যাকাউন্ট রেজিস্ট্রেশন
+                    </button>
+                </div>
             </div>
         </section>
 
@@ -435,7 +440,7 @@
 
             <div class="flex bg-slate-900 p-1 rounded-xl mb-5 border border-slate-800">
                 <button id="memberTabBtn" onclick="switchAuthTab('member')" class="w-1/2 py-2 text-xs font-bold rounded-lg transition-all bg-police-accent text-slate-950">
-                    সদস্য পিন (PIN)
+                    সদস্য লগইন
                 </button>
                 <button id="adminTabBtn" onclick="switchAuthTab('admin')" class="w-1/2 py-2 text-xs font-bold rounded-lg transition-all text-gray-400 hover:text-white">
                     অ্যাডমিন পাসওয়ার্ড
@@ -448,18 +453,20 @@
                     <input type="text" id="loginBpNumber" required placeholder="উদাহরণ: BP2022XXXX" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-police-accent outline-none uppercase">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-gray-300 mb-1">লগইন পিন / পাসওয়ার্ড *</label>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">পাসওয়ার্ড / পিন *</label>
                     <div class="relative">
                         <input type="password" id="loginPin" required placeholder="••••" maxlength="20" autocomplete="current-password" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 pr-10 text-sm text-white focus:border-police-accent outline-none">
                         <button type="button" onclick="togglePasswordVisibility('loginPin', 'pinEyeIcon')" class="absolute right-3 top-3 text-gray-400 hover:text-white">
                             <i id="pinEyeIcon" class="fa-solid fa-eye-slash text-xs"></i>
                         </button>
                     </div>
-                    <p class="text-[10px] text-gray-400 mt-1">* আপনার পিন অথবা ডিফল্ট পিন প্রদান করুন</p>
                 </div>
                 <button type="submit" class="w-full py-3 bg-police-accent hover:bg-police-gold text-slate-950 font-bold rounded-xl shadow-lg transition-all text-sm">
-                    সদস্য হিসেবে প্রবেশ করুন
+                    লগইন করুন
                 </button>
+                <div class="text-center pt-2">
+                    <p class="text-xs text-gray-400">নতুন অ্যাকাউন্ট নেই? <button type="button" onclick="closeModal('loginModal'); openAddMemberModal();" class="text-police-gold font-bold hover:underline">রেজিস্ট্রেশন করুন</button></p>
+                </div>
             </form>
 
             <form id="adminLoginForm" onsubmit="handleAdminLogin(event)" class="space-y-4 hidden">
@@ -479,7 +486,7 @@
         </div>
     </div>
 
-    <!-- Profile Form Modal -->
+    <!-- Registration / Profile Form Modal -->
     <div id="memberFormModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4 overflow-y-auto">
         <div class="glass-card max-w-2xl w-full p-6 rounded-2xl shadow-2xl relative border border-police-accent/40 my-8">
             <button onclick="closeModal('memberFormModal')" class="absolute top-4 right-4 text-gray-400 hover:text-white text-lg">
@@ -487,8 +494,9 @@
             </button>
 
             <h3 id="formTitle" class="text-lg font-bold text-police-gold font-bangla mb-4 flex items-center gap-2">
-                <i class="fa-solid fa-user-plus"></i> প্রোফাইল তথ্য ফর্ম
+                <i class="fa-solid fa-user-plus"></i> নতুন অ্যাকাউন্ট রেজিস্ট্রেশন ফর্ম
             </h3>
+            <p class="text-xs text-gray-300 mb-4" id="formSubText">সঠিক তথ্য দিয়ে রেজিস্ট্রেশন করুন। অ্যাডমিন কর্তৃক অনুমোদিত হওয়ার পর আপনি অ্যাপে লগইন করতে পারবেন।</p>
 
             <form id="memberDataForm" onsubmit="saveMember(event)" class="space-y-4">
                 <input type="hidden" id="editMemberId">
@@ -515,8 +523,8 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-medium text-gray-300 mb-1">নিরাপত্তা পিন / পাসওয়ার্ড *</label>
-                        <input type="text" id="memberPin" required value="2022" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
+                        <label class="block text-xs font-medium text-gray-300 mb-1">লগইন পিন / পাসওয়ার্ড *</label>
+                        <input type="text" id="memberPin" required placeholder="আপনার নিজস্ব পিন দিন" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
                     </div>
 
                     <div>
@@ -638,7 +646,7 @@
                         বাতিল
                     </button>
                     <button type="submit" id="formSubmitBtn" class="px-6 py-2 bg-police-accent hover:bg-police-gold text-slate-950 font-bold text-xs rounded-xl shadow-lg transition-all">
-                        সংরক্ষণ করুন
+                        রেজিস্ট্রেশন রিকোয়েস্ট পাঠান
                     </button>
                 </div>
             </form>
@@ -675,7 +683,7 @@
                 <i class="fa-solid fa-xmark"></i>
             </button>
             <h3 class="text-lg font-bold text-red-400 font-bangla flex items-center gap-2">
-                <i class="fa-solid fa-user-clock"></i> পেন্ডিং সদস্য রিকোয়েস্ট অনুমোদন
+                <i class="fa-solid fa-user-clock"></i> নতুন সদস্য রেজিস্ট্রেশন ও পেন্ডিং অনুমোদন
             </h3>
             <div>
                 <div id="pendingListContainer" class="space-y-3 max-h-[60vh] overflow-y-auto pr-2">
@@ -733,7 +741,6 @@
                 auth = firebase.auth();
                 isCloudAvailable = true;
                 
-                // অটো অ্যানোনিমাস সাইন-ইন নিশ্চিত করা (403 Error দূর করার জন্য)
                 auth.signInAnonymously().catch(err => {
                     console.warn("Anonymous auth failed or disabled:", err);
                 });
@@ -755,7 +762,6 @@
             }
         }
 
-        // XSS Sanitization helper function
         function sanitizeInput(str) {
             if (!str) return '';
             return str.toString()
@@ -1133,20 +1139,20 @@
 
         async function saveMember(e) {
             e.preventDefault();
-            showLoading('তথ্য সুরক্ষিতভাবে সেভ হচ্ছে...');
+            showLoading('রেজিস্ট্রেশন রিকোয়েস্ট পাঠানো হচ্ছে...');
 
             let editId = document.getElementById('editMemberId').value.trim();
             const name = sanitizeInput(document.getElementById('memberName').value.trim());
             let bp = sanitizeInput(document.getElementById('memberBp').value.trim().toUpperCase());
             if(!bp.startsWith('BP')) bp = 'BP' + bp;
 
-            const pin = sanitizeInput(document.getElementById('memberPin').value.trim() || '2022');
+            const pin = sanitizeInput(document.getElementById('memberPin').value.trim());
             const rank = sanitizeInput(document.getElementById('memberRank').value);
             const unit = sanitizeInput(document.getElementById('memberUnit').value);
             const branch = sanitizeInput(document.getElementById('memberBranch').value);
             const blood = sanitizeInput(document.getElementById('memberBlood').value);
-            const lastDonation = sanitizeInput(document.getElementById('memberLastDonation').value);
-            const serviceStatus = sanitizeInput(document.getElementById('memberServiceStatus').value);
+            const lastDonation = sanitizeInput(document.getElementById('memberLastDonation') ? document.getElementById('memberLastDonation').value : '');
+            const serviceStatus = sanitizeInput(document.getElementById('memberServiceStatus') ? document.getElementById('memberServiceStatus').value : 'ইন-সার্ভিস');
             const district = sanitizeInput(document.getElementById('memberDistrict').value.trim());
             const training = sanitizeInput(document.getElementById('memberTraining').value);
             const location = sanitizeInput(document.getElementById('memberLocation').value.trim());
@@ -1163,6 +1169,7 @@
 
             if (isCloudAvailable && db) {
                 if (currentUserRole === 'admin' || editId) {
+                    // অ্যাডমিন সরাসরি এডিট বা অ্যাড করলে সরাসরি members কালেকশনে যাবে
                     db.collection("members").doc(bp).set(memberPayload, { merge: true }).then(() => {
                         addAuditLog('প্রোফাইল আপডেট', `${name} (${bp})-এর তথ্য আপডেট করা হয়েছে`);
                         hideLoading();
@@ -1173,22 +1180,23 @@
                         fallbackSaveLocal(memberPayload, bp);
                     });
                 } else {
+                    // নতুন ইউজারের ক্ষেত্রে চেক করা হবে অলরেডি রেজিস্টার্ড বা পেন্ডিং আছে কিনা
                     db.collection("members").doc(bp).get().then((docSnap) => {
                         if (docSnap.exists) {
                             hideLoading();
-                            showToast('এই বিপি নম্বরটি ইতোমধ্যে ডিরেক্টরিতে বিদ্যমান!', true);
+                            showToast('এই বিপি নম্বরটি ইতোমধ্যে ডিরেক্টরিতে অনুমোদিত রয়েছে!', true);
                             return;
                         }
                         db.collection("pending_members").doc(bp).get().then((pendingSnap) => {
                             if (pendingSnap.exists) {
                                 hideLoading();
-                                showToast('এই বিপি নম্বরের আবেদন ইতোমধ্যে পেন্ডিং রয়েছে!', true);
+                                showToast('এই বিপি নম্বরের রেজিস্ট্রেশন আবেদন ইতোমধ্যে পেন্ডিং রয়েছে!', true);
                                 return;
                             }
                             db.collection("pending_members").doc(bp).set(memberPayload).then(() => {
-                                addAuditLog('নতুন আবেদন', `${name} (${bp})-এর প্রোফাইল জমা দেওয়া হয়েছে`);
+                                addAuditLog('নতুন রেজিস্ট্রেশন', `${name} (${bp})-এর রেজিস্ট্রেশন আবেদন জমা হয়েছে`);
                                 hideLoading();
-                                showToast('আপনার প্রোফাইল জমা হয়েছে! অনুমোদনের পর ডিরেক্টরিতে দেখাবে।');
+                                showToast('রেজিস্ট্রেশন সফল হয়েছে! অ্যাডমিন অনুমোদন করার পর আপনি লগইন করতে পারবেন।');
                                 closeModal('memberFormModal');
                             });
                         });
@@ -1213,7 +1221,7 @@
             renderMembersGrid();
             updateStatisticsDashboard();
             hideLoading();
-            showToast('তথ্য সফলভাবে সেভ হয়েছে (অফলাইন লোকাল ডাটা)');
+            showToast('তথ্য সফলভাবে সেভ হয়েছে (লোকাল মোড)');
             closeModal('memberFormModal');
         }
 
@@ -1222,10 +1230,11 @@
             document.getElementById('memberDataForm').reset();
             document.getElementById('memberBp').value = 'BP';
             document.getElementById('memberBp').disabled = false;
-            document.getElementById('memberPin').value = '2022';
+            document.getElementById('memberPin').value = '';
             document.getElementById('photoPreviewBox').innerHTML = `<i class="fa-solid fa-user text-2xl text-gray-500"></i>`;
-            document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-user-plus"></i> নতুন প্রোফাইল জমা দিন`;
-            document.getElementById('formSubmitBtn').innerText = 'জমা দিন';
+            document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-user-plus"></i> নতুন অ্যাকাউন্ট রেজিস্ট্রেশন ফর্ম`;
+            document.getElementById('formSubText').innerText = `সঠিক তথ্য দিয়ে রেজিস্ট্রেশন করুন। অ্যাডমিন কর্তৃক অনুমোদিত হওয়ার পর আপনি অ্যাপে লগইন করতে পারবেন।`;
+            document.getElementById('formSubmitBtn').innerText = 'রেজিস্ট্রেশন রিকোয়েস্ট পাঠান';
             memberImageBase64 = '';
             openModal('memberFormModal');
         }
@@ -1233,8 +1242,7 @@
         function openEditMyProfileModal() {
             const found = membersData.find(m => m.bp && m.bp.toUpperCase() === loggedInBpNumber.toUpperCase());
             if (!found) {
-                showToast('আপনার বিপি নম্বরের প্রোফাইল পাওয়া যায়নি। নতুন তৈরি করুন।', true);
-                openAddMemberModal();
+                showToast('আপনার প্রোফাইল পাওয়া যায়নি।', true);
                 return;
             }
             fillAndOpenEditForm(found);
@@ -1250,13 +1258,13 @@
             document.getElementById('memberName').value = found.name || '';
             document.getElementById('memberBp').value = found.bp || '';
             document.getElementById('memberBp').disabled = (currentUserRole !== 'admin');
-            document.getElementById('memberPin').value = found.pin || '2022';
+            document.getElementById('memberPin').value = found.pin || '';
             document.getElementById('memberRank').value = found.rank || 'কনস্টেবল';
             document.getElementById('memberUnit').value = found.unit || 'পুলিশ হেডকোয়ার্টার্স';
             document.getElementById('memberBranch').value = found.branch || 'প্রশাসনিক শাখা';
             document.getElementById('memberBlood').value = found.blood || 'A+';
-            document.getElementById('memberLastDonation').value = found.lastDonation || '';
-            document.getElementById('memberServiceStatus').value = found.serviceStatus || 'ইন-সার্ভিস';
+            if(document.getElementById('memberLastDonation')) document.getElementById('memberLastDonation').value = found.lastDonation || '';
+            if(document.getElementById('memberServiceStatus')) document.getElementById('memberServiceStatus').value = found.serviceStatus || 'ইন-সার্ভিস';
             document.getElementById('memberDistrict').value = found.district || '';
             document.getElementById('memberTraining').value = found.training || 'পুলিশ একাডেমি, সারদা';
             document.getElementById('memberLocation').value = found.location || '';
@@ -1272,6 +1280,7 @@
             }
 
             document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-user-pen"></i> প্রোফাইল এডিট করুন`;
+            document.getElementById('formSubText').innerText = `আপনার তথ্য আপডেট করুন।`;
             document.getElementById('formSubmitBtn').innerText = 'আপডেট করুন';
             openModal('memberFormModal');
         }
@@ -1368,7 +1377,7 @@
             const container = document.getElementById('pendingListContainer');
             container.innerHTML = '';
             if (pendingData.length === 0) {
-                container.innerHTML = `<p class="text-center text-xs text-gray-400 py-4">কোনো পেন্ডিং রিকোয়েস্ট নেই।</p>`;
+                container.innerHTML = `<p class="text-center text-xs text-gray-400 py-4">কোনো পেন্ডিং রেজিস্ট্রেশন রিকোয়েস্ট নেই।</p>`;
                 return;
             }
             pendingData.forEach((p) => {
@@ -1379,7 +1388,7 @@
                         <img src="${p.photo || 'https://placehold.co/80x80/0b192c/fbbf24?text=P'}" class="w-12 h-12 rounded-full object-cover border border-police-accent">
                         <div>
                             <h5 class="text-xs font-bold text-white">${sanitizeInput(p.name)} (${sanitizeInput(p.bp)})</h5>
-                            <p class="text-[10px] text-gray-300">${sanitizeInput(p.rank)} - ${sanitizeInput(p.unit)} | জেলা: ${sanitizeInput(p.district)}</p>
+                            <p class="text-[10px] text-gray-300">${sanitizeInput(p.rank)} - ${sanitizeInput(p.unit)} | জেলা: ${sanitizeInput(p.district)} | পিন: <span class="text-police-gold font-mono">${sanitizeInput(p.pin)}</span></p>
                         </div>
                     </div>
                     <div class="flex gap-1.5">
@@ -1399,9 +1408,9 @@
                 if (isCloudAvailable && db) {
                     db.collection("members").doc(docId).set(item).then(() => {
                         db.collection("pending_members").doc(id).delete().then(() => {
-                            addAuditLog('আবেদন অনুমোদন', `${item.name} (${docId})-এর আবেদন অনুমোদন করা হয়েছে`);
+                            addAuditLog('রেজিস্ট্রেশন অনুমোদন', `${item.name} (${docId})-এর রেজিস্ট্রেশন অনুমোদন করা হয়েছে`);
                             hideLoading();
-                            showToast('প্রোফাইল সফলভাবে এপ্রুভ ও যুক্ত হয়েছে!');
+                            showToast('রেজিস্ট্রেশন সফলভাবে এপ্রুভ করা হয়েছে!');
                             renderPendingList();
                         });
                     });
@@ -1412,14 +1421,14 @@
                     renderMembersGrid();
                     updateStatisticsDashboard();
                     hideLoading();
-                    showToast('প্রোফাইল এপ্রুভ হয়েছে!');
+                    showToast('এপ্রুভ করা হয়েছে!');
                     renderPendingList();
                 }
             }
         }
 
         function rejectPending(id) {
-            if (confirm('আবেদনটি বাতিল করতে চান?')) {
+            if (confirm('এই রেজিস্ট্রেশন রিকোয়েস্টটি বাতিল করতে চান?')) {
                 if (isCloudAvailable && db) {
                     db.collection("pending_members").doc(id).delete().then(() => {
                         addAuditLog('আবেদন বাতিল', `পেন্ডিং আইডি: ${id} বাতিল করা হয়েছে`);
@@ -1513,29 +1522,30 @@
             if(!bpInput.startsWith('BP')) bpInput = 'BP' + bpInput;
             const pinInput = document.getElementById('loginPin').value.trim();
 
-            if (pinInput === '2022' || pinInput === '২০২২') {
-                currentUserRole = 'member';
-                loggedInBpNumber = bpInput;
-                sessionStorage.setItem('POLICE_USER_ROLE', 'member');
-                sessionStorage.setItem('POLICE_LOGGED_BP', bpInput);
-                checkSessionState();
-                closeModal('loginModal');
-                showToast('সদস্য পিন ভেরিফাইড! ডিরেক্টরি উন্মুক্ত।');
-                return;
-            }
-
+            // সদস্য ডাটাবেস থেকে বিপি এবং পিন যাচাই করা
             let foundMember = membersData.find(m => m.bp && m.bp.toUpperCase() === bpInput);
-            if (foundMember && (foundMember.pin === pinInput || pinInput === '2022')) {
-                currentUserRole = 'member';
-                loggedInBpNumber = bpInput;
-                sessionStorage.setItem('POLICE_USER_ROLE', 'member');
-                sessionStorage.setItem('POLICE_LOGGED_BP', bpInput);
-                
-                checkSessionState();
-                closeModal('loginModal');
-                showToast('সদস্য হিসেবে সফলভাবে লগইন হয়েছে!');
+            
+            if (foundMember) {
+                if (foundMember.pin === pinInput) {
+                    currentUserRole = 'member';
+                    loggedInBpNumber = bpInput;
+                    sessionStorage.setItem('POLICE_USER_ROLE', 'member');
+                    sessionStorage.setItem('POLICE_LOGGED_BP', bpInput);
+                    
+                    checkSessionState();
+                    closeModal('loginModal');
+                    showToast('সদস্য হিসেবে সফলভাবে লগইন হয়েছে!');
+                } else {
+                    showToast('ভুল পাসওয়ার্ড বা পিন কোড!', true);
+                }
             } else {
-                showToast('ভুল বিপি নম্বর অথবা পিন কোড!', true);
+                // চেক করা যাক আবেদনটি পেন্ডিং আছে কিনা
+                let pendingMatch = pendingData.find(p => p.bp && p.bp.toUpperCase() === bpInput);
+                if (pendingMatch) {
+                    showToast('আপনার অ্যাকাউন্টটি এখনও অ্যাডমিন কর্তৃক অনুমোদিত হয়নি। অনুগ্রহ করে অপেক্ষা করুন।', true);
+                } else {
+                    showToast('এই বিপি নম্বরে কোনো অ্যাকাউন্ট পাওয়া যায়নি। অনুগ্রহ করে আগে রেজিস্ট্রেশন করুন।', true);
+                }
             }
         }
 
@@ -1574,7 +1584,7 @@
             if (currentUserRole !== 'guest') {
                 lockedScreen.classList.add('hidden');
                 unlockedApp.classList.remove('hidden');
-                addMemberBtn.classList.remove('hidden');
+                addMemberBtn.classList.add('hidden'); // সাধারণ ইউজাররা লগইন করার পর আর নতুন রেজিস্ট্রেশন বাটন দেখবে না
                 noticeBloodBar.classList.remove('hidden');
                 renderMembersGrid();
                 updatePendingCounter();
@@ -1582,13 +1592,13 @@
 
                 if (currentUserRole === 'admin') {
                     authBtnText.innerText = 'অ্যাডমিন লগআউট';
+                    addMemberBtn.classList.remove('hidden'); // অ্যাডমিন চাইলে সরাসরি মেম্বার যোগ করতে পারবে
                     submitBtnText.innerText = 'সরাসরি সদস্য যোগ করুন';
                     editMyProfileNavBtn.classList.add('hidden');
                     editNoticeBtn.classList.remove('hidden');
                     adminLogsNavBtn.classList.remove('hidden');
                 } else {
                     authBtnText.innerText = 'লগআউট';
-                    submitBtnText.innerText = 'নতুন প্রোফাইল জমা দিন';
                     editMyProfileNavBtn.classList.remove('hidden');
                     editNoticeBtn.classList.add('hidden');
                     adminLogsNavBtn.classList.add('hidden');
@@ -1596,7 +1606,8 @@
             } else {
                 lockedScreen.classList.remove('hidden');
                 unlockedApp.classList.add('hidden');
-                addMemberBtn.classList.add('hidden');
+                addMemberBtn.classList.remove('hidden');
+                submitBtnText.innerText = 'সদস্য যোগ করুন';
                 editMyProfileNavBtn.classList.add('hidden');
                 noticeBloodBar.classList.add('hidden');
                 document.getElementById('adminPendingBtn').classList.add('hidden');
