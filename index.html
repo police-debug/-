@@ -1516,13 +1516,41 @@
             }
         }
 
-        function handleMemberLogin(e) {
+                async function handleMemberLogin(e) {
             e.preventDefault();
             let bpInput = document.getElementById('loginBpNumber').value.trim().toUpperCase();
             if(!bpInput.startsWith('BP')) bpInput = 'BP' + bpInput;
             const pinInput = document.getElementById('loginPin').value.trim();
 
-            // সদস্য ডাটাবেস থেকে বিপি এবং পিন যাচাই করা
+            showLoading('লগইন যাচাই করা হচ্ছে...');
+
+            if (isCloudAvailable && db) {
+                try {
+                    const docRef = await db.collection("members").doc(bpInput).get();
+                    if (docRef.exists) {
+                        const memberData = docRef.data();
+                        if (memberData.pin === pinInput) {
+                            currentUserRole = 'member';
+                            loggedInBpNumber = bpInput;
+                            sessionStorage.setItem('POLICE_USER_ROLE', 'member');
+                            sessionStorage.setItem('POLICE_LOGGED_BP', bpInput);
+                            
+                            checkSessionState();
+                            closeModal('loginModal');
+                            hideLoading();
+                            showToast('সদস্য হিসেবে সফলভাবে লগইন হয়েছে!');
+                            return;
+                        } else {
+                            hideLoading();
+                            showToast('ভুল পাসওয়ার্ড বা পিন কোড!', true);
+                            return;
+                        }
+                    }
+                } catch (err) {
+                    console.error("Cloud login error:", err);
+                }
+            }
+
             let foundMember = membersData.find(m => m.bp && m.bp.toUpperCase() === bpInput);
             
             if (foundMember) {
@@ -1534,20 +1562,29 @@
                     
                     checkSessionState();
                     closeModal('loginModal');
+                    hideLoading();
                     showToast('সদস্য হিসেবে সফলভাবে লগইন হয়েছে!');
                 } else {
+                    hideLoading();
                     showToast('ভুল পাসওয়ার্ড বা পিন কোড!', true);
                 }
             } else {
-                // চেক করা যাক আবেদনটি পেন্ডিং আছে কিনা
-                let pendingMatch = pendingData.find(p => p.bp && p.bp.toUpperCase() === bpInput);
-                if (pendingMatch) {
-                    showToast('আপনার অ্যাকাউন্টটি এখনও অ্যাডমিন কর্তৃক অনুমোদিত হয়নি। অনুগ্রহ করে অপেক্ষা করুন।', true);
-                } else {
-                    showToast('এই বিপি নম্বরে কোনো অ্যাকাউন্ট পাওয়া যায়নি। অনুগ্রহ করে আগে রেজিস্ট্রেশন করুন।', true);
+                if (isCloudAvailable && db) {
+                    try {
+                        const pendingDoc = await db.collection("pending_members").doc(bpInput).get();
+                        hideLoading();
+                        if (pendingDoc.exists) {
+                            showToast('আপনার অ্যাকাউন্টটি এখনও অ্যাডমিন কর্তৃক অনুমোদিত হয়নি। অনুগ্রহ করে অপেক্ষা করুন।', true);
+                            return;
+                        }
+                    } catch (e) {}
                 }
+
+                hideLoading();
+                showToast('এই বিপি নম্বরে কোনো অ্যাকাউন্ট ডিরেক্টরিতে নেই। অনুগ্রহ করে আগে রেজিস্ট্রেশন করুন।', true);
             }
         }
+
 
         function handleAdminLogin(e) {
             e.preventDefault();
