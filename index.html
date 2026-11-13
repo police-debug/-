@@ -13,9 +13,6 @@
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Tiro+Bangla:ital@0;1&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- html2pdf.js for Export PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <!-- Firebase App, Auth & Firestore SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -112,7 +109,7 @@
             </div>
 
             <div class="flex items-center gap-1.5 sm:gap-3 flex-wrap justify-end">
-                <div class="hidden sm:flex items-center gap-2 bg-gradient-to-r from-police-navy to-slate-900 border border-police-accent/40 px-3 py-1.5 rounded-xl shadow-inner">
+                <div id="navCounterBox" class="hidden sm:flex items-center gap-2 bg-gradient-to-r from-police-navy to-slate-900 border border-police-accent/40 px-3 py-1.5 rounded-xl shadow-inner">
                     <div class="w-7 h-7 rounded-lg bg-police-accent/20 flex items-center justify-center text-police-accent">
                         <i class="fa-solid fa-users text-sm"></i>
                     </div>
@@ -122,7 +119,7 @@
                     </div>
                 </div>
 
-                <button id="addMemberBtn" onclick="openAddMemberModal()" class="hidden px-2.5 py-1.5 sm:px-4 sm:py-2 bg-police-accent hover:bg-police-gold text-slate-950 text-xs sm:text-sm font-bold rounded-xl shadow-lg transition-all flex items-center gap-1.5 active:scale-95">
+                <button id="addMemberBtn" onclick="openAddMemberModal()" class="px-2.5 py-1.5 sm:px-4 sm:py-2 bg-police-accent hover:bg-police-gold text-slate-950 text-xs sm:text-sm font-bold rounded-xl shadow-lg transition-all flex items-center gap-1.5 active:scale-95">
                     <i class="fa-solid fa-user-plus"></i>
                     <span class="hidden sm:inline" id="submitBtnText">সদস্য যোগ করুন</span>
                 </button>
@@ -169,13 +166,13 @@
 
             <!-- Emergency Blood Request Trigger -->
             <div class="glass-card p-3 sm:p-4 rounded-2xl border-l-4 border-red-500 flex items-center justify-between gap-3 shadow-xl">
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-3 flex-1">
                     <div class="w-9 h-9 rounded-full bg-red-600/20 text-red-500 flex items-center justify-center font-bold text-base animate-pulse flex-shrink-0">
                         <i class="fa-solid fa-droplet"></i>
                     </div>
                     <div>
                         <h4 class="text-xs font-bold text-red-400 uppercase tracking-wider">জরুরি রক্ত প্রয়োজন?</h4>
-                        <p class="text-[11px] text-gray-300">ব্যাচমেটদের কাছে রিকোয়েস্ট পাঠান</p>
+                        <p id="bloodAlertText" class="text-[11px] text-gray-300">ব্যাচমেটদের কাছে রিকোয়েস্ট পাঠান</p>
                     </div>
                 </div>
                 <button onclick="openBloodModal()" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl shadow-md transition-all flex-shrink-0">
@@ -196,7 +193,7 @@
                         <p class="text-[10px] text-gray-300">ইউনিট, রক্তের গ্রুপ ও ট্রেনিং সেন্টারভিত্তিক বিস্তারিত</p>
                     </div>
                 </div>
-                <button class="text-police-gold text-sm font-bold px-2 py-1 bg-police-navy rounded-lg border border-police-accent/20">
+                <button type="button" class="text-police-gold text-sm font-bold px-2 py-1 bg-police-navy rounded-lg border border-police-accent/20">
                     <i id="statsToggleIcon" class="fa-solid fa-chevron-down"></i>
                 </button>
             </div>
@@ -231,7 +228,7 @@
                     <i class="fa-solid fa-shield-halved"></i>
                 </div>
                 <h2 class="text-xl sm:text-2xl font-bold text-white font-bangla">বাংলাদেশ পুলিশ ব্যাচ ২০২২ ডিরেক্টরিতে স্বাগতম</h2>
-                <p class="text-xs sm:text-sm text-gray-300 leading-relaxed">তথ্য দেখতে এবং আপনার তথ্য যোগ করতে অনুগ্রহ করে আপনার বিপি নম্বর এবং পিন দিয়ে লগইন করুন অথবা নতুন হয়ে থাকলে নিচের বাটনে ক্লিক করে রেজিস্ট্রেশন করুন।</p>
+                <p class="text-xs sm:text-sm text-gray-300 leading-relaxed">তথ্য দেখতে এবং আপনার তথ্য যোগ করতে অনুগ্রহ করে আপনার বিপি নম্বর এবং পাসওয়ার্ড দিয়ে লগইন করুন অথবা নতুন হয়ে থাকলে নিচের বাটনে ক্লিক করে রেজিস্ট্রেশন করুন।</p>
                 <div class="flex flex-col sm:flex-row gap-3 justify-center pt-2">
                     <button onclick="openLoginModal()" class="px-6 py-3 bg-police-accent hover:bg-police-gold text-slate-950 font-bold rounded-xl shadow-xl transition-all text-sm inline-flex items-center justify-center gap-2">
                         <i class="fa-solid fa-key"></i> লগইন করুন
@@ -354,7 +351,7 @@
 
     <footer class="bg-police-dark border-t border-police-accent/20 py-6 text-center text-xs text-gray-400">
         <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p>© ২০২২ বাংলাদেশ পুলিশ ব্যাচ ২০২২ | সিকিউরড </p>
+            <p>© ২০২২ বাংলাদেশ পুলিশ ব্যাচ ২০২২ | সিকিউরড</p>
             <p class="text-police-gold">জরুরি দরকারে আপনার ব্যাচমেটের পাশে দাঁড়ান</p>
         </div>
     </footer>
@@ -439,11 +436,11 @@
             </div>
 
             <div class="flex bg-slate-900 p-1 rounded-xl mb-5 border border-slate-800">
-                <button id="memberTabBtn" onclick="switchAuthTab('member')" class="w-1/2 py-2 text-xs font-bold rounded-lg transition-all bg-police-accent text-slate-950">
+                <button type="button" id="memberTabBtn" onclick="switchAuthTab('member')" class="w-1/2 py-2 text-xs font-bold rounded-lg transition-all bg-police-accent text-slate-950">
                     সদস্য লগইন
                 </button>
-                <button id="adminTabBtn" onclick="switchAuthTab('admin')" class="w-1/2 py-2 text-xs font-bold rounded-lg transition-all text-gray-400 hover:text-white">
-                    অ্যাডমিন পাসওয়ার্ড
+                <button type="button" id="adminTabBtn" onclick="switchAuthTab('admin')" class="w-1/2 py-2 text-xs font-bold rounded-lg transition-all text-gray-400 hover:text-white">
+                    অ্যাডমিন লগইন
                 </button>
             </div>
 
@@ -455,7 +452,7 @@
                 <div>
                     <label class="block text-xs font-medium text-gray-300 mb-1">পাসওয়ার্ড / পিন *</label>
                     <div class="relative">
-                        <input type="password" id="loginPin" required placeholder="••••" maxlength="20" autocomplete="current-password" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 pr-10 text-sm text-white focus:border-police-accent outline-none">
+                        <input type="password" id="loginPin" required placeholder="••••••" minlength="6" autocomplete="current-password" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 pr-10 text-sm text-white focus:border-police-accent outline-none">
                         <button type="button" onclick="togglePasswordVisibility('loginPin', 'pinEyeIcon')" class="absolute right-3 top-3 text-gray-400 hover:text-white">
                             <i id="pinEyeIcon" class="fa-solid fa-eye-slash text-xs"></i>
                         </button>
@@ -471,7 +468,11 @@
 
             <form id="adminLoginForm" onsubmit="handleAdminLogin(event)" class="space-y-4 hidden">
                 <div>
-                    <label class="block text-xs font-medium text-gray-300 mb-1">অ্যাডমিন পাসওয়ার্ড (Admin Password) *</label>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">অ্যাডমিন ইমেইল *</label>
+                    <input type="email" id="adminEmail" required placeholder="admin@policebatch2022.local" autocomplete="username" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-white focus:border-police-accent outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-300 mb-1">অ্যাডমিন পাসওয়ার্ড *</label>
                     <div class="relative">
                         <input type="password" id="adminPassword" required placeholder="••••••••" autocomplete="current-password" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 pr-10 text-sm text-white focus:border-police-accent outline-none">
                         <button type="button" onclick="togglePasswordVisibility('adminPassword', 'adminEyeIcon')" class="absolute right-3 top-3 text-gray-400 hover:text-white">
@@ -493,13 +494,13 @@
                 <i class="fa-solid fa-xmark"></i>
             </button>
 
-            <h3 id="formTitle" class="text-lg font-bold text-police-gold font-bangla mb-4 flex items-center gap-2">
+            <h3 id="formTitle" class="text-lg font-bold text-police-gold font-bangla mb-2 flex items-center gap-2">
                 <i class="fa-solid fa-user-plus"></i> নতুন অ্যাকাউন্ট রেজিস্ট্রেশন ফর্ম
             </h3>
             <p class="text-xs text-gray-300 mb-4" id="formSubText">সঠিক তথ্য দিয়ে রেজিস্ট্রেশন করুন। অ্যাডমিন কর্তৃক অনুমোদিত হওয়ার পর আপনি অ্যাপে লগইন করতে পারবেন।</p>
 
             <form id="memberDataForm" onsubmit="saveMember(event)" class="space-y-4">
-                <input type="hidden" id="editMemberId">
+                <input type="hidden" id="editMemberUid">
 
                 <div class="flex items-center gap-4 bg-slate-900/60 p-3 rounded-xl border border-slate-800">
                     <div id="photoPreviewBox" class="w-16 h-16 rounded-full bg-slate-800 border-2 border-police-accent flex items-center justify-center overflow-hidden flex-shrink-0">
@@ -507,7 +508,7 @@
                     </div>
                     <div class="flex-1">
                         <label class="block text-xs font-medium text-gray-300 mb-1">প্রোফাইল ছবি (কম্প্রেসড)</label>
-                        <input type="file" accept="image/*" onchange="handleImageUpload(event)" class="text-xs text-gray-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-police-accent file:text-slate-950 hover:file:bg-police-gold">
+                        <input type="file" id="memberPhotoInput" accept="image/*" onchange="handleImageUpload(event)" class="text-xs text-gray-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-police-accent file:text-slate-950 hover:file:bg-police-gold">
                     </div>
                 </div>
 
@@ -519,12 +520,12 @@
 
                     <div>
                         <label class="block text-xs font-medium text-gray-300 mb-1">বিপি নম্বর (BP No.) *</label>
-                        <input type="text" id="memberBp" required placeholder="BP2022..." oninput="formatBpInput(this)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none uppercase">
+                        <input type="text" id="memberBp" required placeholder="BP2022XXXX" onblur="normalizeBpField(this)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none uppercase">
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-medium text-gray-300 mb-1">লগইন পিন / পাসওয়ার্ড *</label>
-                        <input type="text" id="memberPin" required placeholder="আপনার নিজস্ব পিন দিন" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
+                    <div id="memberPinGroup">
+                        <label id="memberPinLabel" class="block text-xs font-medium text-gray-300 mb-1">লগইন পাসওয়ার্ড / পিন (কমপক্ষে ৬ অক্ষর) *</label>
+                        <input type="password" id="memberPin" minlength="6" placeholder="কমপক্ষে ৬ অক্ষরের পাসওয়ার্ড দিন" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
                     </div>
 
                     <div>
@@ -589,6 +590,17 @@
                     </div>
 
                     <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">সার্ভিস স্ট্যাটাস *</label>
+                        <select id="memberServiceStatus" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
+                            <option value="ইন-সার্ভিস">ইন-সার্ভিস</option>
+                            <option value="স্টাডি লিভ">স্টাডি লিভ</option>
+                            <option value="ডেপুটেশন">ডেপুটেশন</option>
+                            <option value="প্রশিক্ষণ">প্রশিক্ষণ</option>
+                            <option value="ছুটি">ছুটি</option>
+                        </select>
+                    </div>
+
+                    <div>
                         <label class="block text-xs font-medium text-gray-300 mb-1">রক্তের গ্রুপ *</label>
                         <select id="memberBlood" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
                             <option value="A+">A+</option>
@@ -600,6 +612,11 @@
                             <option value="AB+">AB+</option>
                             <option value="AB-">AB-</option>
                         </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">সর্বশেষ রক্তদানের তারিখ (ঐচ্ছিক)</label>
+                        <input type="date" id="memberLastDonation" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
                     </div>
 
                     <div>
@@ -635,9 +652,9 @@
                         <input type="tel" id="memberWhatsapp" placeholder="017XXXXXXXX" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
                     </div>
 
-                    <div>
+                    <div class="sm:col-span-2">
                         <label class="block text-xs font-medium text-gray-300 mb-1">ফেসবুক প্রোফাইল লিংক (ঐচ্ছিক)</label>
-                        <input type="url" id="memberFacebook" placeholder="https://facebook.com/username" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
+                        <input type="text" id="memberFacebook" placeholder="https://facebook.com/username" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-police-accent outline-none">
                     </div>
                 </div>
 
@@ -667,7 +684,7 @@
             <form onsubmit="handleNoticeSubmit(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-medium text-gray-300 mb-1">নোটিশের বিবরণ *</label>
-                    <textarea id="adminNoticeInput" rows="4" required placeholder="এখানে জরুরি নোটিশ লিখুন..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-xs text-white focus:border-police-accent outline-none"></textarea>
+                    <textarea id="adminNoticeInput" rows="4" required maxlength="1000" placeholder="এখানে জরুরি নোটিশ লিখুন..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-xs text-white focus:border-police-accent outline-none"></textarea>
                 </div>
                 <button type="submit" class="w-full py-3 bg-police-accent hover:bg-police-gold text-slate-950 font-bold rounded-xl text-xs shadow-lg transition-all">
                     নোটিশ পাবলিশ করুন
@@ -685,9 +702,7 @@
             <h3 class="text-lg font-bold text-red-400 font-bangla flex items-center gap-2">
                 <i class="fa-solid fa-user-clock"></i> নতুন সদস্য রেজিস্ট্রেশন ও পেন্ডিং অনুমোদন
             </h3>
-            <div>
-                <div id="pendingListContainer" class="space-y-3 max-h-[60vh] overflow-y-auto pr-2">
-                </div>
+            <div id="pendingListContainer" class="space-y-3 max-h-[60vh] overflow-y-auto pr-2">
             </div>
         </div>
     </div>
@@ -710,67 +725,42 @@
             measurementId: "G-YMT17CG5W2"
         };
 
+        const AUTH_DOMAIN_SUFFIX = '@policebatch2022.local';
+
         let db = null;
         let auth = null;
-        let isCloudAvailable = false;
         let membersData = [];
         let pendingData = [];
         let auditLogs = [];
-        let currentUserRole = 'guest'; 
+        let currentUserRole = 'guest';
+        let currentUserUid = '';
         let loggedInBpNumber = '';
         let memberImageBase64 = '';
+        let isRegistering = false;
+        let pendingLoginSource = null; // 'member' | 'admin' | null
+        let toastTimer = null;
+
+        let unsubMembers = null;
+        let unsubPending = null;
+        let unsubNotice = null;
+        let unsubBloodAlert = null;
+        let unsubLogs = null;
 
         window.onload = function() {
             initFirebaseCloud();
-            checkSessionState();
         };
 
-        function showLoading(msg = 'প্রসেসিং হচ্ছে...') { 
+        function showLoading(msg = 'প্রসেসিং হচ্ছে...') {
             document.getElementById('loadingText').innerText = msg;
-            document.getElementById('loadingOverlay').classList.remove('hidden'); 
-        }
-        function hideLoading() { document.getElementById('loadingOverlay').classList.add('hidden'); }
-
-        let listenersStarted = false;
-
-        function initFirebaseCloud() {
-            showLoading('সার্ভারের সাথে ডাটা সিঙ্ক করা হচ্ছে...');
-            try {
-                if (!firebase.apps.length) {
-                    firebase.initializeApp(firebaseConfig);
-                }
-                db = firebase.firestore();
-                auth = firebase.auth();
-                isCloudAvailable = true;
-
-                auth.onAuthStateChanged((user) => {
-                    if (user) {
-                        console.log("Firebase Auth User Active:", user.uid);
-                        if (!listenersStarted) {
-                            listenersStarted = true;
-                            listenToCloudDatabase();
-                        }
-                    } else {
-                        auth.signInAnonymously().catch(err => {
-                            console.warn("Anonymous auth failed or disabled:", err);
-                            isCloudAvailable = false;
-                            loadLocalBackupData();
-                            hideLoading();
-                        });
-                    }
-                });
-            } catch (error) {
-                console.warn("Cloud offline fallback mode:", error);
-                isCloudAvailable = false;
-                document.getElementById('statusText').innerText = "অফলাইন/লোকাল মোড";
-                document.getElementById('statusIndicator').className = "inline-block w-2 h-2 rounded-full bg-yellow-500";
-                loadLocalBackupData();
-                hideLoading();
-            }
+            document.getElementById('loadingOverlay').classList.remove('hidden');
         }
 
-        function sanitizeInput(str) {
-            if (!str) return '';
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.add('hidden');
+        }
+
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
             return str.toString()
                 .replace(/&/g, '&amp;')
                 .replace(/</g, '&lt;')
@@ -779,80 +769,200 @@
                 .replace(/'/g, '&#039;');
         }
 
-        function loadLocalBackupData() {
-            const localMembers = localStorage.getItem('BP2022_LOCAL_MEMBERS');
-            if (localMembers) membersData = JSON.parse(localMembers);
-            
-            const localNotice = localStorage.getItem('BP2022_LOCAL_NOTICE');
-            if (localNotice) document.getElementById('noticeBoardText').innerText = localNotice;
-            
-            const localLogs = localStorage.getItem('BP2022_LOCAL_LOGS');
-            if (localLogs) auditLogs = JSON.parse(localLogs);
-
-            renderMembersGrid();
-            updateStatisticsDashboard();
+        function safeUrl(url) {
+            if (!url) return '';
+            const trimmed = url.trim();
+            if (/^https?:\/\//i.test(trimmed)) {
+                return escapeHtml(trimmed);
+            }
+            return '';
         }
 
-        function saveLocalBackupData() {
-            localStorage.setItem('BP2022_LOCAL_MEMBERS', JSON.stringify(membersData));
-            localStorage.setItem('BP2022_LOCAL_LOGS', JSON.stringify(auditLogs));
+        function formatWhatsappNumber(phone) {
+            if (!phone) return '';
+            let digits = phone.replace(/\D/g, '');
+            if (digits.startsWith('01') && digits.length === 11) {
+                digits = '88' + digits;
+            }
+            return digits;
         }
 
-        function listenToCloudDatabase() {
-            if (!db) return;
-            
-            db.collection("members").onSnapshot((snapshot) => {
+        function cleanBpCode(raw) {
+            let val = (raw || '').trim().toUpperCase().replace(/[^A-Z0-9-]/g, '');
+            if (val && !val.startsWith('BP')) {
+                val = 'BP' + val;
+            }
+            return val;
+        }
+
+        function normalizeBpField(input) {
+            input.value = cleanBpCode(input.value);
+        }
+
+        function bpToEmail(bp) {
+            return cleanBpCode(bp).toLowerCase() + AUTH_DOMAIN_SUFFIX;
+        }
+
+        function clearAllListeners() {
+            if (unsubMembers) { unsubMembers(); unsubMembers = null; }
+            if (unsubPending) { unsubPending(); unsubPending = null; }
+            if (unsubNotice) { unsubNotice(); unsubNotice = null; }
+            if (unsubBloodAlert) { unsubBloodAlert(); unsubBloodAlert = null; }
+            if (unsubLogs) { unsubLogs(); unsubLogs = null; }
+        }
+
+        function initFirebaseCloud() {
+            try {
+                if (!firebase.apps.length) {
+                    firebase.initializeApp(firebaseConfig);
+                }
+                db = firebase.firestore();
+                auth = firebase.auth();
+
+                auth.onAuthStateChanged(async (user) => {
+                    if (isRegistering) return;
+
+                    clearAllListeners();
+
+                    if (!user) {
+                        currentUserRole = 'guest';
+                        currentUserUid = '';
+                        loggedInBpNumber = '';
+                        membersData = [];
+                        pendingData = [];
+                        auditLogs = [];
+                        updateUIForRole();
+                        hideLoading();
+                        return;
+                    }
+
+                    currentUserUid = user.uid;
+                    showLoading('তথ্য যাচাই করা হচ্ছে...');
+
+                    try {
+                        const adminDoc = await db.collection("admins").doc(user.uid).get();
+                        if (adminDoc.exists) {
+                            currentUserRole = 'admin';
+                            loggedInBpNumber = 'ADMIN';
+                            updateUIForRole();
+                            startCloudListeners('admin');
+                            if (pendingLoginSource) {
+                                closeModal('loginModal');
+                                resetLoginForms();
+                                addAuditLog('অ্যাডমিন লগইন', 'অ্যাডমিন প্যানেলে প্রবেশ করা হয়েছে');
+                                showToast('অ্যাডমিন মোড অ্যাক্টিভেটেড!');
+                                pendingLoginSource = null;
+                            }
+                            return;
+                        }
+
+                        if (pendingLoginSource === 'admin') {
+                            pendingLoginSource = null;
+                            await auth.signOut();
+                            hideLoading();
+                            showToast('এই অ্যাকাউন্টের অ্যাডমিন অনুমতি নেই!', true);
+                            return;
+                        }
+
+                        const memberDoc = await db.collection("members").doc(user.uid).get();
+                        if (memberDoc.exists) {
+                            currentUserRole = 'member';
+                            loggedInBpNumber = memberDoc.data().bp || '';
+                            updateUIForRole();
+                            startCloudListeners('member');
+                            if (pendingLoginSource === 'member') {
+                                closeModal('loginModal');
+                                resetLoginForms();
+                                showToast('সদস্য হিসেবে সফলভাবে লগইন হয়েছে!');
+                                pendingLoginSource = null;
+                            }
+                            return;
+                        }
+
+                        const pendingDoc = await db.collection("pending_members").doc(user.uid).get();
+                        pendingLoginSource = null;
+                        await auth.signOut();
+                        hideLoading();
+                        if (pendingDoc.exists) {
+                            showToast('আপনার অ্যাকাউন্টটি এখনও অ্যাডমিন কর্তৃক অনুমোদিত হয়নি। অনুগ্রহ করে অপেক্ষা করুন।', true);
+                        } else {
+                            showToast('আপনার অ্যাকাউন্টটি ডিরেক্টরিতে পাওয়া যায়নি অথবা বাতিল করা হয়েছে।', true);
+                        }
+                    } catch (err) {
+                        console.error("Auth state verification error:", err);
+                        pendingLoginSource = null;
+                        hideLoading();
+                        showToast('সার্ভারের সাথে সংযোগ করতে সমস্যা হয়েছে।', true);
+                    }
+                });
+            } catch (error) {
+                console.error("Firebase init failed:", error);
+                document.getElementById('statusText').innerText = "সার্ভার সংযোগ বিচ্ছিন্ন";
+                document.getElementById('statusIndicator').className = "inline-block w-2 h-2 rounded-full bg-red-500";
+                hideLoading();
+            }
+        }
+
+        function startCloudListeners(role) {
+            unsubMembers = db.collection("members").onSnapshot((snapshot) => {
                 membersData = [];
                 snapshot.forEach((doc) => {
                     membersData.push({ id: doc.id, ...doc.data() });
                 });
-                saveLocalBackupData();
                 renderMembersGrid();
                 updateStatisticsDashboard();
                 hideLoading();
             }, (error) => {
-                loadLocalBackupData();
+                console.error("Members listener error:", error);
                 hideLoading();
+                showToast('সদস্যদের তথ্য লোড করতে সমস্যা হয়েছে।', true);
             });
 
-            db.collection("pending_members").onSnapshot((snapshot) => {
-                pendingData = [];
-                snapshot.forEach((doc) => {
-                    pendingData.push({ id: doc.id, ...doc.data() });
-                });
-                updatePendingCounter();
-                if (currentUserRole === 'admin') renderPendingList();
-            });
-
-            db.collection("settings").doc("notice").onSnapshot((doc) => {
+            unsubNotice = db.collection("settings").doc("notice").onSnapshot((doc) => {
                 if (doc.exists && doc.data().text) {
-                    document.getElementById('noticeBoardText').innerText = doc.data().text;
-                    localStorage.setItem('BP2022_LOCAL_NOTICE', doc.data().text);
+                    document.getElementById('noticeBoardText').textContent = doc.data().text;
+                } else {
+                    document.getElementById('noticeBoardText').textContent = 'বর্তমানে কোনো জরুরি নোটিশ নেই।';
                 }
-            });
+            }, (err) => console.warn("Notice listener error:", err));
 
-            db.collection("logs").orderBy("timestamp", "desc").limit(25).onSnapshot((snapshot) => {
-                auditLogs = [];
-                snapshot.forEach((doc) => {
-                    auditLogs.push(doc.data());
-                });
-            });
+            unsubBloodAlert = db.collection("settings").doc("blood_alert").onSnapshot((doc) => {
+                if (doc.exists && doc.data().text) {
+                    document.getElementById('bloodAlertText').textContent = doc.data().text;
+                } else {
+                    document.getElementById('bloodAlertText').textContent = 'ব্যাচমেটদের কাছে রিকোয়েস্ট পাঠান';
+                }
+            }, (err) => console.warn("Blood alert listener error:", err));
+
+            if (role === 'admin') {
+                unsubPending = db.collection("pending_members").onSnapshot((snapshot) => {
+                    pendingData = [];
+                    snapshot.forEach((doc) => {
+                        pendingData.push({ id: doc.id, ...doc.data() });
+                    });
+                    updatePendingCounter();
+                    renderPendingList();
+                }, (err) => console.warn("Pending listener error:", err));
+
+                unsubLogs = db.collection("logs").orderBy("createdAt", "desc").limit(30).onSnapshot((snapshot) => {
+                    auditLogs = [];
+                    snapshot.forEach((doc) => {
+                        auditLogs.push(doc.data());
+                    });
+                }, (err) => console.warn("Logs listener error:", err));
+            }
         }
 
         function addAuditLog(action, details) {
+            if (!db || currentUserRole === 'guest') return;
             const logItem = {
-                action: sanitizeInput(action),
-                details: sanitizeInput(details),
+                action: action,
+                details: details,
                 user: currentUserRole === 'admin' ? 'অ্যাডমিন' : (loggedInBpNumber || 'সদস্য'),
-                timestamp: new Date().toLocaleString('bn-BD')
+                timestamp: new Date().toLocaleString('bn-BD'),
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
             };
-
-            if (isCloudAvailable && db) {
-                db.collection("logs").add(logItem).catch(() => {});
-            } else {
-                auditLogs.unshift(logItem);
-                saveLocalBackupData();
-            }
+            db.collection("logs").add(logItem).catch((err) => console.warn("Log write skipped:", err));
         }
 
         function openAdminLogsModal() {
@@ -867,11 +977,11 @@
                     item.className = "p-2.5 bg-slate-900/90 rounded-lg border border-slate-800 flex flex-col gap-1";
                     item.innerHTML = `
                         <div class="flex justify-between font-semibold text-police-gold">
-                            <span><i class="fa-solid fa-angle-right mr-1"></i>${log.action}</span>
-                            <span class="text-[10px] text-gray-400">${log.timestamp}</span>
+                            <span><i class="fa-solid fa-angle-right mr-1"></i>${escapeHtml(log.action)}</span>
+                            <span class="text-[10px] text-gray-400">${escapeHtml(log.timestamp || '')}</span>
                         </div>
-                        <p class="text-gray-300 text-[11px]">${log.details}</p>
-                        <p class="text-[10px] text-gray-500">বাই: ${log.user}</p>
+                        <p class="text-gray-300 text-[11px]">${escapeHtml(log.details)}</p>
+                        <p class="text-[10px] text-gray-500">বাই: ${escapeHtml(log.user)}</p>
                     `;
                     container.appendChild(item);
                 });
@@ -880,7 +990,7 @@
         }
 
         function updatePendingCounter() {
-            document.getElementById('pendingCount').innerText = pendingData.length;
+            document.getElementById('pendingCount').innerText = toBanglaDigit(pendingData.length);
             const btn = document.getElementById('adminPendingBtn');
             if (currentUserRole === 'admin' && pendingData.length > 0) {
                 btn.classList.remove('hidden');
@@ -899,7 +1009,7 @@
 
         function updateStatisticsDashboard() {
             document.getElementById('statTotalMembers').innerText = toBanglaDigit(membersData.length);
-            
+
             let unitCounts = {};
             let trainingCounts = {};
             let bloodDonorsCount = 0;
@@ -928,7 +1038,7 @@
         function renderMembersGrid() {
             const grid = document.getElementById('membersGrid');
             const noResults = document.getElementById('noResults');
-            
+
             document.getElementById('navCounter').innerText = toBanglaDigit(membersData.length) + ' জন';
 
             if (currentUserRole === 'guest') return;
@@ -940,7 +1050,7 @@
             const bloodVal = document.getElementById('bloodFilter').value;
 
             const filtered = membersData.filter(m => {
-                const matchSearch = !searchTxt || 
+                const matchSearch = !searchTxt ||
                     (m.name && m.name.toLowerCase().includes(searchTxt)) ||
                     (m.bp && m.bp.toLowerCase().includes(searchTxt)) ||
                     (m.location && m.location.toLowerCase().includes(searchTxt)) ||
@@ -970,18 +1080,19 @@
             filtered.forEach(m => {
                 const card = document.createElement('div');
                 card.className = "glass-card rounded-2xl p-4 sm:p-5 border border-police-accent/20 hover:border-police-accent/60 transition-all duration-300 shadow-xl flex flex-col justify-between relative fade-in";
-                
-                const photoSrc = m.photo ? m.photo : `https://placehold.co/120x120/0b192c/fbbf24?text=${encodeURIComponent((m.name || 'P').charAt(0))}`;
+
+                const fallbackImg = `https://placehold.co/120x120/0b192c/fbbf24?text=${encodeURIComponent((m.name || 'P').charAt(0))}`;
+                const photoSrc = (m.photo && m.photo.startsWith('data:image/')) ? m.photo : fallbackImg;
 
                 let donationBadge = '';
                 if (m.lastDonation) {
                     const lastDate = new Date(m.lastDonation);
                     const today = new Date();
-                    const diffMonths = (today.getFullYear() - lastDate.getFullYear()) * 12 + (today.getMonth() - lastDate.getMonth());
-                    if (diffMonths >= 3) {
+                    const diffDays = Math.floor((today - lastDate) / (1000 * 60 * 60 * 24));
+                    if (!isNaN(diffDays) && diffDays >= 90) {
                         donationBadge = `<span class="text-[10px] bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded border border-emerald-800"><i class="fa-solid fa-check"></i> রক্তদানে প্রস্তুত</span>`;
-                    } else {
-                        donationBadge = `<span class="text-[10px] bg-amber-950 text-amber-400 px-2 py-0.5 rounded border border-amber-800"><i class="fa-solid fa-clock"></i> ৩ মাসের বিরতিতে</span>`;
+                    } else if (!isNaN(diffDays) && diffDays >= 0) {
+                        donationBadge = `<span class="text-[10px] bg-amber-950 text-amber-400 px-2 py-0.5 rounded border border-amber-800"><i class="fa-solid fa-clock"></i> ৯০ দিনের বিরতিতে</span>`;
                     }
                 } else {
                     donationBadge = `<span class="text-[10px] bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded border border-emerald-800"><i class="fa-solid fa-check"></i> উপলব্ধ রক্তদাতা</span>`;
@@ -992,32 +1103,35 @@
                 if (sStatus === 'স্টাডি লিভ') statusBadgeColor = 'bg-blue-950 text-blue-300 border-blue-800';
                 if (sStatus === 'ডেপুটেশন') statusBadgeColor = 'bg-purple-950 text-purple-300 border-purple-800';
 
-                const canEditThis = (currentUserRole === 'admin') || (currentUserRole === 'member' && m.bp && m.bp.toUpperCase() === loggedInBpNumber.toUpperCase());
+                const safeId = escapeHtml(m.id);
+                const canEditThis = (currentUserRole === 'admin') || (currentUserRole === 'member' && m.id === currentUserUid);
                 const actionControls = canEditThis ? `
                     <div class="absolute top-3 right-3 flex gap-1 z-10">
-                        <button onclick="editSpecificMember('${m.id}')" title="এডিট" class="p-1.5 bg-blue-600/90 hover:bg-blue-600 text-white text-xs rounded-lg shadow transition-all">
+                        <button onclick="editSpecificMember('${safeId}')" title="এডিট" class="p-1.5 bg-blue-600/90 hover:bg-blue-600 text-white text-xs rounded-lg shadow transition-all">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </button>
                         ${currentUserRole === 'admin' ? `
-                            <button onclick="deleteMember('${m.id}', '${m.bp}')" title="মুছুন" class="p-1.5 bg-red-600/90 hover:bg-red-600 text-white text-xs rounded-lg shadow transition-all">
+                            <button onclick="deleteMember('${safeId}')" title="মুছুন" class="p-1.5 bg-red-600/90 hover:bg-red-600 text-white text-xs rounded-lg shadow transition-all">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         ` : ''}
                     </div>
                 ` : '';
 
+                const safePhoneHref = m.phone ? escapeHtml(m.phone.replace(/[^0-9+]/g, '')) : '';
+
                 card.innerHTML = `
                     ${actionControls}
                     <div>
-                        <div class="flex items-start gap-3 sm:gap-4 mb-4 cursor-pointer" onclick="viewMemberProfile('${m.id}')">
-                            <img src="${photoSrc}" alt="${m.name}" class="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover border-2 border-police-accent shadow-md flex-shrink-0">
+                        <div class="flex items-start gap-3 sm:gap-4 mb-4 cursor-pointer" onclick="viewMemberProfile('${safeId}')">
+                            <img src="${photoSrc}" alt="${escapeHtml(m.name)}" class="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover border-2 border-police-accent shadow-md flex-shrink-0">
                             <div class="pr-10">
                                 <span class="px-2 py-0.5 bg-police-accent/20 text-police-accent text-[11px] font-bold rounded-md border border-police-accent/30 inline-block mb-1">
-                                    ${sanitizeInput(m.rank || 'সদস্য')}
+                                    ${escapeHtml(m.rank || 'সদস্য')}
                                 </span>
-                                <h4 class="font-bold text-sm sm:text-base text-white leading-snug hover:text-police-gold transition-colors">${sanitizeInput(m.name)}</h4>
+                                <h4 class="font-bold text-sm sm:text-base text-white leading-snug hover:text-police-gold transition-colors">${escapeHtml(m.name)}</h4>
                                 <p class="text-xs text-gray-300 font-mono flex items-center gap-1">
-                                    <i class="fa-solid fa-id-card text-police-accent text-[10px]"></i> ${sanitizeInput(m.bp)}
+                                    <i class="fa-solid fa-id-card text-police-accent text-[10px]"></i> ${escapeHtml(m.bp)}
                                 </p>
                             </div>
                         </div>
@@ -1025,24 +1139,24 @@
                         <div class="space-y-2 text-xs text-gray-300 bg-slate-900/80 p-3 rounded-xl border border-slate-800 mb-4">
                             <div class="flex justify-between items-center">
                                 <span class="text-gray-400 font-medium">সার্ভিস স্ট্যাটাস:</span>
-                                <span class="font-bold px-2 py-0.5 rounded border ${statusBadgeColor}">${sanitizeInput(sStatus)}</span>
+                                <span class="font-bold px-2 py-0.5 rounded border ${statusBadgeColor}">${escapeHtml(sStatus)}</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-gray-400 font-medium">নিজ জেলা:</span>
-                                <span class="font-bold text-white">${sanitizeInput(m.district || 'প্রযোজ্য নয়')}</span>
+                                <span class="font-bold text-white">${escapeHtml(m.district || 'প্রযোজ্য নয়')}</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-gray-400 font-medium">সংস্থা / ইউনিট:</span>
-                                <span class="font-bold text-white bg-police-navy px-2 py-0.5 rounded border border-police-accent/20">${sanitizeInput(m.unit)}</span>
+                                <span class="font-bold text-white bg-police-navy px-2 py-0.5 rounded border border-police-accent/20">${escapeHtml(m.unit)}</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-gray-400 font-medium">কর্মস্থল:</span>
-                                <span class="text-gray-200 text-right truncate max-w-[150px]">${sanitizeInput(m.location)}</span>
+                                <span class="text-gray-200 text-right truncate max-w-[150px]">${escapeHtml(m.location)}</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-gray-400 font-medium">রক্তের গ্রুপ:</span>
-                                <span class="text-red-400 font-bold bg-red-950/60 px-2 py-0.5 rounded border border-red-800/45 cursor-pointer" onclick="filterByBloodGroup('${sanitizeInput(m.blood)}')">
-                                    <i class="fa-solid fa-droplet text-[10px] mr-1"></i>${sanitizeInput(m.blood)}
+                                <span class="text-red-400 font-bold bg-red-950/60 px-2 py-0.5 rounded border border-red-800/45 cursor-pointer" onclick="filterByBloodGroup('${escapeHtml(m.blood)}')">
+                                    <i class="fa-solid fa-droplet text-[10px] mr-1"></i>${escapeHtml(m.blood)}
                                 </span>
                             </div>
                             ${donationBadge ? `<div class="pt-1 flex justify-end">${donationBadge}</div>` : ''}
@@ -1050,10 +1164,10 @@
                     </div>
 
                     <div class="flex gap-2">
-                        <button onclick="viewMemberProfile('${m.id}')" class="flex-1 py-2 bg-police-light hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow transition-all flex items-center justify-center gap-1.5">
+                        <button onclick="viewMemberProfile('${safeId}')" class="flex-1 py-2 bg-police-light hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow transition-all flex items-center justify-center gap-1.5">
                             <i class="fa-solid fa-eye"></i> বিস্তারিত
                         </button>
-                        ${m.phone ? `<a href="tel:${sanitizeInput(m.phone)}" class="px-3 py-2 bg-green-600 hover:bg-green-500 text-white font-bold text-xs rounded-xl shadow flex items-center justify-center gap-1.5 transition-all"><i class="fa-solid fa-phone"></i> কল</a>` : ''}
+                        ${safePhoneHref ? `<a href="tel:${safePhoneHref}" class="px-3 py-2 bg-green-600 hover:bg-green-500 text-white font-bold text-xs rounded-xl shadow flex items-center justify-center gap-1.5 transition-all"><i class="fa-solid fa-phone"></i> কল</a>` : ''}
                     </div>
                 `;
 
@@ -1062,58 +1176,62 @@
         }
 
         function viewMemberProfile(id) {
-            const m = membersData.find(item => item.id === id || item.bp === id);
+            const m = membersData.find(item => item.id === id);
             if (!m) return;
 
-            const photoSrc = m.photo ? m.photo : `https://placehold.co/150x150/0b192c/fbbf24?text=${encodeURIComponent((m.name || 'P').charAt(0))}`;
+            const fallbackImg = `https://placehold.co/150x150/0b192c/fbbf24?text=${encodeURIComponent((m.name || 'P').charAt(0))}`;
+            const photoSrc = (m.photo && m.photo.startsWith('data:image/')) ? m.photo : fallbackImg;
+            const safePhoneHref = m.phone ? escapeHtml(m.phone.replace(/[^0-9+]/g, '')) : '';
+            const waNumber = formatWhatsappNumber(m.whatsapp);
+            const fbUrl = safeUrl(m.facebook);
 
             document.getElementById('profileModalDetails').innerHTML = `
                 <div class="text-center mb-6">
-                    <img src="${photoSrc}" class="w-24 h-24 rounded-full border-4 border-police-accent mx-auto mb-3 object-cover shadow-xl">
-                    <span class="px-3 py-1 bg-police-accent/20 text-police-gold text-xs font-bold rounded-full border border-police-accent/40 inline-block mb-1">${sanitizeInput(m.rank || 'সদস্য')}</span>
-                    <h3 class="text-xl font-bold text-white font-bangla">${sanitizeInput(m.name)}</h3>
-                    <p class="text-sm font-mono text-police-gold"><i class="fa-solid fa-id-card"></i> ${sanitizeInput(m.bp)}</p>
+                    <img src="${photoSrc}" alt="${escapeHtml(m.name)}" class="w-24 h-24 rounded-full border-4 border-police-accent mx-auto mb-3 object-cover shadow-xl">
+                    <span class="px-3 py-1 bg-police-accent/20 text-police-gold text-xs font-bold rounded-full border border-police-accent/40 inline-block mb-1">${escapeHtml(m.rank || 'সদস্য')}</span>
+                    <h3 class="text-xl font-bold text-white font-bangla">${escapeHtml(m.name)}</h3>
+                    <p class="text-sm font-mono text-police-gold"><i class="fa-solid fa-id-card"></i> ${escapeHtml(m.bp)}</p>
                 </div>
 
                 <div class="space-y-2.5 text-xs bg-slate-900/90 p-4 rounded-xl border border-slate-800 mb-6">
                     <div class="flex justify-between border-b border-slate-800 pb-2">
                         <span class="text-gray-400">সার্ভিস স্ট্যাটাস / বদলি:</span>
-                        <span class="font-bold text-police-gold">${sanitizeInput(m.serviceStatus || 'ইন-সার্ভিস')}</span>
+                        <span class="font-bold text-police-gold">${escapeHtml(m.serviceStatus || 'ইন-সার্ভিস')}</span>
                     </div>
                     <div class="flex justify-between border-b border-slate-800 pb-2">
                         <span class="text-gray-400">সংস্থা / ইউনিট:</span>
-                        <span class="font-bold text-white">${sanitizeInput(m.unit)}</span>
+                        <span class="font-bold text-white">${escapeHtml(m.unit)}</span>
                     </div>
                     <div class="flex justify-between border-b border-slate-800 pb-2">
                         <span class="text-gray-400">শাখা / ফান্ড:</span>
-                        <span class="font-bold text-police-gold">${sanitizeInput(m.branch)}</span>
+                        <span class="font-bold text-police-gold">${escapeHtml(m.branch)}</span>
                     </div>
                     <div class="flex justify-between border-b border-slate-800 pb-2">
                         <span class="text-gray-400">কর্মস্থল / থানা:</span>
-                        <span class="font-bold text-white">${sanitizeInput(m.location)}</span>
+                        <span class="font-bold text-white">${escapeHtml(m.location)}</span>
                     </div>
                     <div class="flex justify-between border-b border-slate-800 pb-2">
                         <span class="text-gray-400">নিজ জেলা:</span>
-                        <span class="font-bold text-white">${sanitizeInput(m.district || 'N/A')}</span>
+                        <span class="font-bold text-white">${escapeHtml(m.district || 'N/A')}</span>
                     </div>
                     <div class="flex justify-between border-b border-slate-800 pb-2">
                         <span class="text-gray-400">ট্রেনিং সেন্টার:</span>
-                        <span class="font-bold text-white">${sanitizeInput(m.training || 'N/A')}</span>
+                        <span class="font-bold text-white">${escapeHtml(m.training || 'N/A')}</span>
                     </div>
                     <div class="flex justify-between border-b border-slate-800 pb-2">
                         <span class="text-gray-400">রক্তের গ্রুপ:</span>
-                        <span class="font-bold text-red-400"><i class="fa-solid fa-droplet text-red-500 mr-1"></i>${sanitizeInput(m.blood)}</span>
+                        <span class="font-bold text-red-400"><i class="fa-solid fa-droplet text-red-500 mr-1"></i>${escapeHtml(m.blood)}</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-gray-400">সর্বশেষ রক্তদানের তারিখ:</span>
-                        <span class="font-bold text-white">${sanitizeInput(m.lastDonation || 'প্রযোজ্য নয়')}</span>
+                        <span class="font-bold text-white">${escapeHtml(m.lastDonation || 'প্রযোজ্য নয়')}</span>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    ${m.phone ? `<a href="tel:${sanitizeInput(m.phone)}" class="w-full py-2.5 bg-green-600 hover:bg-green-500 text-white font-bold text-xs rounded-xl shadow-lg flex items-center justify-center gap-2"><i class="fa-solid fa-phone"></i> কল করুন (${sanitizeInput(m.phone)})</a>` : ''}
-                    ${m.whatsapp ? `<a href="https://wa.me/${sanitizeInput(m.whatsapp)}" target="_blank" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-lg flex items-center justify-center gap-2"><i class="fa-brands fa-whatsapp"></i> হোয়াটসঅ্যাপ</a>` : ''}
-                    ${m.facebook ? `<a href="${sanitizeInput(m.facebook)}" target="_blank" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl shadow-lg flex items-center justify-center gap-2 sm:col-span-2"><i class="fa-brands fa-facebook"></i> ফেসবুক প্রোফাইল</a>` : ''}
+                    ${safePhoneHref ? `<a href="tel:${safePhoneHref}" class="w-full py-2.5 bg-green-600 hover:bg-green-500 text-white font-bold text-xs rounded-xl shadow-lg flex items-center justify-center gap-2"><i class="fa-solid fa-phone"></i> কল করুন (${escapeHtml(m.phone)})</a>` : ''}
+                    ${waNumber ? `<a href="https://wa.me/${waNumber}" target="_blank" rel="noopener noreferrer" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-lg flex items-center justify-center gap-2"><i class="fa-brands fa-whatsapp"></i> হোয়াটসঅ্যাপ</a>` : ''}
+                    ${fbUrl ? `<a href="${fbUrl}" target="_blank" rel="noopener noreferrer" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl shadow-lg flex items-center justify-center gap-2 sm:col-span-2"><i class="fa-brands fa-facebook"></i> ফেসবুক প্রোফাইল</a>` : ''}
                 </div>
             `;
             openModal('viewProfileModal');
@@ -1137,117 +1255,168 @@
             showToast('সকল ফিল্টার রিসেট করা হয়েছে');
         }
 
-        function formatBpInput(input) {
-            let val = input.value.trim().toUpperCase();
-            if (!val.startsWith('BP')) {
-                input.value = 'BP' + val.replace(/^BP/, '');
-            }
-        }
-
         async function saveMember(e) {
             e.preventDefault();
-            showLoading('রেজিস্ট্রেশন রিকোয়েস্ট পাঠানো হচ্ছে...');
 
-            let editId = document.getElementById('editMemberId').value.trim();
-            const name = sanitizeInput(document.getElementById('memberName').value.trim());
-            let bp = sanitizeInput(document.getElementById('memberBp').value.trim().toUpperCase());
-            if(!bp.startsWith('BP')) bp = 'BP' + bp;
+            const editUid = document.getElementById('editMemberUid').value.trim();
+            const name = document.getElementById('memberName').value.trim();
+            const bp = cleanBpCode(document.getElementById('memberBp').value);
+            const password = document.getElementById('memberPin').value.trim();
+            const rank = document.getElementById('memberRank').value;
+            const unit = document.getElementById('memberUnit').value;
+            const branch = document.getElementById('memberBranch').value;
+            const serviceStatus = document.getElementById('memberServiceStatus').value;
+            const blood = document.getElementById('memberBlood').value;
+            const lastDonation = document.getElementById('memberLastDonation').value;
+            const district = document.getElementById('memberDistrict').value.trim();
+            const training = document.getElementById('memberTraining').value;
+            const location = document.getElementById('memberLocation').value.trim();
+            const phone = document.getElementById('memberPhone').value.trim();
+            const whatsapp = document.getElementById('memberWhatsapp').value.trim();
+            let facebook = document.getElementById('memberFacebook').value.trim();
 
-            const pin = sanitizeInput(document.getElementById('memberPin').value.trim());
-            const rank = sanitizeInput(document.getElementById('memberRank').value);
-            const unit = sanitizeInput(document.getElementById('memberUnit').value);
-            const branch = sanitizeInput(document.getElementById('memberBranch').value);
-            const blood = sanitizeInput(document.getElementById('memberBlood').value);
-            const lastDonation = sanitizeInput(document.getElementById('memberLastDonation') ? document.getElementById('memberLastDonation').value : '');
-            const serviceStatus = sanitizeInput(document.getElementById('memberServiceStatus') ? document.getElementById('memberServiceStatus').value : 'ইন-সার্ভিস');
-            const district = sanitizeInput(document.getElementById('memberDistrict').value.trim());
-            const training = sanitizeInput(document.getElementById('memberTraining').value);
-            const location = sanitizeInput(document.getElementById('memberLocation').value.trim());
-            const phone = sanitizeInput(document.getElementById('memberPhone').value.trim());
-            const whatsapp = sanitizeInput(document.getElementById('memberWhatsapp').value.trim());
-            const facebook = sanitizeInput(document.getElementById('memberFacebook').value.trim());
+            if (!bp || bp.length < 4) {
+                showToast('অনুগ্রহ করে সঠিক বিপি নম্বর দিন (যেমন: BP20221234)।', true);
+                return;
+            }
+
+            if (facebook) {
+                if (/^javascript:/i.test(facebook)) {
+                    showToast('অবৈধ ফেসবুক লিংক!', true);
+                    return;
+                }
+                if (!/^https?:\/\//i.test(facebook)) {
+                    facebook = 'https://' + facebook;
+                }
+            }
+
+            if (!editUid && password.length < 6) {
+                showToast('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।', true);
+                return;
+            }
+            if (editUid && password && password.length < 6) {
+                showToast('নতুন পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।', true);
+                return;
+            }
 
             const memberPayload = {
-                name, bp, pin, rank, unit, branch, blood, lastDonation, serviceStatus, district, training, location, phone, whatsapp, facebook,
+                name, bp, rank, unit, branch, serviceStatus, blood, lastDonation,
+                district, training, location, phone, whatsapp, facebook,
                 updatedAt: new Date().toISOString()
             };
+            if (memberImageBase64) {
+                memberPayload.photo = memberImageBase64;
+            }
 
-            if (memberImageBase64) { memberPayload.photo = memberImageBase64; }
+            showLoading(editUid ? 'তথ্য আপডেট হচ্ছে...' : (currentUserRole === 'admin' ? 'সদস্য যুক্ত করা হচ্ছে...' : 'রেজিস্ট্রেশন রিকোয়েস্ট পাঠানো হচ্ছে...'));
 
-            if (isCloudAvailable && db) {
-                if (currentUserRole === 'admin' || editId) {
-                    // অ্যাডমিন সরাসরি এডিট বা অ্যাড করলে সরাসরি members কালেকশনে যাবে
-                    db.collection("members").doc(bp).set(memberPayload, { merge: true }).then(() => {
-                        addAuditLog('প্রোফাইল আপডেট', `${name} (${bp})-এর তথ্য আপডেট করা হয়েছে`);
-                        hideLoading();
-                        showToast('তথ্য সফলভাবে আপডেট হয়েছে!');
-                        closeModal('memberFormModal');
-                    }).catch(err => { 
-                        hideLoading(); 
-                        fallbackSaveLocal(memberPayload, bp);
-                    });
-                } else {
-                    // নতুন ইউজারের ক্ষেত্রে চেক করা হবে অলরেডি রেজিস্টার্ড বা পেন্ডিং আছে কিনা
-                    db.collection("members").doc(bp).get().then((docSnap) => {
-                        if (docSnap.exists) {
-                            hideLoading();
-                            showToast('এই বিপি নম্বরটি ইতোমধ্যে ডিরেক্টরিতে অনুমোদিত রয়েছে!', true);
+            try {
+                if (editUid) {
+                    // বিদ্যমান সদস্যের প্রোফাইল আপডেট (UID দ্বারা)
+                    if (currentUserRole === 'admin') {
+                        const duplicate = membersData.find(m => m.bp === bp && m.id !== editUid);
+                        if (duplicate) {
+                            showToast('এই বিপি নম্বরটি ইতোমধ্যে অন্য একজন সদস্যের নামে রয়েছে!', true);
                             return;
                         }
-                        db.collection("pending_members").doc(bp).get().then((pendingSnap) => {
-                            if (pendingSnap.exists) {
-                                hideLoading();
-                                showToast('এই বিপি নম্বরের রেজিস্ট্রেশন আবেদন ইতোমধ্যে পেন্ডিং রয়েছে!', true);
-                                return;
-                            }
-                            db.collection("pending_members").doc(bp).set(memberPayload).then(() => {
-                                addAuditLog('নতুন রেজিস্ট্রেশন', `${name} (${bp})-এর রেজিস্ট্রেশন আবেদন জমা হয়েছে`);
-                                hideLoading();
-                                showToast('রেজিস্ট্রেশন সফল হয়েছে! অ্যাডমিন অনুমোদন করার পর আপনি লগইন করতে পারবেন।');
-                                closeModal('memberFormModal');
-                            });
-                        });
-                    }).catch(err => {
-                        hideLoading();
-                        fallbackSaveLocal(memberPayload, bp);
-                    });
-                }
-            } else {
-                fallbackSaveLocal(memberPayload, bp);
-            }
-        }
+                    }
 
-        function fallbackSaveLocal(payload, bp) {
-            const index = membersData.findIndex(m => m.bp === bp);
-            if (index >= 0) {
-                membersData[index] = { ...membersData[index], ...payload };
-            } else {
-                membersData.push({ id: bp, ...payload });
+                    await db.collection("members").doc(editUid).set({
+                        ...memberPayload,
+                        uid: editUid
+                    }, { merge: true });
+
+                    if (currentUserRole === 'member' && password && auth.currentUser) {
+                        try {
+                            await auth.currentUser.updatePassword(password);
+                        } catch (pwErr) {
+                            console.warn("Password update error:", pwErr);
+                            showToast('তথ্য আপডেট হয়েছে, তবে পাসওয়ার্ড পরিবর্তন করতে পুনরায় লগইন করুন।', true);
+                            closeModal('memberFormModal');
+                            return;
+                        }
+                    }
+
+                    addAuditLog('প্রোফাইল আপডেট', `${name} (${bp})-এর তথ্য আপডেট করা হয়েছে`);
+                    showToast('তথ্য সফলভাবে আপডেট হয়েছে!');
+                    closeModal('memberFormModal');
+                } else if (currentUserRole === 'admin') {
+                    // অ্যাডমিন সরাসরি নতুন সদস্য তৈরি করছেন (Secondary Auth ব্যবহার করে)
+                    let secondaryApp = firebase.apps.find(app => app.name === 'SecondaryAuth');
+                    if (!secondaryApp) {
+                        secondaryApp = firebase.initializeApp(firebaseConfig, 'SecondaryAuth');
+                    }
+                    const secondaryAuth = secondaryApp.auth();
+                    const cred = await secondaryAuth.createUserWithEmailAndPassword(bpToEmail(bp), password);
+                    const newUid = cred.user.uid;
+                    await secondaryAuth.signOut();
+
+                    await db.collection("members").doc(newUid).set({
+                        ...memberPayload,
+                        uid: newUid
+                    });
+
+                    addAuditLog('সরাসরি সদস্য যোগ', `অ্যাডমিন ${name} (${bp})-কে সরাসরি যুক্ত করেছেন`);
+                    showToast('নতুন সদস্য সফলভাবে যুক্ত হয়েছে!');
+                    closeModal('memberFormModal');
+                } else {
+                    // নতুন গেস্ট রেজিস্ট্রেশন আবেদন
+                    isRegistering = true;
+                    const cred = await auth.createUserWithEmailAndPassword(bpToEmail(bp), password);
+                    const newUid = cred.user.uid;
+
+                    await db.collection("pending_members").doc(newUid).set({
+                        ...memberPayload,
+                        uid: newUid
+                    });
+
+                    await auth.signOut();
+                    isRegistering = false;
+
+                    showToast('রেজিস্ট্রেশন সফল হয়েছে! অ্যাডমিন অনুমোদন করার পর আপনি লগইন করতে পারবেন।');
+                    closeModal('memberFormModal');
+                }
+            } catch (err) {
+                isRegistering = false;
+                console.error("Save member error:", err);
+                if (err.code === 'auth/email-already-in-use') {
+                    showToast('এই বিপি নম্বর দিয়ে ইতোমধ্যে অ্যাকাউন্ট তৈরি করা আছে!', true);
+                } else if (err.code === 'auth/weak-password') {
+                    showToast('পাসওয়ার্ড আরও শক্তিশালী দিন (কমপক্ষে ৬ অক্ষর)।', true);
+                } else {
+                    showToast('সমস্যা হয়েছে: ' + (err.message || 'আবার চেষ্টা করুন'), true);
+                }
+            } finally {
+                hideLoading();
             }
-            saveLocalBackupData();
-            renderMembersGrid();
-            updateStatisticsDashboard();
-            hideLoading();
-            showToast('তথ্য সফলভাবে সেভ হয়েছে (লোকাল মোড)');
-            closeModal('memberFormModal');
         }
 
         function openAddMemberModal() {
-            document.getElementById('editMemberId').value = '';
+            document.getElementById('editMemberUid').value = '';
             document.getElementById('memberDataForm').reset();
             document.getElementById('memberBp').value = 'BP';
             document.getElementById('memberBp').disabled = false;
+            document.getElementById('memberPinGroup').classList.remove('hidden');
+            document.getElementById('memberPinLabel').innerText = 'লগইন পাসওয়ার্ড / পিন (কমপক্ষে ৬ অক্ষর) *';
+            document.getElementById('memberPin').required = true;
             document.getElementById('memberPin').value = '';
             document.getElementById('photoPreviewBox').innerHTML = `<i class="fa-solid fa-user text-2xl text-gray-500"></i>`;
-            document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-user-plus"></i> নতুন অ্যাকাউন্ট রেজিস্ট্রেশন ফর্ম`;
-            document.getElementById('formSubText').innerText = `সঠিক তথ্য দিয়ে রেজিস্ট্রেশন করুন। অ্যাডমিন কর্তৃক অনুমোদিত হওয়ার পর আপনি অ্যাপে লগইন করতে পারবেন।`;
-            document.getElementById('formSubmitBtn').innerText = 'রেজিস্ট্রেশন রিকোয়েস্ট পাঠান';
             memberImageBase64 = '';
+
+            if (currentUserRole === 'admin') {
+                document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-user-plus"></i> সরাসরি নতুন সদস্য যোগ করুন`;
+                document.getElementById('formSubText').innerText = `সদস্যের সঠিক তথ্য ও লগইন পাসওয়ার্ড দিয়ে সরাসরি ডিরেক্টরিতে যুক্ত করুন।`;
+                document.getElementById('formSubmitBtn').innerText = 'সরাসরি সদস্য যোগ করুন';
+            } else {
+                document.getElementById('formTitle').innerHTML = `<i class="fa-solid fa-user-plus"></i> নতুন অ্যাকাউন্ট রেজিস্ট্রেশন ফর্ম`;
+                document.getElementById('formSubText').innerText = `সঠিক তথ্য দিয়ে রেজিস্ট্রেশন করুন। অ্যাডমিন কর্তৃক অনুমোদিত হওয়ার পর আপনি অ্যাপে লগইন করতে পারবেন।`;
+                document.getElementById('formSubmitBtn').innerText = 'রেজিস্ট্রেশন রিকোয়েস্ট পাঠান';
+            }
             openModal('memberFormModal');
         }
 
         function openEditMyProfileModal() {
-            const found = membersData.find(m => m.bp && m.bp.toUpperCase() === loggedInBpNumber.toUpperCase());
+            const found = membersData.find(m => m.id === currentUserUid);
             if (!found) {
                 showToast('আপনার প্রোফাইল পাওয়া যায়নি।', true);
                 return;
@@ -1256,22 +1425,32 @@
         }
 
         function editSpecificMember(id) {
-            const found = membersData.find(m => m.id === id || m.bp === id);
+            const found = membersData.find(m => m.id === id);
             if (found) fillAndOpenEditForm(found);
         }
 
         function fillAndOpenEditForm(found) {
-            document.getElementById('editMemberId').value = found.id || found.bp || '';
+            document.getElementById('editMemberUid').value = found.id;
             document.getElementById('memberName').value = found.name || '';
             document.getElementById('memberBp').value = found.bp || '';
             document.getElementById('memberBp').disabled = (currentUserRole !== 'admin');
-            document.getElementById('memberPin').value = found.pin || '';
+            document.getElementById('memberPin').value = '';
+
+            if (currentUserRole === 'member' && found.id === currentUserUid) {
+                document.getElementById('memberPinGroup').classList.remove('hidden');
+                document.getElementById('memberPinLabel').innerText = 'নতুন পাসওয়ার্ড (পরিবর্তন করতে চাইলে, কমপক্ষে ৬ অক্ষর)';
+                document.getElementById('memberPin').required = false;
+            } else {
+                document.getElementById('memberPinGroup').classList.add('hidden');
+                document.getElementById('memberPin').required = false;
+            }
+
             document.getElementById('memberRank').value = found.rank || 'কনস্টেবল';
             document.getElementById('memberUnit').value = found.unit || 'পুলিশ হেডকোয়ার্টার্স';
             document.getElementById('memberBranch').value = found.branch || 'প্রশাসনিক শাখা';
+            document.getElementById('memberServiceStatus').value = found.serviceStatus || 'ইন-সার্ভিস';
             document.getElementById('memberBlood').value = found.blood || 'A+';
-            if(document.getElementById('memberLastDonation')) document.getElementById('memberLastDonation').value = found.lastDonation || '';
-            if(document.getElementById('memberServiceStatus')) document.getElementById('memberServiceStatus').value = found.serviceStatus || 'ইন-সার্ভিস';
+            document.getElementById('memberLastDonation').value = found.lastDonation || '';
             document.getElementById('memberDistrict').value = found.district || '';
             document.getElementById('memberTraining').value = found.training || 'পুলিশ একাডেমি, সারদা';
             document.getElementById('memberLocation').value = found.location || '';
@@ -1280,8 +1459,8 @@
             document.getElementById('memberFacebook').value = found.facebook || '';
 
             memberImageBase64 = found.photo || '';
-            if (found.photo) {
-                document.getElementById('photoPreviewBox').innerHTML = `<img src="${found.photo}" class="w-full h-full object-cover">`;
+            if (found.photo && found.photo.startsWith('data:image/')) {
+                document.getElementById('photoPreviewBox').innerHTML = `<img src="${found.photo}" alt="Preview" class="w-full h-full object-cover">`;
             } else {
                 document.getElementById('photoPreviewBox').innerHTML = `<i class="fa-solid fa-user text-2xl text-gray-500"></i>`;
             }
@@ -1292,85 +1471,80 @@
             openModal('memberFormModal');
         }
 
-        function deleteMember(id, memberBp) {
-            if (confirm('আপনি কি নিশ্চিত যে এই সদস্যকে চিরতরে ডিলিট করতে চান?')) {
-                showLoading('ডিলিট প্রসেসিং...');
-                const targetBp = memberBp || id;
+        async function deleteMember(id) {
+            if (currentUserRole !== 'admin') return;
+            const target = membersData.find(m => m.id === id);
+            const targetLabel = target ? `${target.name} (${target.bp})` : id;
 
-                if (isCloudAvailable && db) {
-                    db.collection("members").doc(targetBp).delete().then(() => {
-                        addAuditLog('সদস্য মুছে ফেলা', `বিপি: ${targetBp} সফলভাবে মুছে ফেলা হয়েছে`);
-                        hideLoading();
-                        showToast('সদস্য মুছে ফেলা হয়েছে');
-                    }).catch(() => {
-                        fallbackDeleteLocal(targetBp);
-                    });
-                } else {
-                    fallbackDeleteLocal(targetBp);
+            if (confirm(`আপনি কি নিশ্চিত যে ${targetLabel}-কে ডিরেক্টরি থেকে ডিলিট করতে চান?`)) {
+                showLoading('ডিলিট করা হচ্ছে...');
+                try {
+                    await db.collection("members").doc(id).delete();
+                    addAuditLog('সদস্য মুছে ফেলা', `${targetLabel} ডিলিট করা হয়েছে`);
+                    showToast('সদস্য সফলভাবে মুছে ফেলা হয়েছে');
+                } catch (err) {
+                    console.error("Delete error:", err);
+                    showToast('ডিলিট করতে সমস্যা হয়েছে: ' + err.message, true);
+                } finally {
+                    hideLoading();
                 }
             }
         }
 
-        function fallbackDeleteLocal(bp) {
-            membersData = membersData.filter(m => m.bp !== bp && m.id !== bp);
-            saveLocalBackupData();
-            renderMembersGrid();
-            updateStatisticsDashboard();
-            hideLoading();
-            showToast('ডাটা সফলভাবে ডিলিট করা হয়েছে');
-        }
-
         function openBloodModal() { openModal('bloodModal'); }
-        function handleBloodSubmit(e) {
+
+        async function handleBloodSubmit(e) {
             e.preventDefault();
-            const blood = sanitizeInput(document.getElementById('reqBloodGroup').value);
-            const loc = sanitizeInput(document.getElementById('reqBloodLocation').value);
-            const phone = sanitizeInput(document.getElementById('reqBloodPhone').value);
-            
-            const msg = `জরুরি রক্ত প্রয়োজন (${blood})! স্থান: ${loc}, কল করুন: ${phone}`;
-            showLoading('নোটিশ পোস্ট হচ্ছে...');
-            
-            if (isCloudAvailable && db) {
-                db.collection("settings").doc("notice").set({ text: msg }, { merge: true }).then(() => {
-                    addAuditLog('রক্তের রিকোয়েস্ট', `${blood} গ্রুপের রক্তের রিকোয়েস্ট দেওয়া হয়েছে`);
-                    hideLoading();
-                    showToast('রক্তের রিকোয়েস্ট নোটিশ বোর্ডে পোস্ট হয়েছে!');
-                    closeModal('bloodModal');
-                });
-            } else {
-                document.getElementById('noticeBoardText').innerText = msg;
-                localStorage.setItem('BP2022_LOCAL_NOTICE', msg);
-                hideLoading();
-                showToast('রক্তের রিকোয়েস্ট পোস্ট হয়েছে');
+            const blood = document.getElementById('reqBloodGroup').value;
+            const loc = document.getElementById('reqBloodLocation').value.trim();
+            const phone = document.getElementById('reqBloodPhone').value.trim();
+
+            const msg = `জরুরি রক্ত প্রয়োজন (${blood})! স্থান: ${loc}, কল: ${phone}`;
+            showLoading('রক্তের রিকোয়েস্ট পোস্ট হচ্ছে...');
+
+            try {
+                await db.collection("settings").doc("blood_alert").set({
+                    text: msg,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                addAuditLog('রক্তের রিকোয়েস্ট', `${blood} গ্রুপের রক্তের রিকোয়েস্ট (${loc})`);
+                showToast('রক্তের রিকোয়েস্ট বোর্ডে পোস্ট হয়েছে!');
+                e.target.reset();
                 closeModal('bloodModal');
+            } catch (err) {
+                console.error("Blood request error:", err);
+                showToast('রিকোয়েস্ট পাঠাতে সমস্যা হয়েছে: ' + err.message, true);
+            } finally {
+                hideLoading();
             }
         }
 
         function openAdminNoticeModal() {
             if (currentUserRole !== 'admin') return;
+            document.getElementById('adminNoticeInput').value = document.getElementById('noticeBoardText').textContent;
             openModal('adminNoticeModal');
         }
 
-        function handleNoticeSubmit(e) {
+        async function handleNoticeSubmit(e) {
             e.preventDefault();
-            const txt = sanitizeInput(document.getElementById('adminNoticeInput').value.trim());
-            if (txt) {
-                showLoading('নোটিশ আপডেট হচ্ছে...');
-                if (isCloudAvailable && db) {
-                    db.collection("settings").doc("notice").set({ text: txt }, { merge: true }).then(() => {
-                        addAuditLog('নোটিশ আপডেট', 'জরুরি ব্যাচ নোটিশ পরিবর্তন করা হয়েছে');
-                        hideLoading();
-                        showToast('নোটিশ আপডেট হয়েছে!');
-                        document.getElementById('adminNoticeInput').value = '';
-                        closeModal('adminNoticeModal');
-                    });
-                } else {
-                    document.getElementById('noticeBoardText').innerText = txt;
-                    localStorage.setItem('BP2022_LOCAL_NOTICE', txt);
-                    hideLoading();
-                    showToast('নোটিশ আপডেট হয়েছে!');
-                    closeModal('adminNoticeModal');
-                }
+            const txt = document.getElementById('adminNoticeInput').value.trim();
+            if (!txt) return;
+
+            showLoading('নোটিশ আপডেট হচ্ছে...');
+            try {
+                await db.collection("settings").doc("notice").set({
+                    text: txt,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                addAuditLog('নোটিশ আপডেট', 'জরুরি ব্যাচ নোটিশ পরিবর্তন করা হয়েছে');
+                showToast('নোটিশ সফলভাবে আপডেট হয়েছে!');
+                document.getElementById('adminNoticeInput').value = '';
+                closeModal('adminNoticeModal');
+            } catch (err) {
+                console.error("Notice update error:", err);
+                showToast('নোটিশ আপডেট ব্যর্থ হয়েছে: ' + err.message, true);
+            } finally {
+                hideLoading();
             }
         }
 
@@ -1388,64 +1562,62 @@
                 return;
             }
             pendingData.forEach((p) => {
+                const safeId = escapeHtml(p.id);
+                const photoSrc = (p.photo && p.photo.startsWith('data:image/')) ? p.photo : 'https://placehold.co/80x80/0b192c/fbbf24?text=P';
                 const div = document.createElement('div');
-                div.className = "bg-slate-900 border border-slate-700 p-3 rounded-lg flex items-center justify-between gap-3";
+                div.className = "bg-slate-900 border border-slate-700 p-3 rounded-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3";
                 div.innerHTML = `
                     <div class="flex items-center gap-3">
-                        <img src="${p.photo || 'https://placehold.co/80x80/0b192c/fbbf24?text=P'}" class="w-12 h-12 rounded-full object-cover border border-police-accent">
+                        <img src="${photoSrc}" alt="${escapeHtml(p.name)}" class="w-12 h-12 rounded-full object-cover border border-police-accent flex-shrink-0">
                         <div>
-                            <h5 class="text-xs font-bold text-white">${sanitizeInput(p.name)} (${sanitizeInput(p.bp)})</h5>
-                            <p class="text-[10px] text-gray-300">${sanitizeInput(p.rank)} - ${sanitizeInput(p.unit)} | জেলা: ${sanitizeInput(p.district)} | পিন: <span class="text-police-gold font-mono">${sanitizeInput(p.pin)}</span></p>
+                            <h5 class="text-xs font-bold text-white">${escapeHtml(p.name)} (${escapeHtml(p.bp)})</h5>
+                            <p class="text-[10px] text-gray-300">${escapeHtml(p.rank)} - ${escapeHtml(p.unit)} | জেলা: ${escapeHtml(p.district)} | রক্ত: ${escapeHtml(p.blood)}</p>
                         </div>
                     </div>
-                    <div class="flex gap-1.5">
-                        <button onclick="approvePending('${p.id}', '${p.bp}')" class="px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white text-xs font-bold rounded-lg shadow">এপ্রুভ</button>
-                        <button onclick="rejectPending('${p.id}')" class="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white text-xs font-bold rounded-lg shadow">বাতিল</button>
+                    <div class="flex gap-1.5 justify-end">
+                        <button onclick="approvePending('${safeId}')" class="px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white text-xs font-bold rounded-lg shadow">এপ্রুভ</button>
+                        <button onclick="rejectPending('${safeId}')" class="px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white text-xs font-bold rounded-lg shadow">বাতিল</button>
                     </div>
                 `;
                 container.appendChild(div);
             });
         }
 
-        function approvePending(id, bp) {
-            const item = pendingData.find(p => p.id === id || p.bp === bp);
-            if (item) {
-                showLoading('এপ্রুভ করা হচ্ছে...');
-                const docId = bp || item.bp;
-                if (isCloudAvailable && db) {
-                    db.collection("members").doc(docId).set(item).then(() => {
-                        db.collection("pending_members").doc(id).delete().then(() => {
-                            addAuditLog('রেজিস্ট্রেশন অনুমোদন', `${item.name} (${docId})-এর রেজিস্ট্রেশন অনুমোদন করা হয়েছে`);
-                            hideLoading();
-                            showToast('রেজিস্ট্রেশন সফলভাবে এপ্রুভ করা হয়েছে!');
-                            renderPendingList();
-                        });
-                    });
-                } else {
-                    membersData.push({ id: docId, ...item });
-                    pendingData = pendingData.filter(p => p.id !== id);
-                    saveLocalBackupData();
-                    renderMembersGrid();
-                    updateStatisticsDashboard();
-                    hideLoading();
-                    showToast('এপ্রুভ করা হয়েছে!');
-                    renderPendingList();
-                }
+        async function approvePending(id) {
+            if (currentUserRole !== 'admin') return;
+            const item = pendingData.find(p => p.id === id);
+            if (!item) return;
+
+            showLoading('এপ্রুভ করা হচ্ছে...');
+            try {
+                const { id: _ignored, ...cleanItem } = item;
+                cleanItem.uid = id;
+                await db.collection("members").doc(id).set(cleanItem);
+                await db.collection("pending_members").doc(id).delete();
+                addAuditLog('রেজিস্ট্রেশন অনুমোদন', `${item.name} (${item.bp})-এর আবেদন অনুমোদন করা হয়েছে`);
+                showToast('রেজিস্ট্রেশন সফলভাবে এপ্রুভ করা হয়েছে!');
+            } catch (err) {
+                console.error("Approve error:", err);
+                showToast('এপ্রুভ করতে সমস্যা হয়েছে: ' + err.message, true);
+            } finally {
+                hideLoading();
             }
         }
 
-        function rejectPending(id) {
+        async function rejectPending(id) {
+            if (currentUserRole !== 'admin') return;
+            const item = pendingData.find(p => p.id === id);
             if (confirm('এই রেজিস্ট্রেশন রিকোয়েস্টটি বাতিল করতে চান?')) {
-                if (isCloudAvailable && db) {
-                    db.collection("pending_members").doc(id).delete().then(() => {
-                        addAuditLog('আবেদন বাতিল', `পেন্ডিং আইডি: ${id} বাতিল করা হয়েছে`);
-                        showToast('আবেদনটি বাতিল হয়েছে');
-                        renderPendingList();
-                    });
-                } else {
-                    pendingData = pendingData.filter(p => p.id !== id);
+                showLoading('বাতিল করা হচ্ছে...');
+                try {
+                    await db.collection("pending_members").doc(id).delete();
+                    addAuditLog('আবেদন বাতিল', `${item ? item.name + ' (' + item.bp + ')' : id}-এর আবেদন বাতিল করা হয়েছে`);
                     showToast('আবেদনটি বাতিল হয়েছে');
-                    renderPendingList();
+                } catch (err) {
+                    console.error("Reject error:", err);
+                    showToast('বাতিল করতে সমস্যা হয়েছে: ' + err.message, true);
+                } finally {
+                    hideLoading();
                 }
             }
         }
@@ -1467,40 +1639,67 @@
 
         function handleImageUpload(event) {
             const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = new Image();
-                    img.src = e.target.result;
-                    img.onload = function() {
-                        const canvas = document.createElement('canvas');
-                        const ctx = canvas.getContext('2d');
-                        const MAX_WIDTH = 260;
-                        const scaleSize = MAX_WIDTH / img.width;
-                        canvas.width = MAX_WIDTH;
-                        canvas.height = img.height * scaleSize;
-                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        memberImageBase64 = canvas.toDataURL('image/jpeg', 0.5);
-                        document.getElementById('photoPreviewBox').innerHTML = `<img src="${memberImageBase64}" class="w-full h-full object-cover">`;
-                    }
-                };
-                reader.readAsDataURL(file);
-            }
-        }
+            if (!file) return;
 
-        function openLoginModal() {
-            if (currentUserRole !== 'guest') {
-                if (auth) {
-                    auth.signOut().catch(() => {});
-                }
-                currentUserRole = 'guest';
-                loggedInBpNumber = '';
-                sessionStorage.removeItem('POLICE_USER_ROLE');
-                sessionStorage.removeItem('POLICE_LOGGED_BP');
-                checkSessionState();
-                showToast('লগআউট করা হয়েছে');
+            if (!file.type.startsWith('image/')) {
+                showToast('অনুগ্রহ করে শুধুমাত্র ছবির ফাইল (JPG/PNG) সিলেক্ট করুন।', true);
+                event.target.value = '';
                 return;
             }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const MAX_DIM = 260;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > MAX_DIM || height > MAX_DIM) {
+                        if (width > height) {
+                            height = Math.round((height * MAX_DIM) / width);
+                            width = MAX_DIM;
+                        } else {
+                            width = Math.round((width * MAX_DIM) / height);
+                            height = MAX_DIM;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, width, height);
+                    ctx.drawImage(img, 0, 0, width, height);
+                    memberImageBase64 = canvas.toDataURL('image/jpeg', 0.65);
+                    document.getElementById('photoPreviewBox').innerHTML = `<img src="${memberImageBase64}" alt="Preview" class="w-full h-full object-cover">`;
+                };
+                img.onerror = function() {
+                    showToast('ছবি প্রসেস করতে সমস্যা হয়েছে। অন্য ছবি চেষ্টা করুন।', true);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function resetLoginForms() {
+            document.getElementById('memberLoginForm').reset();
+            document.getElementById('adminLoginForm').reset();
+        }
+
+        async function openLoginModal() {
+            if (currentUserRole !== 'guest') {
+                try {
+                    await auth.signOut();
+                    resetLoginForms();
+                    showToast('সফলভাবে লগআউট করা হয়েছে');
+                } catch (err) {
+                    showToast('লগআউট করতে সমস্যা হয়েছে', true);
+                }
+                return;
+            }
+            resetLoginForms();
             openModal('loginModal');
         }
 
@@ -1523,98 +1722,54 @@
             }
         }
 
-                async function handleMemberLogin(e) {
+        async function handleMemberLogin(e) {
             e.preventDefault();
-            let bpInput = document.getElementById('loginBpNumber').value.trim().toUpperCase();
-            if(!bpInput.startsWith('BP')) bpInput = 'BP' + bpInput;
+            const bpInput = cleanBpCode(document.getElementById('loginBpNumber').value);
             const pinInput = document.getElementById('loginPin').value.trim();
 
+            if (!bpInput || bpInput.length < 4) {
+                showToast('সঠিক বিপি নম্বর দিন।', true);
+                return;
+            }
+
             showLoading('লগইন যাচাই করা হচ্ছে...');
+            pendingLoginSource = 'member';
 
-            if (isCloudAvailable && db) {
-                try {
-                    const docRef = await db.collection("members").doc(bpInput).get();
-                    if (docRef.exists) {
-                        const memberData = docRef.data();
-                        if (memberData.pin === pinInput) {
-                            currentUserRole = 'member';
-                            loggedInBpNumber = bpInput;
-                            sessionStorage.setItem('POLICE_USER_ROLE', 'member');
-                            sessionStorage.setItem('POLICE_LOGGED_BP', bpInput);
-                            
-                            checkSessionState();
-                            closeModal('loginModal');
-                            hideLoading();
-                            showToast('সদস্য হিসেবে সফলভাবে লগইন হয়েছে!');
-                            return;
-                        } else {
-                            hideLoading();
-                            showToast('ভুল পাসওয়ার্ড বা পিন কোড!', true);
-                            return;
-                        }
-                    }
-                } catch (err) {
-                    console.error("Cloud login error:", err);
-                }
-            }
-
-            let foundMember = membersData.find(m => m.bp && m.bp.toUpperCase() === bpInput);
-            
-            if (foundMember) {
-                if (foundMember.pin === pinInput) {
-                    currentUserRole = 'member';
-                    loggedInBpNumber = bpInput;
-                    sessionStorage.setItem('POLICE_USER_ROLE', 'member');
-                    sessionStorage.setItem('POLICE_LOGGED_BP', bpInput);
-                    
-                    checkSessionState();
-                    closeModal('loginModal');
-                    hideLoading();
-                    showToast('সদস্য হিসেবে সফলভাবে লগইন হয়েছে!');
-                } else {
-                    hideLoading();
-                    showToast('ভুল পাসওয়ার্ড বা পিন কোড!', true);
-                }
-            } else {
-                if (isCloudAvailable && db) {
-                    try {
-                        const pendingDoc = await db.collection("pending_members").doc(bpInput).get();
-                        hideLoading();
-                        if (pendingDoc.exists) {
-                            showToast('আপনার অ্যাকাউন্টটি এখনও অ্যাডমিন কর্তৃক অনুমোদিত হয়নি। অনুগ্রহ করে অপেক্ষা করুন।', true);
-                            return;
-                        }
-                    } catch (e) {}
-                }
-
+            try {
+                await auth.signInWithEmailAndPassword(bpToEmail(bpInput), pinInput);
+            } catch (err) {
+                pendingLoginSource = null;
                 hideLoading();
-                showToast('এই বিপি নম্বরে কোনো অ্যাকাউন্ট ডিরেক্টরিতে নেই। অনুগ্রহ করে আগে রেজিস্ট্রেশন করুন।', true);
+                console.error("Login error:", err);
+                if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password') {
+                    showToast('ভুল বিপি নম্বর বা পাসওয়ার্ড!', true);
+                } else if (err.code === 'auth/too-many-requests') {
+                    showToast('অনেকবার ভুল চেষ্টা করা হয়েছে। কিছুক্ষণ পর আবার চেষ্টা করুন।', true);
+                } else {
+                    showToast('লগইন ব্যর্থ হয়েছে: ' + err.message, true);
+                }
             }
         }
 
-
-        function handleAdminLogin(e) {
+        async function handleAdminLogin(e) {
             e.preventDefault();
+            const email = document.getElementById('adminEmail').value.trim();
             const pass = document.getElementById('adminPassword').value.trim();
-            if (pass === 'Admin2k22') {
-                currentUserRole = 'admin';
-                sessionStorage.setItem('POLICE_USER_ROLE', 'admin');
-                
-                checkSessionState();
-                closeModal('loginModal');
-                addAuditLog('অ্যাডমিন লগইন', 'অ্যাডমিন প্যানেলে প্রবেশ করা হয়েছে');
-                showToast('অ্যাডমিন মোড অ্যাক্টিভেটেড!');
-            } else {
-                showToast('ভুল পাসওয়ার্ড!', true);
+
+            showLoading('অ্যাডমিন যাচাই করা হচ্ছে...');
+            pendingLoginSource = 'admin';
+
+            try {
+                await auth.signInWithEmailAndPassword(email, pass);
+            } catch (err) {
+                pendingLoginSource = null;
+                hideLoading();
+                console.error("Admin login error:", err);
+                showToast('ভুল অ্যাডমিন ইমেইল বা পাসওয়ার্ড!', true);
             }
         }
 
-        function checkSessionState() {
-            const savedRole = sessionStorage.getItem('POLICE_USER_ROLE');
-            const savedBp = sessionStorage.getItem('POLICE_LOGGED_BP');
-            if (savedRole) currentUserRole = savedRole;
-            if (savedBp) loggedInBpNumber = savedBp;
-
+        function updateUIForRole() {
             const authBtnText = document.getElementById('authBtnText');
             const addMemberBtn = document.getElementById('addMemberBtn');
             const editMyProfileNavBtn = document.getElementById('editMyProfileNavBtn');
@@ -1624,29 +1779,29 @@
             const noticeBloodBar = document.getElementById('noticeBloodBar');
             const editNoticeBtn = document.getElementById('editNoticeBtn');
             const adminLogsNavBtn = document.getElementById('adminLogsNavBtn');
+            const navCounterBox = document.getElementById('navCounterBox');
 
             if (currentUserRole !== 'guest') {
                 lockedScreen.classList.add('hidden');
                 unlockedApp.classList.remove('hidden');
-                addMemberBtn.classList.add('hidden'); // সাধারণ ইউজাররা লগইন করার পর আর নতুন রেজিস্ট্রেশন বাটন দেখবে না
                 noticeBloodBar.classList.remove('hidden');
-                renderMembersGrid();
-                updatePendingCounter();
-                updateStatisticsDashboard();
+                navCounterBox.classList.remove('hidden');
 
                 if (currentUserRole === 'admin') {
                     authBtnText.innerText = 'অ্যাডমিন লগআউট';
-                    addMemberBtn.classList.remove('hidden'); // অ্যাডমিন চাইলে সরাসরি মেম্বার যোগ করতে পারবে
+                    addMemberBtn.classList.remove('hidden');
                     submitBtnText.innerText = 'সরাসরি সদস্য যোগ করুন';
                     editMyProfileNavBtn.classList.add('hidden');
                     editNoticeBtn.classList.remove('hidden');
                     adminLogsNavBtn.classList.remove('hidden');
                 } else {
                     authBtnText.innerText = 'লগআউট';
+                    addMemberBtn.classList.add('hidden');
                     editMyProfileNavBtn.classList.remove('hidden');
                     editNoticeBtn.classList.add('hidden');
                     adminLogsNavBtn.classList.add('hidden');
                 }
+                updatePendingCounter();
             } else {
                 lockedScreen.classList.remove('hidden');
                 unlockedApp.classList.add('hidden');
@@ -1654,6 +1809,7 @@
                 submitBtnText.innerText = 'সদস্য যোগ করুন';
                 editMyProfileNavBtn.classList.add('hidden');
                 noticeBloodBar.classList.add('hidden');
+                navCounterBox.classList.add('hidden');
                 document.getElementById('adminPendingBtn').classList.add('hidden');
                 editNoticeBtn.classList.add('hidden');
                 adminLogsNavBtn.classList.add('hidden');
@@ -1666,7 +1822,7 @@
             const toastMessage = document.getElementById('toastMessage');
             const toastIcon = document.getElementById('toastIcon');
 
-            toastMessage.innerText = msg;
+            toastMessage.textContent = msg;
             if (isError) {
                 toast.classList.remove('border-police-accent');
                 toast.classList.add('border-red-600');
@@ -1677,8 +1833,9 @@
                 toastIcon.className = "fa-solid fa-circle-check text-police-accent text-xl";
             }
 
-            toast.classList.add('hidden');
-            setTimeout(() => { toast.classList.add('hidden'); }, 3000);
+            toast.classList.remove('hidden');
+            if (toastTimer) clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => { toast.classList.add('hidden'); }, 3500);
         }
 
         function toBanglaDigit(num) {
