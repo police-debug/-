@@ -731,6 +731,8 @@
         }
         function hideLoading() { document.getElementById('loadingOverlay').classList.add('hidden'); }
 
+        let listenersStarted = false;
+
         function initFirebaseCloud() {
             showLoading('সার্ভারের সাথে ডাটা সিঙ্ক করা হচ্ছে...');
             try {
@@ -740,18 +742,23 @@
                 db = firebase.firestore();
                 auth = firebase.auth();
                 isCloudAvailable = true;
-                
-                auth.signInAnonymously().catch(err => {
-                    console.warn("Anonymous auth failed or disabled:", err);
-                });
 
                 auth.onAuthStateChanged((user) => {
                     if (user) {
                         console.log("Firebase Auth User Active:", user.uid);
+                        if (!listenersStarted) {
+                            listenersStarted = true;
+                            listenToCloudDatabase();
+                        }
+                    } else {
+                        auth.signInAnonymously().catch(err => {
+                            console.warn("Anonymous auth failed or disabled:", err);
+                            isCloudAvailable = false;
+                            loadLocalBackupData();
+                            hideLoading();
+                        });
                     }
                 });
-
-                listenToCloudDatabase();
             } catch (error) {
                 console.warn("Cloud offline fallback mode:", error);
                 isCloudAvailable = false;
